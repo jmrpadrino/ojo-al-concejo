@@ -89,11 +89,11 @@ add_action( 'cmb2_admin_init', 'oda_register_miembro_metabox' );
  */
 function oda_register_miembro_metabox() {
 	/**
-	 * Sample metabox to demonstrate each field type included
+	 * Metaboxz for Relaciones
 	 */
 	$mtb_rel = new_cmb2_box( array(
 		'id'            => 'oda_miembro_relaciones',
-		'title'         => esc_html__( 'Relaciones', 'cmb2' ),
+		'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Relaciones', 'oda' ),
 		'object_types'  => array( 'miembro' ), // Post type
 		// 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
 		'context'    => 'side',
@@ -112,7 +112,7 @@ function oda_register_miembro_metabox() {
 	$alcaldias = new WP_Query($args);
 	if ( !$alcaldias->have_posts() ){
 		$mtb_rel->add_field( array(
-			'name' => esc_html__( 'Aviso Importante', 'cmb2' ),
+			'name' => esc_html__( 'Aviso Importante', 'oda' ),
 			'desc' => __( 'Aun no tiene alcaldias agregadas por favor agregue una. Haga clic <a href="'. admin_url('/post-new.php?post_type=alcaldia') .'">aqui</a>.', 'cmb2' ),
 			'id'   => 'yourprefix_demo_title',
 			'type' => 'title',
@@ -126,7 +126,7 @@ function oda_register_miembro_metabox() {
 		//die;
 		$mtb_rel->add_field( array(
 			'name'       => esc_html__( '¿A qué ciudad pertenece este miembro?', 'cmb2' ),
-			'desc'       => esc_html__( 'Este campo es obligatorio', 'cmb2' ),
+			'desc'       => esc_html__( 'Este campo es obligatorio', 'oda' ),
 			'id'         => ODA_PREFIX . 'ciudad_owner',
 			'type'             => 'select',
 			'show_option_none' => true,
@@ -136,43 +136,462 @@ function oda_register_miembro_metabox() {
 			),
 		) );
 	}
-
+	
 	/**
 	 * Get all post from Circunscripcion
 	 */
+	if ( !isset ( $_GET['post']) ){
+		$mtb_rel->add_field( array(
+			'name'       => esc_html__( '¿A qué Circunscripción pertenece este miembro?', 'cmb2' ),
+			'desc'       => esc_html__( 'Debe seleccionar una ciudad.', 'oda' ),
+			'id'         => ODA_PREFIX . 'circunscripcion_owner',
+			'type'             => 'select',
+			//'show_option_none' => true,
+			'options' => array(),
+			'attributes' => array(
+				'required' => 'required',
+				'disabled' => 'disabled'
+			),
+		) );
+	}else{
+		$city_ID = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true); 
+		$args = array(
+			'post_type' => 'circunscripcion',
+			'posts_per_page' => -1,
+			'post_status' => 'publish',
+			'meta_key' => ODA_PREFIX . 'ciudad_owner',
+			'orderby'    => 'meta_value_num',
+			'order'      => 'ASC',
+			'meta_query' => array(
+				array(
+					'key' => ODA_PREFIX . 'ciudad_owner',
+					'value' => $city_ID
+				)
+			)
+		);
+		$circunscripcion = new WP_Query($args);
+		if ( !$circunscripcion->have_posts() ){
+			$mtb_rel->add_field( array(
+				'name' => esc_html__( 'Aviso Importante', 'oda' ),
+				'desc' => __( 'Aun no tiene circunscripciones agregadas por favor agregue una. Haga clic <a href="'. admin_url('/post-new.php?post_type=circunscripcion') .'">aqui</a>.', 'cmb2' ),
+				'id'   => ODA_PREFIX . 'circunscripcion_owner',
+				'type' => 'title',
+			) );
+		}else{
+			$circunscripcion_array = array();
+			while ( $circunscripcion->have_posts() ) { $circunscripcion->the_post();
+				$circunscripcion_array[get_the_ID()] = get_the_title();
+			}
+			//var_dump( $alcaldias_array );
+			//die;
+			$mtb_rel->add_field( array(
+				'name'       => esc_html__( '¿A qué Circunscripción pertenece este miembro?', 'cmb2' ),
+				'desc'       => esc_html__( 'Este campo es obligatorio', 'oda' ),
+				'id'         => ODA_PREFIX . 'circunscripcion_owner',
+				'type'             => 'select',
+				'show_option_none' => true,
+				'options' => $circunscripcion_array,
+				'attributes' => array(
+					'required' => 'required',
+				),
+			) );	
+		}
+	}
+
+	/**
+	 * Get all post from Partido Politico
+	 */
 	$args = array(
-		'post_type' => 'circunscripcion',
+		'post_type' => 'partido',
 		'posts_per_page' => -1,
 		'post_status' => 'publish'
 	);
-	$circunscripcion = new WP_Query($args);
-	if ( !$circunscripcion->have_posts() ){
+	$partido = new WP_Query($args);
+	if ( !$partido->have_posts() ){
 		$mtb_rel->add_field( array(
-			'name' => esc_html__( 'Aviso Importante', 'cmb2' ),
-			'desc' => __( 'Aun no tiene circunscripciones agregadas por favor agregue una. Haga clic <a href="'. admin_url('/post-new.php?post_type=circunscripcion') .'">aqui</a>.', 'cmb2' ),
+			'name' => esc_html__( 'Aviso Importante', 'oda' ),
+			'desc' => __( 'Aun no tiene Partidos politicos agregados por favor agregue una. Haga clic <a href="'. admin_url('/post-new.php?post_type=circunscripcion') .'">aqui</a>.', 'cmb2' ),
 			'id'   => 'yourprefix_demo_title',
 			'type' => 'title',
 		) );
 	}else{
-		$circunscripcion_array = array();
-		while ( $circunscripcion->have_posts() ) { $circunscripcion->the_post();
-			$circunscripcion_array[get_the_ID()] = get_the_title();
+		$partido_array = array();
+		while ( $partido->have_posts() ) { $partido->the_post();
+			$partido_array[get_the_ID()] = get_the_title();
 		}
 		//var_dump( $alcaldias_array );
 		//die;
 		$mtb_rel->add_field( array(
-			'name'       => esc_html__( '¿A qué Circunscripción pertenece esta miembro?', 'cmb2' ),
+			'name'       => esc_html__( '¿A qué partido político pertenece este miembro?', 'cmb2' ),
 			'desc'       => esc_html__( 'Este campo es obligatorio', 'cmb2' ),
-			'id'         => ODA_PREFIX . 'circunscripcion_owner',
+			'id'         => ODA_PREFIX . 'partido_owner',
 			'type'             => 'select',
+			'column'          => true,
 			'show_option_none' => true,
-			'options' => $circunscripcion_array,
+			'options' => $partido_array,
 			'attributes' => array(
 				'required' => 'required',
 			),
 		) );
+	}
 
+	/**
+	 * Metabox para metadatos
+	 */
+	$mtb_rel = new_cmb2_box( array(
+		'id'            => 'oda_miembro_metadatos',
+		'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Metadatos para el Miembro del Concejo', 'oda' ),
+		'object_types'  => array( 'miembro' ), // Post type
+		// 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
+		'context'    => 'normal',
+		'priority'   => 'high',
+		'show_names' => true, // Show field names on the left
+		'classes'    => 'oda-metabox'
+	) );
+	
+	/**
+	 * Get the Full first name
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( '¿Es miembro suplente?', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_es_supente',
+		'type' => 'checkbox',
+	) );
+
+	/**
+	 * Get the Full first name
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( '¿Participa en el Concejo?', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_participa',
+		'type' => 'checkbox',
+	) );
 		
+	/**
+	 * Get the Full first name
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Nombres Completos', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_nombres',
+		'type'       => 'text',
+	) );
+
+	/**
+	 * Get the Full last name
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Apellidos Completos', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_apellidos',
+		'type'       => 'text',
+	) );
+
+	/**
+	 * Get the job
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Cargo', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_cargo',
+		'type'             => 'select',
+		'show_option_none' => true,
+		'show_option_none' => 'Seleccione uno',
+		'options'          => array(
+			'1' 	=> esc_html__( 'Alcalde', 'oda' ),
+			'2'   	=> esc_html__( 'concejal rural', 'oda' ),
+			'3'     => esc_html__( 'concejal urbano', 'oda' ),
+		),
+	) );
+
+	/**
+	 * Get the gender
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Genero', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_gerero',
+		'type'             => 'select',
+		'show_option_none' => true,
+		'show_option_none' => 'Seleccione uno',
+		'options'          => array(
+			'1' 	=> esc_html__( 'Msculino', 'oda' ),
+			'2'   	=> esc_html__( 'Femenino', 'oda' ),
+			'3'     => esc_html__( 'Sin especificar', 'oda' ),
+		),
+	) );
+
+	/**
+	 * Get the curul
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Curul', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_curul',
+		'type'             => 'text',
+		'attributes' => array(
+			'type' => 'number',
+			'min' => '0',
+		),
+
+	) );
+	
+	/**
+	 * Get the Profesion
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Profesión', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_profesion',
+		'type'             => 'text'
+	) );
+
+	/**
+	 * Get the email
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Correo Electrónico', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_email',
+		'type'             => 'text_email'
+	) );
+
+	/**
+	 * Get the telefono
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Teléfono', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_phone',
+		'type'             => 'text',
+		'attributes' => array(
+			'type' => 'tel',
+		),
+	) );
+
+	/**
+	 * Get the blog
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Blog', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_web',
+		'type'             => 'text_url',
+	) );
+
+	/**
+	 * Get the twitter
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Twitter', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_twitter',
+		'type'             => 'text_url',
+	) );
+
+	/**
+	 * Get the radiografia politica url
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Radiografía Política URL', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_rpurl',
+		'type'             => 'text_url',
+	) );
+
+	/**
+	 * Get the asesor comunicacion
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Asesor de Comunicación', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_asesor_comunicacion',
+		'type'             => 'text',
+	) );
+
+	/**
+	 * Get the asesor legal
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Asesor Legal', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_asesor_legal',
+		'type'             => 'text',
+	) );
+
+	/**
+	 * Get the asesor administrativo
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( 'Asesor Administrativo', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_asesor_admin',
+		'type'             => 'text',
+		'repeatable' => true
+	) );
+
+
+	/**
+	 * Metabox para documentos
+	 */
+	$mtb_rel = new_cmb2_box( array(
+		'id'            => 'oda_miembro_documentos',
+		'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Documentos', 'oda' ),
+		'object_types'  => array( 'miembro' ), // Post type
+		// 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
+		'context'    => 'normal',
+		'priority'   => 'high',
+		'show_names' => true, // Show field names on the left
+		'classes'    => 'oda-metabox'
+	) );
+
+	/**
+	 * Get the CV
+	 */
+	$mtb_rel->add_field( array(
+		'name'    => 'Cirruculum Vitae',
+		'desc'    => 'Suba un archivo o agregue una URL',
+		'id'      => ODA_PREFIX . 'miembro_pdf_cv',
+		'type'    => 'file',
+		// Optional:
+		'options' => array(
+			'url' => true, // Hide the text input for the url
+		),
+		'text'    => array(
+			'add_upload_file_text' => 'Añadir PDF' // Change upload button text. Default: "Add or Upload File"
+		),
+		'query_args' => array(
+			'type' => 'application/pdf', // Make library only display PDFs.
+			// Or only allow gif, jpg, or png images
+			// 'type' => array(
+			// 	'image/gif',
+			// 	'image/jpeg',
+			// 	'image/png',
+			// ),
+		),
+		'preview_size' => 'large', // Image size to use when previewing in the admin.
+	) );
+
+	/**
+	 * Get the Plan
+	 */
+	$mtb_rel->add_field( array(
+		'name'    => 'Plan de Trabajo',
+		'desc'    => 'Suba un archivo o agregue una URL',
+		'id'      => ODA_PREFIX . 'miembro_pdf_plan',
+		'type'    => 'file',
+		// Optional:
+		'options' => array(
+			'url' => true, // Hide the text input for the url
+		),
+		'text'    => array(
+			'add_upload_file_text' => 'Añadir PDF' // Change upload button text. Default: "Add or Upload File"
+		),
+		'query_args' => array(
+			'type' => 'application/pdf', // Make library only display PDFs.
+			// Or only allow gif, jpg, or png images
+			// 'type' => array(
+			// 	'image/gif',
+			// 	'image/jpeg',
+			// 	'image/png',
+			// ),
+		),
+		'preview_size' => 'large', // Image size to use when previewing in the admin.
+	) );
+
+	/**
+	 * Get the Labor notmativa
+	 */
+	$mtb_rel->add_field( array(
+		'name'    => 'Labor Normativa',
+		'desc'    => 'Suba un archivo o agregue una URL',
+		'id'      => ODA_PREFIX . 'miembro_pdf_labor',
+		'type'    => 'file',
+		// Optional:
+		'options' => array(
+			'url' => true, // Hide the text input for the url
+		),
+		'text'    => array(
+			'add_upload_file_text' => 'Añadir PDF' // Change upload button text. Default: "Add or Upload File"
+		),
+		'query_args' => array(
+			'type' => 'application/pdf', // Make library only display PDFs.
+			// Or only allow gif, jpg, or png images
+			// 'type' => array(
+			// 	'image/gif',
+			// 	'image/jpeg',
+			// 	'image/png',
+			// ),
+		),
+		'preview_size' => 'large', // Image size to use when previewing in the admin.
+	) );
+
+	/**
+	 * Metabox para metadatos
+	 */
+	$suplente = get_post_meta($_GET['post'], ODA_PREFIX . 'miembro_es_supente', true);
+	if ( !'on' == $suplente ){
+		$mtb_rel = new_cmb2_box( array(
+			'id'            => 'oda_miembros_suplentes_metadatos',
+			'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Miembros Suplentes', 'oda' ),
+			'object_types'  => array( 'miembro' ), // Post type
+			'context'    => 'normal',
+			'priority'   => 'high',
+			'show_names' => true, // Show field names on the left
+			'classes'    => 'oda-metabox'
+		) );
+
+		// get suplentes of same city
+		$city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
+		$args = array(
+			'post_type' => 'miembro',
+			'posts_per_page' => -1,
+			'post_status' => 'publish',
+			'post__not_in' => $excluir_suplentes,
+			'meta_query' => array(
+				'relation' => 'AND',
+				array(
+					'key' => ODA_PREFIX . 'ciudad_owner',
+					'value' => $city,
+					'compare' => '='
+				),
+				array(
+					'key' => ODA_PREFIX . 'miembro_es_supente',
+					'value' => 'on',
+					'compare' => '='
+				)
+			)
+		);
+		$miembros = new WP_Query($args);
+
+		if ( $miembros->have_posts() ){
+			$miembros_array = array();
+			while ( $miembros->have_posts() ) { $miembros->the_post();
+				$miembros_array[get_the_ID()] = get_the_title();
+			}
+			$mtb_rel->add_field( array(
+				'name'       => esc_html__( 'Miembro Suplente', 'oda' ),
+				'id'         => ODA_PREFIX . 'comision_composicion_miembros',
+				'type'             => 'select',
+				'show_option_none' => true,
+				'options' => $miembros_array,
+				/*
+				'attributes' => array(
+					'required' => 'required',
+				),
+				*/
+				'repeatable' => true
+			) );
+		}else{
+			$mtb_rel->add_field( array(
+				'name' => esc_html__( 'Aviso Importante', 'oda' ),
+				'desc' => __( 'Aun no existen Miembros suplentes registrados para esta ciudad.', 'cmb2' ),
+				'id'   => 'no_suplentes',
+				'type' => 'title',
+			) );
+		}
 	}
 
 }

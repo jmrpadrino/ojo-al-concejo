@@ -9,6 +9,107 @@ add_action( 'cmb2_admin_init', 'oda_comision_metabox' );
  * Hook in and add a demo metabox. Can only happen on the 'oda_admin_init' or 'oda_init' hook.
  */
 function oda_comision_metabox() {
+
+	/**
+	 * Metabos for metadata on Comision Composicion
+	 */
+	$mtb_metas = new_cmb2_box( array(
+		'id'            => 'oda_comision_composicion',
+		'title'         => esc_html__( 'Composición de la Comisión', 'oda' ),
+		'object_types'  => array( 'comision' ), // Post type
+		'context'    => 'normal',
+		'priority'   => 'high',
+		'show_names' => true, // Show field names on the left
+	) );
+
+	$args = array(
+		'post_type' => 'miembro',
+		'posts_per_page' => -1,
+		'post_status' => 'publish',
+		'meta_key'   => ODA_PREFIX . 'miembro_es_supente',
+		'meta_query' => array(
+			//'relation' => 'AND',
+			array(
+				'key' => ODA_PREFIX . 'miembro_es_supente',
+				'value' => 'on',
+				'compare' => '='
+			)
+		)
+	);
+	
+	$miembros_suplentes = new WP_Query($args);
+	$excluir_suplentes = array();
+	while ( $miembros_suplentes->have_posts() ){
+		$miembros_suplentes->the_post();
+		$excluir_suplentes[] = get_the_ID();
+	}
+
+	// get city meta for comision to filter members
+	$city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
+
+	
+	$args = array(
+		'post_type' => 'miembro',
+		'posts_per_page' => -1,
+		'post_status' => 'publish',
+		'post__not_in' => $excluir_suplentes,
+		'meta_query' => array(
+			array(
+				'key' => ODA_PREFIX . 'ciudad_owner',
+				'value' => $city,
+				'compare' => '='
+			)
+		)
+	);
+	$miembros = new WP_Query($args);
+
+	if ( $miembros->have_posts() ){
+		$miembros_array = array();
+		while ( $miembros->have_posts() ) { $miembros->the_post();
+			$miembros_array[get_the_ID()] = get_the_title();
+		}
+	}
+
+	$mtb_metas->add_field( array(
+		'name'       => esc_html__( 'Presidente', 'oda' ),
+		'id'         => ODA_PREFIX . 'comision_composicion_presidente',
+		'type'             => 'select',
+		'show_option_none' => true,
+		'options' => $miembros_array,
+		/*
+		'attributes' => array(
+			'required' => 'required',
+		),
+		*/
+	) );
+
+	$mtb_metas->add_field( array(
+		'name'       => esc_html__( 'Vicepresidente', 'oda' ),
+		'id'         => ODA_PREFIX . 'comision_composicion_vicepresidente',
+		'type'             => 'select',
+		'show_option_none' => true,
+		'options' => $miembros_array,
+		/*
+		'attributes' => array(
+			'required' => 'required',
+		),
+		*/
+	) );
+
+	$mtb_metas->add_field( array(
+		'name'       => esc_html__( 'Demás Miembros', 'oda' ),
+		'id'         => ODA_PREFIX . 'comision_composicion_miembros',
+		'type'             => 'select',
+		'show_option_none' => true,
+		'options' => $miembros_array,
+		/*
+		'attributes' => array(
+			'required' => 'required',
+		),
+		*/
+		'repeatable' => true
+	) );
+
 	/**
 	 * Metabos for metadata on Comision
 	 */
@@ -16,27 +117,34 @@ function oda_comision_metabox() {
 		'id'            => 'oda_comision_meta',
 		'title'         => esc_html__( 'Metadatos de la Comisión', 'oda' ),
 		'object_types'  => array( 'comision' ), // Post type
-		// 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
 		'context'    => 'normal',
 		'priority'   => 'high',
 		'show_names' => true, // Show field names on the left
 	) );
 
 	$mtb_metas->add_field( array(
+		'name'       => esc_html__( '¿Desactivar?', 'oda' ),
+		'id'         => ODA_PREFIX . 'comision_activa',
+		'type'       => 'checkbox',
+	) );
+
+	$mtb_metas->add_field( array(
+		'name'       => esc_html__( 'Fecha de creación', 'oda' ),
+		'id'         => ODA_PREFIX . 'comision_created',
+		'type'       => 'text_date',
+	) );
+
+	$mtb_metas->add_field( array(
+		'name'       => esc_html__( 'Fecha de terminación', 'oda' ),
+		'id'         => ODA_PREFIX . 'comision_ends',
+		'type'       => 'text_date',
+	) );
+
+	$mtb_metas->add_field( array(
 		'name'       => esc_html__( 'Nombre corto', 'oda' ),
 		'id'         => ODA_PREFIX . 'comision_short_name',
 		'type'       => 'text',
-		// 'show_on_cb' => 'yourprefix_hide_if_no_cats', // function should return a bool value
-		// 'sanitization_cb' => 'my_custom_sanitization', // custom sanitization callback parameter
-		// 'escape_cb'       => 'my_custom_escaping',  // custom escaping callback parameter
-		// 'on_front'        => false, // Optionally designate a field to wp-admin only
-		// 'repeatable'      => true,
-		// 'column'          => true, // Display field value in the admin post-listing columns
 	) );
-
-	/**
-	 * Metabos for metadata on Comision
-	 */
 
 	$mtb_metas->add_field( array(
 		'name'       => esc_html__( 'Tipo', 'oda' ),
@@ -44,13 +152,8 @@ function oda_comision_metabox() {
 		'type'       => 'select',
 		'show_option_none' => true,
 		'options' 	 => ODA_ESTADOS_COMISION,
-		// 'show_on_cb' => 'yourprefix_hide_if_no_cats', // function should return a bool value
-		// 'sanitization_cb' => 'my_custom_sanitization', // custom sanitization callback parameter
-		// 'escape_cb'       => 'my_custom_escaping',  // custom escaping callback parameter
-		// 'on_front'        => false, // Optionally designate a field to wp-admin only
-		// 'repeatable'      => true,
-		// 'column'          => true, // Display field value in the admin post-listing columns
 	) );
+
 
 	$mtb_rel = new_cmb2_box( array(
 		'id'            => 'oda_comision_relaciones',
@@ -96,8 +199,6 @@ function oda_comision_metabox() {
 			),
 			'after_field'    => '<strong>¿No esta la ciudad?</strong>, haga clic <a href="'. admin_url('/post-new.php?post_type=ciudad') .'">aqui</a> para agregar una nueva.',
 		) );
-
-		
 	}
 
 }

@@ -1,14 +1,14 @@
 <?php
 /**
- * @package CRMec
+ * @package Observatorio
  */
 /*
 Plugin Name: Observatorio de Alcaldias
-Plugin URI: https://choclomedia.com/wordpress-plugins/
+Plugin URI: http://urbadigital.com/wordpress-plugins/
 Description: Aqui viene una descripción pronto...
 Version: 0.0.1
-Author: Choclomedia
-Author URI: https://choclomedia.com/
+Author: Urba Digital
+Author URI: http://urbadigital.com/
 License: GPLv2 or later
 Text Domain: oda
 */
@@ -29,7 +29,8 @@ $oda_objects = [
     'ciudad',
     'circunscripcion',
     'comision',
-    'miembro'
+    'miembro',
+    'partido'
 ];
 
 define('ODA_VERISON', '0.0.1' );
@@ -63,12 +64,20 @@ require_once( ODA_DIR_PATH . 'backend/comision/Comision.php' );
 require_once( ODA_DIR_PATH . 'backend/comision/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/comision/Admin-columns.php' );
 
-
 /**
  * Support for CTP Concejal
  */
 require_once( ODA_DIR_PATH . 'backend/miembros/Miembros.php' );
 require_once( ODA_DIR_PATH . 'backend/miembros/Metaboxes.php' );
+require_once( ODA_DIR_PATH . 'backend/miembros/Admin-columns.php' );
+require_once( ODA_DIR_PATH . 'backend/miembros/ajax-support.php' );
+
+/**
+ * Support for CTP Partido Político
+ */
+require_once( ODA_DIR_PATH . 'backend/partidos-politicos/Partidospoliticos.php' );
+require_once( ODA_DIR_PATH . 'backend/partidos-politicos/Metaboxes.php' );
+require_once( ODA_DIR_PATH . 'backend/partidos-politicos/Admin-columns.php' );
 
 /**
  * Support for CTP Resolucion

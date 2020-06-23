@@ -1,0 +1,11 @@
+/* cmb2 */
+.cmb-row:not(.cmb-repeat-row),
+.cmb-th,
+.cmb-th label,
+.cmb2-metabox-description {padding:0!important;}
+.cmb-row { border-bottom: 0!important;}
+.cmb-th label {
+    font-size: 12px!important;
+    margin:0!important;
+}
+.oda-metabox .cmb-th { text-align: right; }

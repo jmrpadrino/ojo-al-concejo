@@ -12,6 +12,9 @@ var_dump($icons);
 echo '</pre>';
 */
 
+add_theme_support('post-thumbnails');
+//add_post_type_support( 'partido', 'thumbnail' );  
+
 add_action('admin_enqueue_scripts', 'oda_add_my_scripts');
 function oda_add_my_scripts(){
     if ( is_admin() ){

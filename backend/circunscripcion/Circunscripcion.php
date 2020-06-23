@@ -47,7 +47,7 @@ function oda_Circunscripcion() {
         'public'                => true,
         'show_ui'               => true,
         'show_in_menu'          => true,
-		'menu_position'         => 5,
+		'menu_position'         => 27,
 		'menu_icon'             => ODA_DIR_URL . 'images/FCD-menu-icon.png',
         'show_in_admin_bar'     => true,
         'show_in_nav_menus'     => true,

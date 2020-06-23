@@ -47,7 +47,7 @@ function oda_Comision() {
         'public'                => true,
         'show_ui'               => true,
         'show_in_menu'          => true,
-		'menu_position'         => 5,
+		'menu_position'         => 28,
 		'menu_icon'             => ODA_DIR_URL . 'images/FCD-menu-icon.png',
         'show_in_admin_bar'     => true,
         'show_in_nav_menus'     => true,
@@ -67,7 +67,6 @@ function oda_Comision() {
 add_action( 'init', 'oda_Comision', 0 );
 
 $estados_comision = array(
-    '0' => 'No Visible',
     '1' => 'Permanente',
     '2' => 'Ocasional',
 );

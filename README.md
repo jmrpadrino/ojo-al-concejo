@@ -1,2 +1,2 @@
-# ojo-al-concejo
-Proyecto Ojo al Concejo
+# Ojo al Concejo
+Proyecto aplicación para WordPress.
