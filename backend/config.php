@@ -58,3 +58,20 @@ function oda_comment_status( $open, $post_id ) {
     return $open;
 }
 add_filter( 'comments_open', 'oda_comment_status', 10 , 2 );
+
+/**
+ * Disable Comments on specyfic objcts
+ */
+function oda_add_support_info_on_edit() {
+    echo 'Awui';
+}
+//add_action( 'admin_notices', 'oda_add_support_info_on_edit' );
+
+function oda_get_cities(){
+    $args = array(
+        'post_type' => 'ciudad',
+        'posts_per_page' => -1
+    );
+    return new WP_Query($args);
+    
+}

@@ -57,4 +57,24 @@ function oda_ciudad_metabox() {
 		'default' => '#ffffff',
 	) );
 
+	/**
+	 * Lista documentos concejal transparente
+	 */
+	$mtb_rel = new_cmb2_box( array(
+		'id'            => 'oda_listado_documentos',
+		'title'         => esc_html__( 'Lista de documentos solicitados para Concejo Transparente', 'cmb2' ),
+		'object_types'  => array( 'ciudad' ), // Post type
+		// 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
+		'context'    => 'normal',
+		'priority'   => 'low',
+		'show_names' => true, // Show field names on the left
+	) );
+	$mtb_rel->add_field( array(
+		'name' => esc_html__( 'Nombre del Documento', 'cmb2' ),
+		'desc' => __( 'Este nombre se mostrará en otras partes del sistema', 'cmb2' ),
+		'id'   => ODA_PREFIX . 'items_concejo_transparente',
+		'type' => 'text',
+		'repeatable' => true
+	) );
+
 }

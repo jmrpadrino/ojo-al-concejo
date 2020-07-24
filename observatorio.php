@@ -65,11 +65,12 @@ require_once( ODA_DIR_PATH . 'backend/comision/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/comision/Admin-columns.php' );
 
 /**
- * Support for CTP Concejal
+ * Support for CTP Miembros
  */
 require_once( ODA_DIR_PATH . 'backend/miembros/Miembros.php' );
 require_once( ODA_DIR_PATH . 'backend/miembros/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/miembros/Admin-columns.php' );
+require_once( ODA_DIR_PATH . 'backend/miembros/Tools.php' );
 require_once( ODA_DIR_PATH . 'backend/miembros/ajax-support.php' );
 
 /**

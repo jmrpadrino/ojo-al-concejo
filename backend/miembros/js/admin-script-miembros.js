@@ -1,5 +1,36 @@
 (function($){
 
+	$( ".sortable" ).sortable({
+		stop: function(event, ui){
+			console.log('hacer ajax para ordenar');
+			var listado = $('.sortable li');
+			var curules = [];
+			$.each(listado, function(index, value){
+				var item = {};
+				item.id = value.id;
+				item.order = index + 1;
+
+				curules.push(item);
+			})
+			$.ajax({
+				url: ajaxurl,
+				//dataType: 'JSON',
+				data: {
+					action: 'oda_reordenar_curules',
+					data: curules
+				},
+				beforeSend: function(){
+					$('.rotating').removeClass('hide');
+				},
+				success: function(response) {
+					location.reload();
+				}
+			})
+			//console.log(curules)
+		}
+	});
+    $( ".sortable" ).disableSelection();
+
 	$('#oda_ciudad_owner').change(function(e){
         //console.log($(this).val());
         

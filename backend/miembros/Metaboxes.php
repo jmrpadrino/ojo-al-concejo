@@ -88,6 +88,10 @@ add_action( 'cmb2_admin_init', 'oda_register_miembro_metabox' );
  * Hook in and add a demo metabox. Can only happen on the 'cmb2_admin_init' or 'cmb2_init' hook.
  */
 function oda_register_miembro_metabox() {
+
+	$city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
+
+
 	/**
 	 * Metaboxz for Relaciones
 	 */
@@ -234,6 +238,68 @@ function oda_register_miembro_metabox() {
 			),
 		) );
 	}
+
+	/**
+	 * Metabox para metadatos
+	 */
+	$suplente = get_post_meta($_GET['post'], ODA_PREFIX . 'miembro_es_supente', true);
+	if ( !'on' == $suplente ){
+		$mtb_rel = new_cmb2_box( array(
+			'id'            => 'oda_miembros_suplentes_metadatos',
+			'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Miembros Suplentes', 'oda' ),
+			'object_types'  => array( 'miembro' ), // Post type
+			'context'    => 'normal',
+			'priority'   => 'high',
+			'show_names' => true, // Show field names on the left
+			'classes'    => 'oda-metabox'
+		) );
+
+		// get suplentes of same city
+		$suplente = get_post_meta($_GET['post'], ODA_PREFIX . 'comision_composicion_miembros', false);		
+		$args = array(
+			'post_type' => 'miembro',
+			'posts_per_page' => -1,
+			'post_status' => 'publish',
+			'post__not_in' => $excluir_suplentes,
+			'meta_query' => array(
+				'relation' => 'AND',
+				array(
+					'key' => ODA_PREFIX . 'ciudad_owner',
+					'value' => $city,
+					'compare' => '='
+				),
+				array(
+					'key' => ODA_PREFIX . 'miembro_es_supente',
+					'value' => 'on',
+					'compare' => '='
+				)
+			)
+		);
+		$miembros = new WP_Query($args);
+
+		if ( $miembros->have_posts() ){
+			$miembros_array = array();
+			while ( $miembros->have_posts() ) { $miembros->the_post();
+				$miembros_array[get_the_ID()] = get_the_title();
+			}
+		}
+		$mtb_rel->add_field( array(
+			'name'       => esc_html__( 'Miembro Suplente', 'oda' ),
+			'id'         => ODA_PREFIX . 'miembro_miembros_suplentes',
+			'type'             => 'select',
+			'show_option_none' => true,
+			'options' => $miembros_array,
+			/*
+			'attributes' => array(
+				'required' => 'required',
+			),
+			*/
+			'repeatable' => true
+		) );
+
+	}
+
+
 
 	/**
 	 * Metabox para metadatos
@@ -528,70 +594,58 @@ function oda_register_miembro_metabox() {
 		'preview_size' => 'large', // Image size to use when previewing in the admin.
 	) );
 
+
 	/**
-	 * Metabox para metadatos
+	 * Get all items from Concejal Transparente
 	 */
-	$suplente = get_post_meta($_GET['post'], ODA_PREFIX . 'miembro_es_supente', true);
-	if ( !'on' == $suplente ){
-		$mtb_rel = new_cmb2_box( array(
-			'id'            => 'oda_miembros_suplentes_metadatos',
-			'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Miembros Suplentes', 'oda' ),
-			'object_types'  => array( 'miembro' ), // Post type
-			'context'    => 'normal',
-			'priority'   => 'high',
-			'show_names' => true, // Show field names on the left
-			'classes'    => 'oda-metabox'
+	$mtb_transparente = new_cmb2_box( array(
+		'id'            => 'oda_miembros_concejal_transparente',
+		'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Documentos para Concejo Transparente', 'oda' ),
+		'object_types'  => array( 'miembro' ), // Post type
+		'context'    => 'normal',
+		'priority'   => 'high',
+		'show_names' => true, // Show field names on the left
+		'classes'    => 'oda-metabox'
+	) );
+	$documentos = get_post_meta($city, ODA_PREFIX . 'items_concejo_transparente', true);
+	//die;
+	if ( !$documentos ){
+		$mtb_transparente->add_field( array(
+			'name' => esc_html__( 'Aviso Importante', 'oda' ),
+			'desc' => __( 'Aun no items que solicitar para Concejo Transoparente.', 'cmb2' ),
+			'id'   => 'con_transparente',
+			'type' => 'title',
 		) );
-
-		// get suplentes of same city
-		$city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
-		$args = array(
-			'post_type' => 'miembro',
-			'posts_per_page' => -1,
-			'post_status' => 'publish',
-			'post__not_in' => $excluir_suplentes,
-			'meta_query' => array(
-				'relation' => 'AND',
-				array(
-					'key' => ODA_PREFIX . 'ciudad_owner',
-					'value' => $city,
-					'compare' => '='
+	}else{
+		$mtb_transparente->add_field( array(
+			'name' => esc_html__( '¿Es parte del Concejo Transparente?', 'oda' ),
+			'id'   => ODA_PREFIX . 'miembro_parte_concejo_transparente',
+			'type' => 'checkbox',
+		) );
+		foreach($documentos as $index => $value){
+			$mtb_transparente->add_field( array(
+				'name'       => $value,
+				'id'         => ODA_PREFIX . 'con_transp_item_' . $index,
+				'type'             => 'file',
+				'options' => array(
+					'url' => true, // Hide the text input for the url
 				),
-				array(
-					'key' => ODA_PREFIX . 'miembro_es_supente',
-					'value' => 'on',
-					'compare' => '='
-				)
-			)
-		);
-		$miembros = new WP_Query($args);
-
-		if ( $miembros->have_posts() ){
-			$miembros_array = array();
-			while ( $miembros->have_posts() ) { $miembros->the_post();
-				$miembros_array[get_the_ID()] = get_the_title();
-			}
-			$mtb_rel->add_field( array(
-				'name'       => esc_html__( 'Miembro Suplente', 'oda' ),
-				'id'         => ODA_PREFIX . 'comision_composicion_miembros',
-				'type'             => 'select',
-				'show_option_none' => true,
-				'options' => $miembros_array,
-				/*
-				'attributes' => array(
-					'required' => 'required',
+				'text'    => array(
+					'add_upload_file_text' => 'Añadir PDF' // Change upload button text. Default: "Add or Upload File"
 				),
-				*/
-				'repeatable' => true
-			) );
-		}else{
-			$mtb_rel->add_field( array(
-				'name' => esc_html__( 'Aviso Importante', 'oda' ),
-				'desc' => __( 'Aun no existen Miembros suplentes registrados para esta ciudad.', 'cmb2' ),
-				'id'   => 'no_suplentes',
-				'type' => 'title',
+				'query_args' => array(
+					'type' => 'application/pdf', // Make library only display PDFs.
+					// Or only allow gif, jpg, or png images
+					// 'type' => array(
+					// 	'image/gif',
+					// 	'image/jpeg',
+					// 	'image/png',
+					// ),
+				),
+				'preview_size' => 'large', // Image size to use when previewing in the admin.
 			) );
 		}
 	}
+
 
 }

@@ -4,7 +4,8 @@ add_action('admin_enqueue_scripts', 'oda_insert_scripts_miembros');
 function oda_insert_scripts_miembros(){
     if (!is_admin()) return;
     
-    if ( 'miembro' == get_post_type() ) {
+    if ( 'miembro' == get_current_screen()->post_type ) {
+        wp_enqueue_script('oda_admin_script_jqui', 'https://code.jquery.com/ui/1.12.1/jquery-ui.js', array('jquery'), '1', true );
         wp_enqueue_script('oda_admin_script_miembros', ODA_DIR_URL . 'backend/miembros/js/admin-script-miembros.js', array('jquery'), '1', true );
     }
 }
