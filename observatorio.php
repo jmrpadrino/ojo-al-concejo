@@ -30,7 +30,8 @@ $oda_objects = [
     'circunscripcion',
     'comision',
     'miembro',
-    'partido'
+    'partido',
+    'ordenanzas'
 ];
 
 define('ODA_VERISON', '0.0.1' );
@@ -72,6 +73,12 @@ require_once( ODA_DIR_PATH . 'backend/miembros/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/miembros/Admin-columns.php' );
 require_once( ODA_DIR_PATH . 'backend/miembros/Tools.php' );
 require_once( ODA_DIR_PATH . 'backend/miembros/ajax-support.php' );
+
+/**
+ * Support for CTP Ordenanzas
+ */
+require_once( ODA_DIR_PATH . 'backend/ordenanzas/Ordenanzas.php' );
+require_once( ODA_DIR_PATH . 'backend/ordenanzas/Metaboxes.php' );
 
 /**
  * Support for CTP Partido Político
