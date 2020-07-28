@@ -31,7 +31,7 @@ $oda_objects = [
     'comision',
     'miembro',
     'partido',
-    'ordenanzas'
+    'ordenanza'
 ];
 
 define('ODA_VERISON', '0.0.1' );
