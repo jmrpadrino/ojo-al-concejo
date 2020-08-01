@@ -2,10 +2,30 @@
 .cmb-row:not(.cmb-repeat-row),
 .cmb-th,
 .cmb-th label,
-.cmb2-metabox-description {padding:0!important;}
-.cmb-row { border-bottom: 0!important;}
-.cmb-th label {
-    font-size: 12px!important;
-    margin:0!important;
+.cmb2-metabox-description {
+    padding: 0 !important;
 }
-.oda-metabox .cmb-th { text-align: right; }
+
+.cmb-row {
+    border-bottom: 0 !important;
+}
+
+.cmb-th label {
+    font-size: 12px !important;
+    margin: 0 !important;
+}
+
+.oda-metabox .cmb-th {
+    text-align: right;
+}
+
+/* CLASS: Select2 Size Limiter */
+.oda_select2 .select2-container {
+    max-width: 400px !important;
+}
+
+/* CLASS: Spacer for Group Custom */
+.oda_spacer {
+    margin-bottom: 1.5rem !important;
+    border-bottom: 1px solid #dadada !important;
+}

@@ -62,13 +62,13 @@ function oda_ciudad_metabox() {
 	 */
     $mtb_rel = new_cmb2_box( array(
         'id'            => 'oda_listado_documentos',
-        'title'         => esc_html__( 'Lista de documentos solicitados para Concejo Transparente', 'cmb2' ),
-        'object_types'  => array( 'ciudad' ), // Post type
-        // 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Lista de documentos solicitados para Concejo Transparente', 'oda' ),
+        'object_types'  => array( 'ciudad' ),
         'context'    => 'normal',
         'priority'   => 'low',
-        'show_names' => true, // Show field names on the left
+        'show_names' => true,
     ) );
+
     $mtb_rel->add_field( array(
         'name' => esc_html__( 'Nombre del Documento', 'cmb2' ),
         'desc' => __( 'Este nombre se mostrará en otras partes del sistema', 'cmb2' ),
@@ -77,44 +77,44 @@ function oda_ciudad_metabox() {
         'repeatable' => true
     ) );
 
-    /**
-	 * Lista documentos asociados a ordenanza
-	 */
-    $mtb_ordinance_rel = new_cmb2_box( array(
-        'id'            => 'oda_ordinance_asoc',
-        'title'         => esc_html__( 'Lista de Ordenanzas Asociadas a la Ciudad', 'cmb2' ),
-        'object_types'  => array( 'ciudad' ), // Post type
-        // 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
+    /* --------------------------------------------------------------
+        DATA ORDENANZA: FASES METABOX
+    -------------------------------------------------------------- */
+    $mtb_ciudad_ordenanzas_fases = new_cmb2_box( array(
+        'id'            => ODA_PREFIX . 'ciudad_ordenanza_fases_metabox',
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'ORDENANZAS: Lista de Fases Asociadas', 'oda' ),
+        'object_types'  => array( 'ciudad' ),
         'context'    => 'normal',
         'priority'   => 'low',
-        'show_names' => true, // Show field names on the left
+        'show_names' => true
     ) );
 
-    $mtb_ordinance_rel->add_field( array(
-        'name' => esc_html__( 'Nombre del Documento', 'cmb2' ),
+    /* DATA ORDENANZA: ITEMS DE FASES */
+    $mtb_ciudad_ordenanzas_fases->add_field( array(
+        'id'   => ODA_PREFIX . 'items_ordenanza_fases',
+        'name' => esc_html__( 'Nombre de la Fase', 'cmb2' ),
         'desc' => __( 'Este nombre se mostrará en otras partes del sistema', 'cmb2' ),
-        'id'   => ODA_PREFIX . 'items_ordinance_docs',
         'type' => 'text',
         'repeatable' => true
     ) );
 
-    /**
-	 * Estados asociados a ordenanza
-	 */
-    $mtb_ordinance_status = new_cmb2_box( array(
-        'id'            => 'oda_ordinance_status_metabox',
-        'title'         => esc_html__( 'Lista de Estados de Ordenanzas Asociadas a la Ciudad', 'cmb2' ),
-        'object_types'  => array( 'ciudad' ), // Post type
-        // 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
+    /* --------------------------------------------------------------
+        DATA RESOLUCIÓN: FASES METABOX
+    -------------------------------------------------------------- */
+    $mtb_ciudad_resolucion_fases = new_cmb2_box( array(
+        'id'            => ODA_PREFIX . 'ciudad_resolucion_fases_metabox',
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'RESOLUCIONES: Lista de Fases Asociadas', 'oda' ),
+        'object_types'  => array( 'ciudad' ),
         'context'    => 'normal',
         'priority'   => 'low',
-        'show_names' => true, // Show field names on the left
+        'show_names' => true
     ) );
 
-    $mtb_ordinance_status->add_field( array(
-        'name' => esc_html__( 'Nombre del Estado', 'cmb2' ),
+    /* DATA RESOLUCIÓN: ITEMS DE FASES */
+    $mtb_ciudad_resolucion_fases->add_field( array(
+        'id'   => ODA_PREFIX . 'items_resolucion_fases',
+        'name' => esc_html__( 'Nombre de la Fase', 'cmb2' ),
         'desc' => __( 'Este nombre se mostrará en otras partes del sistema', 'cmb2' ),
-        'id'   => ODA_PREFIX . 'items_ordinance_status',
         'type' => 'text',
         'repeatable' => true
     ) );

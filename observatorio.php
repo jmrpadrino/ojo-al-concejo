@@ -31,7 +31,8 @@ $oda_objects = [
     'comision',
     'miembro',
     'partido',
-    'ordenanza'
+    'ordenanza',
+    'resolucion'
 ];
 
 define('ODA_VERISON', '0.0.1' );
@@ -75,12 +76,6 @@ require_once( ODA_DIR_PATH . 'backend/miembros/Tools.php' );
 require_once( ODA_DIR_PATH . 'backend/miembros/ajax-support.php' );
 
 /**
- * Support for CTP Ordenanzas
- */
-require_once( ODA_DIR_PATH . 'backend/ordenanzas/Ordenanzas.php' );
-require_once( ODA_DIR_PATH . 'backend/ordenanzas/Metaboxes.php' );
-
-/**
  * Support for CTP Partido Político
  */
 require_once( ODA_DIR_PATH . 'backend/partidos-politicos/Partidospoliticos.php' );
@@ -88,14 +83,23 @@ require_once( ODA_DIR_PATH . 'backend/partidos-politicos/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/partidos-politicos/Admin-columns.php' );
 
 /**
- * Support for CTP Resolucion
+ * Support for CTP Ordenanzas
  */
-//require_once( ODA_DIR_PATH . 'backend/resoluciones/Resoluciones.php' );
+require_once( ODA_DIR_PATH . 'backend/ordenanzas/Ordenanzas.php' );
+require_once( ODA_DIR_PATH . 'backend/ordenanzas/Metaboxes.php' );
+require_once( ODA_DIR_PATH . 'backend/ordenanzas/Admin-columns.php' );
 
 /**
- * Support for CTP Ordenanza
+ * Support for CTP Resoluciones
  */
-//require_once( ODA_DIR_PATH . 'backend/ordenanzas/Ordenanzas.php' );
+require_once( ODA_DIR_PATH . 'backend/resoluciones/Resoluciones.php' );
+require_once( ODA_DIR_PATH . 'backend/resoluciones/Metaboxes.php' );
+require_once( ODA_DIR_PATH . 'backend/resoluciones/Admin-columns.php' );
+
+/**
+ * Support for Tax Temas
+ */
+require_once( ODA_DIR_PATH . 'backend/common/Taxonomy-Temas.php' );
 
 //-----------------------------------------------------------------
 // Frontend Files
