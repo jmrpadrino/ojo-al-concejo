@@ -32,7 +32,7 @@ function oda_Miembros() {
 		'filter_items_list'     => __( 'Filtrar lista de Miembros', 'oda' ),
 	);
 	$rewrite = array(
-        'slug'                  => 'ciudad/%' .ODA_PREFIX . 'circunscripcion_owner%/miembro',
+        'slug'                  => 'ciudad/%' .ODA_PREFIX . 'ciudad_owner%/miembro',        
         'with_front'            => false,
     );
     $args = array(
@@ -76,10 +76,10 @@ function replace_rewrite_tags_for_miembro ($url, $post){
     )
     return $url;
 
-    $ba = strtolower( get_post_meta($post->ID, ODA_PREFIX . 'circunscripcion_owner', true) );
+    $ba = strtolower( get_post_meta($post->ID, ODA_PREFIX . 'ciudad_owner', true) );
     $alcaldia = get_post($ba);
 
-    return str_replace('%'.ODA_PREFIX.'circunscripcion_owner%', $alcaldia->post_name, $url);
+    return str_replace('%'.ODA_PREFIX.'ciudad_owner%', $alcaldia->post_name, $url);
 
 }
 
@@ -90,9 +90,9 @@ add_action('init', 'miembro_rewriter_rule');
 function miembro_rewriter_rule(){
     // You can use this to set a different name both query var and tag
     // add_rewrite_tag( '%alcaldia_owner%', '([^&]+)', 'alcaldia_owner=');
-    add_rewrite_tag( '%'.ODA_PREFIX.'circunscripcion_owner%', '([^&]+)');
+    add_rewrite_tag( '%'.ODA_PREFIX.'ciudad_owner%', '([^/]*)');
 
-    //add_rewrite_rule('^circunscripcion/([^/]+)/miembro/([^/]+)/?', 'index.php?circunscripcion_owner=$matches[1]', 'top');
+    //add_rewrite_rule('ciudad/([^/]*)/miembro/([^/]+)/?', 'index.php?ciudad_owner=$matches[1]', 'top');
 }
 
  /**
@@ -121,13 +121,13 @@ function pre_get_posts_miembro($query){
 
     $meta_query = [];
     
-    $circunscripcion = get_query_var( 'circunscripcion_owner' );
+    $ciudad = get_query_var( 'oda_ciudad_owner' );
 
     
     // Get parent custom post type
     $args = array(
-        'name' => $circunscripcion,
-        'post_type' => 'circunscripcion',
+        'name' => $ciudad,
+        'post_type' => 'ciudad',
         'post_status' => 'publish',
         'numberposts' => 1
     );
@@ -137,7 +137,7 @@ function pre_get_posts_miembro($query){
 
     if ( !empty( $circunscripcion ) ) {
         $meta_query[] = array(
-            'key' => ODA_PREFIX . 'circunscripcion_owner',
+            'key' => ODA_PREFIX . 'ciudad_owner',
             'value' => $alcaldia_id[0]->ID,
             'compare' => '='
         );
