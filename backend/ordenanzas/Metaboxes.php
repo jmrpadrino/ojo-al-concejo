@@ -1,249 +1,437 @@
 <?php
+/* ORDENANZAS: IF FILE IS CALLED DIRECTLY, ABORT */
+if ( ! defined( 'WPINC' ) ) {
+    die;
+}
+
+/* --------------------------------------------------------------
+    ORDENANZAS: FILE INCLUDES - SELECT2 CALLBACK
+-------------------------------------------------------------- */
 if ( file_exists( ODA_DIR_PATH . 'backend/metaboxes/init.php' ) ) {
     require_once ODA_DIR_PATH . 'backend/metaboxes/init.php';
+    require_once ODA_DIR_PATH . 'backend/metaboxes/cmb-field-select2.php';
 } elseif ( file_exists( ODA_DIR_PATH . 'backend/metaboxes/init.php' ) ) {
     require_once ODA_DIR_PATH . 'backend/metaboxes/init.php';
+    require_once ODA_DIR_PATH . 'backend/metaboxes/cmb-field-select2.php';
 }
+
+/* --------------------------------------------------------------
+    ORDENANZAS: MAIN CMB2 CALLBACK
+-------------------------------------------------------------- */
 add_action( 'cmb2_admin_init', 'oda_ordenanza_metabox' );
-/**
- * Hook in and add a demo metabox. Can only happen on the 'cmb2_admin_init' or 'cmb2_init' hook.
- */
+
+/* ORDENANZAS: MAIN METABOX CALLBACK HANDLER */
 function oda_ordenanza_metabox() {
 
+    /* ORDENANZAS: OBTENER CIUDAD ASOCIADA A CPT */
     $city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
 
-    /**
-	 * Sample metabox to demonstrate each field type included
-	 */
+    /* --------------------------------------------------------------
+        ORDENANZAS: METABOX METADATA
+    -------------------------------------------------------------- */
     $mtb_metas = new_cmb2_box( array(
         'id'            => 'oda_ordenanza_metas',
-        'title'         => esc_html__( 'Metadatos', 'cmb2' ),
-        'object_types'  => array( 'ordenanza' ), // Post type
-        // 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Metadatos', 'oda' ),
+        'object_types'  => array( 'ordenanza' ),
         'context'    => 'side',
         'priority'   => 'high',
-        'show_names' => true, // Show field names on the left
-        // 'cmb_styles' => true, // false to disable the CMB stylesheet
-        // 'closed'     => true, // true to keep the metabox closed by default
-        // 'classes'    => 'extra-class', // Extra cmb2-wrap classes
-        // 'classes_cb' => 'oda_add_some_classes', // Add classes through a callback.
-
-        /*
-		 * The following parameter is any additional arguments passed as $callback_args
-		 * to add_meta_box, if/when applicable.
-		 *
-		 * CMB2 does not use these arguments in the add_meta_box callback, however, these args
-		 * are parsed for certain special properties, like determining Gutenberg/block-editor
-		 * compatibility.
-		 *
-		 * Examples:
-		 *
-		 * - Make sure default editor is used as metabox is not compatible with block editor
-		 *      [ '__block_editor_compatible_meta_box' => false/true ]
-		 *
-		 * - Or declare this box exists for backwards compatibility
-		 *      [ '__back_compat_meta_box' => false ]
-		 *
-		 * More: https://wordpress.org/gutenberg/handbook/extensibility/meta-box/
-		 */
-        // 'mb_callback_args' => array( '__block_editor_compatible_meta_box' => false ),
+        'show_names' => true,
+        'classes'    => 'oda-metabox'
     ) );
 
-    /**
-	 * Get all post from Alcaldia
-	 */
+    /* ORDENANZAS: Etiqueta de Color */
     $mtb_metas->add_field( array(
-        'name'    => esc_html__( 'Etiqueta de Color', 'cmb2' ),
-        'desc'    => esc_html__( 'Identificación visual para el sistema', 'cmb2' ),
+        'name'    => esc_html__( 'Etiqueta de Color', 'oda' ),
+        'desc'    => esc_html__( 'Identificación visual para el sistema', 'oda' ),
         'id'      => ODA_PREFIX . 'ordenanza_color',
         'type'    => 'colorpicker',
-        'default' => '#ffffff',
+        'default' => '#ffffff'
     ) );
 
-    /**
-	 * Metaboxz for Relaciones
-	 */
-    $mtb_ordinance_rel = new_cmb2_box( array(
+    /* --------------------------------------------------------------
+        ORDENANZAS: METABOX RELACIONES
+    -------------------------------------------------------------- */
+    $mtb_ordenanza_rel = new_cmb2_box( array(
         'id'            => 'oda_ordenanza_relaciones',
         'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Relaciones', 'oda' ),
-        'object_types'  => array( 'ordenanza' ), // Post type
-        // 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
+        'object_types'  => array( 'ordenanza' ),
         'context'    => 'side',
         'priority'   => 'high',
-        'show_names' => true, // Show field names on the left
+        'show_names' => true
     ) );
 
-    /**
-	 * Get all post from Ciudad
-	 */
+    /* ORDENANZAS: CIUDAD [PRE GET POSTS] */
     $args = array(
         'post_type' => 'ciudad',
         'posts_per_page' => -1,
         'post_status' => 'publish'
     );
     $alcaldias = new WP_Query($args);
+
+
     if ( !$alcaldias->have_posts() ){
-        $mtb_ordinance_rel->add_field( array(
+        /* ORDENANZAS: Titulo si no hay ninguna ciudad */
+        $mtb_ordenanza_rel->add_field( array(
+            'id'   => ODA_PREFIX . 'ordenanza_ciudad_title',
             'name' => esc_html__( 'Aviso Importante', 'oda' ),
-            'desc' => __( 'Aun no tiene alcaldias agregadas por favor agregue una. Haga clic <a href="'. admin_url('/post-new.php?post_type=alcaldia') .'">aqui</a>.', 'cmb2' ),
-            'id'   => 'yourprefix_demo_title',
-            'type' => 'title',
+            'desc' => __( 'Aun no tiene ciudades agregadas por favor agregue una. Haga clic <a href="'. admin_url('/post-new.php?post_type=ciudad') .'">aqui</a>.', 'oda' ),
+            'type' => 'title'
         ) );
     }else{
         $alcaldias_array = array();
-        while ( $alcaldias->have_posts() ) { $alcaldias->the_post();
-                                            $alcaldias_array[get_the_ID()] = get_the_title();
-                                           }
-        //var_dump( $alcaldias_array );
-        //die;
-        $mtb_ordinance_rel->add_field( array(
-            'name'       => esc_html__( '¿A qué ciudad pertenece este miembro?', 'cmb2' ),
+        while ( $alcaldias->have_posts() ) : $alcaldias->the_post();
+        $alcaldias_array[get_the_ID()] = get_the_title();
+        endwhile;
+        wp_reset_query();
+
+        /* ORDENANZAS: Ciudades */
+        $mtb_ordenanza_rel->add_field( array(
+            'name'       => esc_html__( '¿A qué ciudad pertenece este miembro?', 'oda' ),
             'desc'       => esc_html__( 'Este campo es obligatorio', 'oda' ),
             'id'         => ODA_PREFIX . 'ciudad_owner',
             'type'             => 'select',
             'show_option_none' => true,
-            'options' => $alcaldias_array,
             'attributes' => array(
                 'required' => 'required',
             ),
+            'options' => $alcaldias_array
         ) );
     }
 
-    /**
-	 * Metabox fecha de Ordenanza
-	 */
-    $mtb_ordinance_date = new_cmb2_box( array(
-        'id'            => 'oda_ordenanza_fecha',
-        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Fecha', 'oda' ),
-        'object_types'  => array( 'ordenanza' ), // Post type
-        // 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
+    /* --------------------------------------------------------------
+        ORDENANZAS: METABOX INFORMACIÓN PRINCIPAL
+    -------------------------------------------------------------- */
+    $mtb_ordenanza_data = new_cmb2_box( array(
+        'id'            => 'oda_ordenanza_data_metabox',
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Información Básica', 'oda' ),
+        'object_types'  => array( 'ordenanza' ),
         'context'    => 'normal',
         'priority'   => 'high',
-        'show_names' => true, // Show field names on the left
+        'show_names' => true
     ) );
 
+    /* DATA ORDENANZA: Número de Tramite */
+    $mtb_ordenanza_data->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_nro_tramite',
+        'name' => esc_html__( 'Número de Trámite', 'oda' ),
+        'desc' => __( 'Agregue el número de trámite asignado a esta ordenanza.', 'oda' ),
+        'type' => 'text_small'
+    ) );
 
-    $mtb_ordinance_date->add_field( array(
-        'name' => esc_html__( 'Fecha de la Ordenanza', 'oda' ),
-        'desc' => __( 'Adjunte aqui la fecha de la Ordenanza.', 'cmb2' ),
+    /* DATA ORDENANZA: Fecha */
+    $mtb_ordenanza_data->add_field( array(
         'id'         => ODA_PREFIX . 'ordenanza_fecha',
-        'type' => 'text_date',
+        'name' => esc_html__( 'Fecha de Presentación', 'oda' ),
+        'desc' => __( 'Agregue la fecha de presentación de la Ordenanza.', 'oda' ),
+        'type' => 'text_date'
     ) );
 
-    /**
-	 * Get all items from Ordenanzas Ciudad
-	 */
-    $mtb_ordenanza_doc_upload = new_cmb2_box( array(
-        'id'            => 'oda_ordenanza_documentos_asociados',
-        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Documentos relacionados a la Ordenanza', 'oda' ),
-        'object_types'  => array( 'ordenanza' ), // Post type
-        'context'    => 'normal',
-        'priority'   => 'high',
-        'show_names' => true, // Show field names on the left
-        'classes'    => 'oda-metabox'
+    /* DATA ORDENANZA: Iniciativa */
+    $mtb_ordenanza_data->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_iniciativa',
+        'name' => esc_html__( 'Iniciativa', 'oda' ),
+        'desc' => __( 'Seleccione la Iniciativa de esta Ordenanza.', 'oda' ),
+        'type' => 'select',
+        'show_option_none' => true,
+        'default'          => 'alcalde',
+        'options'          => array(
+            'alcalde'       => __( 'Alcalde', 'oda' ),
+            'concejal'      => __( 'Concejal', 'oda' ),
+            'comisiones'    => __( 'Comisiones', 'oda' ),
+            'ciudadania'    => __( 'Ciudadanía', 'oda' ),
+        )
     ) );
-    $documentos = get_post_meta($city, ODA_PREFIX . 'items_ordinance_docs', true);
-    //die;
-    if ( !$documentos ){
-        $mtb_ordenanza_doc_upload->add_field( array(
+
+    /* DATA ORDENANZA: Proponente */
+    $mtb_ordenanza_data->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_proponente',
+        'name' => esc_html__( 'Proponente de Ordenanza', 'oda' ),
+        'desc' => __( 'Agregue el Proponente de esta Ordenanza.', 'oda' ),
+        'type' => 'text_medium'
+    ) );
+
+    /* DATA ORDENANZA: Miembros [ PRE GET POSTS ] */
+    $query_miembros = new WP_Query(array(
+        'post_type' => 'miembro',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => 'oda_ciudad_owner',
+                'value' => $city,
+                'compare' => '='
+            )
+        )
+    ));
+
+    if ( !$query_miembros->have_posts() ){
+        /* DATA ORDENANZA: Aviso [Si no hay miembros disponibles para la ciudad] */
+        $mtb_ordenanza_data->add_field( array(
+            'id'   => ODA_PREFIX . 'ordenanza_miembros',
             'name' => esc_html__( 'Aviso Importante', 'oda' ),
-            'desc' => __( 'Aun no documentos a asociar para la ordenanza.', 'cmb2' ),
-            'id'   => 'con_transparente',
-            'type' => 'title',
+            'desc' => __( 'Aun no tiene miembros asignados a la ciudad, por favor asigne uno. Haga clic <a href="'. admin_url('/post-new.php?post_type=miembro') .'">aqui</a>.', 'oda' ),
+            'type' => 'title'
         ) );
-    }else{
-        foreach($documentos as $index => $value){
-            $mtb_ordenanza_doc_upload->add_field( array(
-                'name'       => $value,
-                'id'         => ODA_PREFIX . 'ord_file_item_' . $index,
-                'type'             => 'file',
-                'options' => array(
-                    'url' => true, // Hide the text input for the url
-                ),
-                'text'    => array(
-                    'add_upload_file_text' => 'Añadir PDF' // Change upload button text. Default: "Add or Upload File"
-                ),
-                'query_args' => array(
-                    'type' => 'application/pdf', // Make library only display PDFs.
-                    // Or only allow gif, jpg, or png images
-                    // 'type' => array(
-                    // 	'image/gif',
-                    // 	'image/jpeg',
-                    // 	'image/png',
-                    // ),
-                ),
-                'preview_size' => 'large', // Image size to use when previewing in the admin.
-            ) );
-        }
+    } else {
+        /* DATA ORDENANZA: Miembros [ PRE GET POSTS ] */
+        while ($query_miembros->have_posts()) : $query_miembros->the_post();
+        $array_miembros[get_the_ID()] = get_the_title();
+        endwhile;
+        wp_reset_query();
+
+        /* DATA ORDENANZA: Miembros */
+        $mtb_ordenanza_data->add_field( array(
+            'id'         => ODA_PREFIX . 'ordenanza_miembros',
+            'name' => esc_html__( 'Miembros del Consejo', 'oda' ),
+            'desc' => __( 'Seleccione el/os miembros del consejo para esta Ordenanza.', 'oda' ),
+            'type' => 'pw_multiselect',
+            'classes_cb' => 'oda_select2',
+            'options'          => $array_miembros
+        ) );
+    }
+
+    /* DATA ORDENANZA: Estado */
+    $mtb_ordenanza_data->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_estado',
+        'name' => esc_html__( 'Estado', 'oda' ),
+        'desc' => __( 'Seleccione el estado de esta Ordenanza.', 'oda' ),
+        'type' => 'select',
+        'show_option_none' => true,
+        'default'          => 'alcalde',
+        'options'          => array(
+            'aprobado'       => __( 'Aprobado', 'oda' ),
+            'discusion'      => __( 'En Discusión', 'oda' ),
+            'derogado'    => __( 'Derogado', 'oda' ),
+            'noaprobado'    => __( 'No Aprobado', 'oda' ),
+        )
+    ) );
+
+    /* DATA ORDENANZA: Comisión [ PRE GET POSTS ] */
+    $query_comision = new WP_Query(array(
+        'post_type' => 'comision',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => 'oda_ciudad_owner',
+                'value' => $city,
+                'compare' => '='
+            )
+        )
+    ));
+
+    if ( !$query_comision->have_posts() ){
+        /* DATA ORDENANZA: Aviso [Si no hay comisiones disponibles para la ciudad] */
+        $mtb_ordenanza_data->add_field( array(
+            'id'   => ODA_PREFIX . 'ordenanza_comision',
+            'name' => esc_html__( 'Aviso Importante', 'oda' ),
+            'desc' => __( 'Aun no tiene comisiones asignadas a la ciudad, por favor asigne una. Haga clic <a href="'. admin_url('/post-new.php?post_type=comision') .'">aqui</a>.', 'oda' ),
+            'type' => 'title'
+        ) );
+    } else {
+        /* DATA ORDENANZA: Comisión [ PRE GET POSTS ] */
+        while ($query_comision->have_posts()) : $query_comision->the_post();
+        $array_comision[get_the_ID()] = get_the_title();
+        endwhile;
+        wp_reset_query();
+
+        /* DATA ORDENANZA: Comisión */
+        $mtb_ordenanza_data->add_field( array(
+            'id'         => ODA_PREFIX . 'ordenanza_comision',
+            'name' => esc_html__( 'Comision de la Ordenanza', 'oda' ),
+            'desc' => __( 'Seleccione la comisión para esta Ordenanza.', 'oda' ),
+            'type' => 'select',
+            'options' => $array_comision
+        ) );
     }
 
 
-    /**
-	 * Get all status from Ordenanzas Ciudad
-	 */
+    /* DATA ORDENANZA: Fecha */
+    $mtb_ordenanza_data->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_vigencia',
+        'name' => esc_html__( 'Fecha de Vigencia', 'oda' ),
+        'desc' => __( 'Agregue la fecha de vigencia de la Ordenanza.', 'oda' ),
+        'type' => 'text_date'
+    ) );
 
-    $mtb_ordenanza_status = new_cmb2_box( array(
-        'id'            => 'oda_ordenanza_status_asoc_metabox',
-        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Status relacionados a la Ordenanza', 'oda' ),
-        'object_types'  => array( 'ordenanza' ), // Post type
+    /* DATA ORDENANZA: Link del Registro Oficial */
+    $mtb_ordenanza_data->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_oficial_link',
+        'name' => esc_html__( 'Link del Registro Oficial', 'oda' ),
+        'desc' => __( 'Agregue la URL del Registro Oficial de esta Ordenanza.', 'oda' ),
+        'type' => 'text_url'
+    ) );
+
+    /* --------------------------------------------------------------
+        DATA ORDENANZA: INCIDENCIA METABOX
+    -------------------------------------------------------------- */
+    $mtb_ordenanza_inc = new_cmb2_box( array(
+        'id'            => 'oda_ordenanza_incidencia_metabox',
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Incidencias', 'oda' ),
+        'object_types'  => array( 'ordenanza' ),
         'context'    => 'normal',
         'priority'   => 'high',
-        'show_names' => true, // Show field names on the left
+        'show_names' => true
+    ) );
+
+    /* DATA INCIDENCIA: Activar [Checkbox] */
+    $mtb_ordenanza_inc->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_incidencia_act',
+        'name' => esc_html__( '¿Esta ordenanza es una incidencia?', 'oda' ),
+        'desc' => __( 'Seleccione si esta ordenanza tiene alguna incidencia.', 'oda' ),
+        'type' => 'checkbox'
+    ) );
+
+    /* DATA INCIDENCIA: Imágenes de la incidencia */
+    $mtb_ordenanza_inc->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_incidencia_img',
+        'name' => esc_html__( 'Imágenes de Incidencia', 'oda' ),
+        'desc' => __( 'Agregue las imágenes de esta incidencia.', 'oda' ),
+        'type' => 'file_list',
+        'preview_size' => array( 100, 100 ),
+        'query_args' => array( 'type' => 'image' ),
+        'text' => array(
+            'add_upload_files_text' => __( 'Agregar o Remover imágenes', 'oda' ),
+            'remove_image_text' => __( 'Remover Imagen', 'oda' ),
+            'file_text' => __( 'Imagen', 'oda' ),
+            'file_download_text' => __( 'Descargar', 'oda' ),
+            'remove_text' => __( 'Remover', 'oda' )
+        )
+    ) );
+
+    /* DATA INCIDENCIA: Descripción */
+    $mtb_ordenanza_inc->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_incidencia_desc',
+        'name' => esc_html__( 'Descripción de la incidencia', 'oda' ),
+        'desc' => __( 'Describa la incidencia de esta ordenanza.', 'oda' ),
+        'type' => 'textarea_small'
+    ) );
+
+    /* DATA INCIDENCIA: ID Video YouTube */
+    $mtb_ordenanza_inc->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_incidencia_videoid',
+        'name' => esc_html__( 'ID Video youTube de la Incidencia', 'oda' ),
+        'desc' => __( 'Agregue el ID del video de la incidencia. <br/> EG: https://www.youtube.com/watch?v=<b>kXShLPXJSJSH</b>.', 'oda' ),
+        'type' => 'text_small'
+    ) );
+
+    /* DATA INCIDENCIA: Urgente [Checkbox] */
+    $mtb_ordenanza_inc->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_incidencia_urgente',
+        'name' => esc_html__( '¿Esta ordenanza es Urgente?', 'oda' ),
+        'desc' => __( 'Seleccione si esta ordenanza es urgente.', 'oda' ),
+        'type' => 'checkbox'
+    ) );
+
+    /* DATA INCIDENCIA: Incidencias Relacionadas */
+    $mtb_ordenanza_inc->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_incidencia_related',
+        'name' => esc_html__( 'Incidencias Relacionadas', 'oda' ),
+        'desc' => __( 'Seleccione la/las indicencias relacionadas.', 'oda' ),
+        'type' => 'select',
+        'show_option_none' => true,
+        'default'          => 'alcalde',
+        'options'          => array(
+            'aprobado'       => __( 'Aprobado', 'oda' ),
+            'discusion'      => __( 'En Discusión', 'oda' ),
+            'derogado'    => __( 'Derogado', 'oda' ),
+            'noaprobado'    => __( 'No Aprobado', 'oda' ),
+        )
+    ) );
+
+    /* DATA INCIDENCIA: Temas [Taxonomy Select] */
+    $mtb_ordenanza_inc->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_incidencia_temas',
+        'name' => esc_html__( 'Temas de Ordenanza', 'oda' ),
+        'desc' => __( 'Seleccione el / los temas de esta incidencia.', 'oda' ),
+        'taxonomy'       => 'temas',
+        'type'           => 'taxonomy_select',
+        'remove_default' => 'true',
+        'query_args' => array(
+            'orderby' => 'slug',
+            'hide_empty' => false
+        )
+    ) );
+
+    /* --------------------------------------------------------------
+        DATA ORDENANZA: FASES METABOX
+    -------------------------------------------------------------- */
+    $mtb_ordenanza_fases = new_cmb2_box( array(
+        'id'            => ODA_PREFIX . 'ordenanza_fases_metabox',
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Fases de la Ordenanza', 'oda' ),
+        'object_types'  => array( 'ordenanza' ),
+        'context'    => 'normal',
+        'priority'   => 'high',
+        'show_names' => true,
         'classes'    => 'oda-metabox'
     ) );
-    $documentos = get_post_meta($city, ODA_PREFIX . 'items_ordinance_status', true);
-    //die;
+
+    /* DATA ORDENANZA: FASES [ PRE GET POSTS ] */
+    $documentos = get_post_meta($city, ODA_PREFIX . 'items_ordenanza_fases', true);
+
     if ( !$documentos ){
-        $mtb_ordenanza_status->add_field( array(
+        /* DATA ORDENANZA: Aviso [Si no hay fases disponibles para la ciudad] */
+        $mtb_ordenanza_fases->add_field( array(
+            'id'   => ODA_PREFIX . 'ordenanza_fases_title',
             'name' => esc_html__( 'Aviso Importante', 'oda' ),
-            'desc' => __( 'Aun no status asociados para la ordenanza.', 'cmb2' ),
-            'id'   => 'con_transparente',
-            'type' => 'title',
+            'desc' => __( 'Aun no tiene fases asignadas a la ciudad, por favor asigne una. Haga clic <a href="'. admin_url('/post-new.php?post_type=ciudad') .'">aqui</a>.', 'oda' ),
+            'type' => 'title'
         ) );
     }else{
+        $i = 1;
         foreach($documentos as $index => $value){
-            $mtb_ordenanza_status->add_field( array(
-                'name'       => $value,
-                'id'         => ODA_PREFIX . 'ord_status_item_' . $index,
+            if ($i > 1) {
+                /* DATA ORDENANZA: Separador */
+                $mtb_ordenanza_fases->add_field( array(
+                    'id'   => ODA_PREFIX . 'ord_fases_title_' . $index,
+                    'name' => esc_html__( ' ' ),
+                    'type' => 'title',
+                    'classes_cb' => 'oda_spacer',
+                ) );
+            }
+            /* DATA ORDENANZA: Ícono representativo del Item */
+            $mtb_ordenanza_fases->add_field( array(
+                'id'         => ODA_PREFIX . 'ord_fases_icon_' . $index,
+                'name'       => __('Ícono para representar la fase', 'oda'),
                 'type'             => 'file',
                 'options' => array(
-                    'url' => true, // Hide the text input for the url
+                    'url' => true,
                 ),
                 'text'    => array(
-                    'add_upload_file_text' => 'Añadir PDF' // Change upload button text. Default: "Add or Upload File"
+                    'add_upload_file_text' => 'Añadir Ícono'
                 ),
                 'query_args' => array(
-                    'type' => 'application/pdf', // Make library only display PDFs.
-                    // Or only allow gif, jpg, or png images
-                    // 'type' => array(
-                    // 	'image/gif',
-                    // 	'image/jpeg',
-                    // 	'image/png',
-                    // ),
+                    'type' => array(
+                        'image/gif',
+                        'image/jpeg',
+                        'image/png',
+                    ),
                 ),
-                'preview_size' => 'large', // Image size to use when previewing in the admin.
+                'preview_size' => 'thumbnail'
             ) );
-        }
-    }
 
-    /**
-	 * Lista documentos concejal transparente
-	 */
-    //	$mtb_proc_ord = new_cmb2_box( array(
-    //		'id'            => 'oda_estado_proceso',
-    //		'title'         => esc_html__( 'Lista de documentos asociados a la ordenanza', 'cmb2' ),
-    //		'object_types'  => array( 'ordenanza' ), // Post type
-    //		// 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
-    //		'context'    => 'normal',
-    //		'priority'   => 'low',
-    //		'show_names' => true, // Show field names on the left
-    //	) );
-    //
-    //	$mtb_proc_ord->add_field( array(
-    //		'name' => esc_html__( 'Nombre del Documento', 'cmb2' ),
-    //		'desc' => __( 'Este nombre se mostrará en otras partes del sistema', 'cmb2' ),
-    //		'id'   => ODA_PREFIX . 'items_concejo_transparente',
-    //		'type' => 'text',
-    //		'repeatable' => true
-    //	) );
+            /* DATA ORDENANZA: Documento PDF representativo del Item */
+            $mtb_ordenanza_fases->add_field( array(
+                'id'         => ODA_PREFIX . 'ord_fases_item_' . $index,
+                'name'       => __('Fase: ') . ' ' . $value,
+                'type'             => 'file',
+                'options' => array(
+                    'url' => true,
+                ),
+                'text'    => array(
+                    'add_upload_file_text' => 'Añadir PDF'
+                ),
+                'query_args' => array(
+                    'type' => 'application/pdf',
+                ),
+                'preview_size' => 'large'
+            ) );
+
+            /* DATA ORDENANZA: Fecha del Item */
+            $mtb_ordenanza_fases->add_field( array(
+                'id'         => ODA_PREFIX . 'ord_fases_fecha_' . $index,
+                'name' => esc_html__( 'Fecha de la Fase', 'oda' ),
+                'desc' => __( 'Agregue la fecha de la Fase.', 'oda' ),
+                'type' => 'text_date'
+            ) );
+            $i++; }
+    }
 }
