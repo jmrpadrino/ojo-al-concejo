@@ -100,7 +100,12 @@ function oda_ordenanza_columns_content($column_name, $post_ID){
                 'ciudadania'    => __( 'Ciudadanía', 'oda' ),
             );
 
-            echo $iniciativa_array[$iniciativa_value];
+            $ciudad_color = get_post_meta( $ciudad_ID, ODA_PREFIX . 'ciudad_color', true);
+            if ( empty( $iniciativa_value ) ){
+                echo '<span class="label-status no-relation">Sin Iniciativa</span>';
+            }else{
+                echo '<span class="label-status" style="border-color:'. $ciudad_color .';">' . $iniciativa_array[$iniciativa_value] . '</span>';
+            }
         }
     }
 

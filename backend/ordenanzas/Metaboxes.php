@@ -269,7 +269,8 @@ function oda_ordenanza_metabox() {
         'object_types'  => array( 'ordenanza' ),
         'context'    => 'normal',
         'priority'   => 'high',
-        'show_names' => true
+        'show_names' => true,
+        'classes'    => 'oda-metabox'
     ) );
 
     /* DATA INCIDENCIA: Activar [Checkbox] */
@@ -281,7 +282,23 @@ function oda_ordenanza_metabox() {
     ) );
 
     /* DATA INCIDENCIA: Imágenes de la incidencia */
-    $mtb_ordenanza_inc->add_field( array(
+    $group_field_id = $mtb_ordenanza_inc->add_field( array(
+        'id'            => ODA_PREFIX . 'ordenanza_incidencia_group',
+        'name'          => esc_html__( 'Incidencias Relacionadas', 'oda' ),
+        'description'   => __( 'Incidencias relacionadas de la ordenanza', 'oda' ),
+        'type'          => 'group',
+        'options'     => array(
+            'group_title'       => __( 'Incidencia {#}', 'oda' ),
+            'add_button'        => __( 'Agregar Otra Incidencia', 'oda' ),
+            'remove_button'     => __( 'Remover Incidencia', 'oda' ),
+            'sortable'          => true,
+            'closed'         => true,
+            'remove_confirm' => esc_html__( '¿Esta seguro de remover esta incidencia?', 'oda' )
+        ),
+    ) );
+
+
+    $mtb_ordenanza_inc->add_group_field( $group_field_id, array(
         'id'         => ODA_PREFIX . 'ordenanza_incidencia_img',
         'name' => esc_html__( 'Imágenes de Incidencia', 'oda' ),
         'desc' => __( 'Agregue las imágenes de esta incidencia.', 'oda' ),
@@ -298,7 +315,7 @@ function oda_ordenanza_metabox() {
     ) );
 
     /* DATA INCIDENCIA: Descripción */
-    $mtb_ordenanza_inc->add_field( array(
+    $mtb_ordenanza_inc->add_group_field( $group_field_id, array(
         'id'         => ODA_PREFIX . 'ordenanza_incidencia_desc',
         'name' => esc_html__( 'Descripción de la incidencia', 'oda' ),
         'desc' => __( 'Describa la incidencia de esta ordenanza.', 'oda' ),
@@ -306,11 +323,11 @@ function oda_ordenanza_metabox() {
     ) );
 
     /* DATA INCIDENCIA: ID Video YouTube */
-    $mtb_ordenanza_inc->add_field( array(
+    $mtb_ordenanza_inc->add_group_field( $group_field_id, array(
         'id'         => ODA_PREFIX . 'ordenanza_incidencia_videoid',
         'name' => esc_html__( 'ID Video youTube de la Incidencia', 'oda' ),
         'desc' => __( 'Agregue el ID del video de la incidencia. <br/> EG: https://www.youtube.com/watch?v=<b>kXShLPXJSJSH</b>.', 'oda' ),
-        'type' => 'text_small'
+        'type' => 'text'
     ) );
 
     /* DATA INCIDENCIA: Urgente [Checkbox] */
@@ -319,6 +336,14 @@ function oda_ordenanza_metabox() {
         'name' => esc_html__( '¿Esta ordenanza es Urgente?', 'oda' ),
         'desc' => __( 'Seleccione si esta ordenanza es urgente.', 'oda' ),
         'type' => 'checkbox'
+    ) );
+
+    /* DATA INCIDENCIA: Análisis y Boletínes */
+    $mtb_ordenanza_inc->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_analisis_boletines',
+        'name' => esc_html__( 'URL de Análisis y Boletines', 'oda' ),
+        'desc' => __( 'Agregue el URL de Análisis y Boletines.', 'oda' ),
+        'type' => 'text'
     ) );
 
     /* DATA INCIDENCIA: Incidencias Relacionadas */
