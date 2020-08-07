@@ -50,7 +50,7 @@ function oda_ordenanza_columns_head($defaults){
         $defaults['tramite'] = 'Número de Trámite';
         $defaults['presentacion'] = 'Fecha de Presentación';
         $defaults['iniciativa'] = 'Iniciativa';
-        $defaults['date'] = __('Date');
+        $defaults['date'] = __('Fecha', 'oda');
     }
     return $defaults;
 }
@@ -114,7 +114,7 @@ function oda_ordenanza_columns_content($column_name, $post_ID){
 /**
  * Edit List Filters form
  */
-
+/*
 add_action('manage_posts_extra_tablenav', 'oda_filter_form_ordenanzas');
 
 function oda_filter_form_ordenanzas(){
@@ -144,3 +144,4 @@ function oda_filter_form_ordenanzas(){
 </div>
 <?php
 }
+*/

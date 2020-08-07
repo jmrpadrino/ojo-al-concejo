@@ -47,7 +47,7 @@ function oda_publicacion_columns_head($defaults){
         unset($defaults['date']);
         $defaults['tipo_publicacion'] = 'Tipo de Publicación';
         $defaults['cod_issuu'] = 'Código ISSUU';
-        $defaults['date'] = __('Date');
+        $defaults['date'] = __('Fecha', 'oda');
     }
     return $defaults;
 }
@@ -88,7 +88,7 @@ function oda_publicacion_columns_content($column_name, $post_ID){
 /**
  * Edit List Filters form
  */
-
+/*
 add_action('manage_posts_extra_tablenav', 'oda_filter_form_publicaciones');
 
 function oda_filter_form_publicaciones(){
@@ -118,3 +118,4 @@ function oda_filter_form_publicaciones(){
 </div>
 <?php
 }
+*/

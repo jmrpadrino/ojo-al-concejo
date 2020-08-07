@@ -22,13 +22,15 @@ function oda_partido_styling_admin_order_list() {
             color: red;
         }
     </style>
-<?php 
+<?php
 }
 
 function oda_partido_columns_head($defaults){
     if ( $_GET['post_type'] == 'partido' ){
+        unset($defaults['date']);
         $defaults['nombre_corto'] = 'Nombre Corto';
         $defaults['activo'] = '¿Activo?';
+        $defaults['date'] = __('Fecha', 'oda');
     }
     return $defaults;
 }
@@ -38,7 +40,7 @@ function oda_partido_columns_content($column_name, $post_ID){
     if ( $_GET['post_type'] == 'partido' ){
 
         if ( $column_name == 'nombre_corto'){
-            echo get_post_meta( $post_ID, ODA_PREFIX . 'partido_nombrecorto', true); 
+            echo get_post_meta( $post_ID, ODA_PREFIX . 'partido_nombrecorto', true);
         }
 
         if ( $column_name == 'activo'){
@@ -55,10 +57,10 @@ function oda_partido_columns_content($column_name, $post_ID){
 function oda_partido_add_dashboard_widget() {
 
 	wp_add_dashboard_widget(
-		'oda_dahboard_partidos',         
-		'<img width="20" src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . _x('Partidos Políticos', 'oda'),        
-		'oda_partido_dashboard_order_label_statues' 
-	);	
+		'oda_dahboard_partidos',
+		'<img width="20" src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . _x('Partidos Políticos', 'oda'),
+		'oda_partido_dashboard_order_label_statues'
+	);
 }
 add_action( 'wp_dashboard_setup', 'oda_partido_add_dashboard_widget' );
 function oda_partido_dashboard_order_label_statues() {

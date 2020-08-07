@@ -5,32 +5,36 @@ add_action( 'manage_posts_custom_column', 'oda_miembro_columns_content', 10, 2 )
 add_action('admin_head', 'oda_miembro_styling_admin_order_list' );
 function oda_miembro_styling_admin_order_list() {
 ?>
-    <style>
-        .label-status{
-            display: block;
-            border-radius: 4px;
-            background-color: #ececec;
-            padding: 7px 7px;
-            text-align: center;
-            width: 120px;
-            min-width: 80px;
-            border-left: 5px solid;
-			font-weight: bold;
-        }
-        .no-relation{
-            border-color: red;
-            color: red;
-        }
-    </style>
-<?php 
+<style>
+    .label-status {
+        display: block;
+        border-radius: 4px;
+        background-color: #ececec;
+        padding: 7px 7px;
+        text-align: center;
+        width: 120px;
+        min-width: 80px;
+        border-left: 5px solid;
+        font-weight: bold;
+    }
+
+    .no-relation {
+        border-color: red;
+        color: red;
+    }
+
+</style>
+<?php
 }
 
 function oda_miembro_columns_head($defaults){
     if ( $_GET['post_type'] == 'miembro' ){
+        unset($defaults['date']);
         $defaults['ciudad'] = 'Ciudad';
         $defaults['curul'] = 'Curul';
         $defaults['participa'] = '<span title="¿Participa en el Concejo?">¿PEC?</span>';
         $defaults['suplente'] = '<span title="¿Es miembro suplente?">¿Suplente?</span>';
+        $defaults['date'] = __('Fecha', 'oda');
     }
     return $defaults;
 }
@@ -72,11 +76,11 @@ function oda_miembro_columns_content($column_name, $post_ID){
 
 function oda_miembro_add_dashboard_widget() {
 
-	wp_add_dashboard_widget(
-		'gmDir_listado_capacitaciones',         
-		'<img width="20" src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . _x('Próximas Capacitaciones', 'oda'),        
-		'oda_miembro_dashboard_order_label_statues' 
-	);	
+    wp_add_dashboard_widget(
+        'gmDir_listado_capacitaciones',
+        '<img width="20" src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . _x('Próximas Capacitaciones', 'oda'),
+        'oda_miembro_dashboard_order_label_statues'
+    );
 }
 add_action( 'wp_dashboard_setup', 'oda_miembro_add_dashboard_widget' );
 function oda_miembro_dashboard_order_label_statues() {
@@ -88,26 +92,26 @@ function oda_miembro_dashboard_order_label_statues() {
     );
     $capacitaciones = new WP_Query($args);
 
-	if (!$capacitaciones->have_posts()){
+    if (!$capacitaciones->have_posts()){
         echo 'No hay Capacitaciones agregadas aún.';
     }else{
-		echo '<table class="lk24-dashboard-table" width="100%" border="0" align="center">';
-		echo '<thead>';
-		echo '<tr>';
-		echo '<td><strong>Nombre</strong></td>';
-		echo '<td width="100"><strong>Fecha</strong></td>';
-		echo '<td align="center"><strong>Estado</strong></td>';
-		echo '<td>&nbsp;</td>';
-		echo '</tr>';
-		echo '</thead>';
-		echo '<tbody>';
-		while($capacitaciones->have_posts()){
+        echo '<table class="lk24-dashboard-table" width="100%" border="0" align="center">';
+        echo '<thead>';
+        echo '<tr>';
+        echo '<td><strong>Nombre</strong></td>';
+        echo '<td width="100"><strong>Fecha</strong></td>';
+        echo '<td align="center"><strong>Estado</strong></td>';
+        echo '<td>&nbsp;</td>';
+        echo '</tr>';
+        echo '</thead>';
+        echo '<tbody>';
+        while($capacitaciones->have_posts()){
             $capacitaciones->the_post();
-//			var_dump($order->get_status());
-			echo '<tr>';
-			echo '<td height="40">'. get_the_title() .'</td>';
+            //			var_dump($order->get_status());
+            echo '<tr>';
+            echo '<td height="40">'. get_the_title() .'</td>';
             echo '<td>'. date('d-m-Y', strtotime(get_post_meta(get_the_ID(),'gmDir_inicio', true)) ) .'</td>';
-            
+
             $today = date('U');
             $event_date = date('U', strtotime(get_post_meta(get_the_ID(), 'gmDir_inicio', true)));
             $dia1 = date('Ymd',$today);
@@ -120,27 +124,27 @@ function oda_miembro_dashboard_order_label_statues() {
                     echo '<td><span class="label-status status-1">Programada</span></td>';
                 }
             }
-            
-			echo '<td aligh="center"><a href="'. get_edit_post_link(get_the_ID()).'"><span class="dashicons dashicons-admin-generic"></span></a></td>';
-			echo '</tr>';
-		}
-		echo '</tbody>';
-		echo '<tfoot>';
-		echo '<tr>';
-		echo '<td><strong>Nombre</strong></td>';
-		echo '<td><strong>Fecha</strong></td>';
-		echo '<td align="center"><strong>Estado</strong></td>';
-		echo '<td>&nbsp;</td>';
-		echo '</tr>';
-		echo '</tfoot>';
-		echo '</table>';
-	}
+
+            echo '<td aligh="center"><a href="'. get_edit_post_link(get_the_ID()).'"><span class="dashicons dashicons-admin-generic"></span></a></td>';
+            echo '</tr>';
+        }
+        echo '</tbody>';
+        echo '<tfoot>';
+        echo '<tr>';
+        echo '<td><strong>Nombre</strong></td>';
+        echo '<td><strong>Fecha</strong></td>';
+        echo '<td align="center"><strong>Estado</strong></td>';
+        echo '<td>&nbsp;</td>';
+        echo '</tr>';
+        echo '</tfoot>';
+        echo '</table>';
+    }
 }
 
 /**
  * Edit List Filters form
  */
-
+/*
 add_action('manage_posts_extra_tablenav', 'oda_filter_form_miembros');
 
 function oda_filter_form_miembros(){
@@ -149,13 +153,13 @@ function oda_filter_form_miembros(){
 <a class="thickbox button" href="#TB_inline?&width=600&height=550&inlineId=more_filters">Mas filtros</a>
 <div id="more_filters" style="display:none;">
     <?php
-        echo 'algo '.get_current_screen()->parent_file;
-        $args = array(
-            'post_type' => 'ciudad',
-            'posts_per_page' => -1
-        );
-        $ciudades = new WP_Query($args);
-        if($ciudades->have_posts()){
+    echo 'algo '.get_current_screen()->parent_file;
+    $args = array(
+        'post_type' => 'ciudad',
+        'posts_per_page' => -1
+    );
+    $ciudades = new WP_Query($args);
+    if($ciudades->have_posts()){
     ?>
     <label for="ciudad">Filtrar por ciudad
         <select for="ciudad" name="city">
@@ -164,9 +168,10 @@ function oda_filter_form_miembros(){
             <option value="<?php echo get_the_ID(); ?>"><?php echo get_the_title(); ?></option>
             <?php } //end while ?>
         </select>
-        </label>
+    </label>
     <?php } // End if ?>
     <input type="submit" name="filter_action" id="post-query-submit" class="button" value="Filtrar">
 </div>
 <?php
 }
+*/

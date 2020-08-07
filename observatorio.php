@@ -108,6 +108,7 @@ require_once( ODA_DIR_PATH . 'backend/publicaciones/Admin-columns.php' );
  * Support for Tax Temas
  */
 require_once( ODA_DIR_PATH . 'backend/common/Taxonomy-Temas.php' );
+require_once( ODA_DIR_PATH . 'backend/common/Filters-Thickbox.php' );
 
 //-----------------------------------------------------------------
 // Frontend Files
