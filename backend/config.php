@@ -75,3 +75,10 @@ function oda_get_cities(){
     return new WP_Query($args);
     
 }
+
+//add_action('save_post', 'mostrarlo');
+function mostrarlo(){
+    echo '<pre>';
+    var_dump($_POST);
+    echo '</pre>';
+}

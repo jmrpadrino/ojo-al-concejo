@@ -88,8 +88,11 @@ add_action( 'cmb2_admin_init', 'oda_register_miembro_metabox' );
  * Hook in and add a demo metabox. Can only happen on the 'cmb2_admin_init' or 'cmb2_init' hook.
  */
 function oda_register_miembro_metabox() {
-
-	$city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
+	if (isset($_GET['post'])){
+		$city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
+	}else{
+		$city = get_post_meta($_POST['post_ID'], ODA_PREFIX . 'ciudad_owner', true);
+	}
 
 
 	/**
@@ -608,7 +611,7 @@ function oda_register_miembro_metabox() {
 		'classes'    => 'oda-metabox'
 	) );
 	$documentos = get_post_meta($city, ODA_PREFIX . 'items_concejo_transparente', true);
-	//die;
+	
 	if ( !$documentos ){
 		$mtb_transparente->add_field( array(
 			'name' => esc_html__( 'Aviso Importante', 'oda' ),
@@ -644,8 +647,9 @@ function oda_register_miembro_metabox() {
 				),
 				'preview_size' => 'large', // Image size to use when previewing in the admin.
 			) );
-		}
+		}	
 	}
+	
 
 
 }

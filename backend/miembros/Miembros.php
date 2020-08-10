@@ -32,7 +32,7 @@ function oda_Miembros() {
 		'filter_items_list'     => __( 'Filtrar lista de Miembros', 'oda' ),
 	);
 	$rewrite = array(
-        'slug'                  => 'ciudad/%' .ODA_PREFIX . 'ciudad_owner%/miembro',        
+        'slug'                  => 'ciudad/%city_slug%/miembro',        
         'with_front'            => false,
     );
     $args = array(
@@ -52,7 +52,7 @@ function oda_Miembros() {
         'has_archive'           => 'todos-los-miembros',
         'exclude_from_search'   => false,
         'publicly_queryable'    => true,
-        'query_var'             => 'miembro',
+        'query_var'             => 'qv_miembro',
         'rewrite'               => $rewrite,
         'capability_type'       => 'post',
         'show_in_rest'          => true,
@@ -79,7 +79,7 @@ function replace_rewrite_tags_for_miembro ($url, $post){
     $ba = strtolower( get_post_meta($post->ID, ODA_PREFIX . 'ciudad_owner', true) );
     $alcaldia = get_post($ba);
 
-    return str_replace('%'.ODA_PREFIX.'ciudad_owner%', $alcaldia->post_name, $url);
+    return str_replace('%city_slug%', $alcaldia->post_name, $url);
 
 }
 
@@ -90,12 +90,13 @@ add_action('init', 'miembro_rewriter_rule');
 function miembro_rewriter_rule(){
     // You can use this to set a different name both query var and tag
     // add_rewrite_tag( '%alcaldia_owner%', '([^&]+)', 'alcaldia_owner=');
-    add_rewrite_tag( '%'.ODA_PREFIX.'ciudad_owner%', '([^/]*)');
+    add_rewrite_tag( '%city_slug%', '([^&]+)');    
+    add_rewrite_tag( '%member_name%', '([^&]+)');
 
-    //add_rewrite_rule('ciudad/([^/]*)/miembro/([^/]+)/?', 'index.php?ciudad_owner=$matches[1]', 'top');
+    add_rewrite_rule('ciudad/([^/]+)/miembro/([^/]+)/?', 'index.php?city_slug=$matches[1]&oda_template=miembro&member_name=$matches[2]', 'top');
 }
 
- /**
+/**
  * Custom query var for Miembro
  */
 
