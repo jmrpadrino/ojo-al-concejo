@@ -1,7 +1,7 @@
 <?php
 
-add_filter( 'manage_posts_columns', 'oda_circunscripcioncolumns_head' );
-add_action( 'manage_posts_custom_column', 'oda_circunscripcioncolumns_content', 10, 2 );
+add_filter( 'manage_posts_columns', 'oda_circunscripcion_columns_head' );
+add_action( 'manage_posts_custom_column', 'oda_circunscripcion_columns_content', 10, 2 );
 add_action('admin_head', 'oda_circunscripcion_styling_admin_order_list' );
 function oda_circunscripcion_styling_admin_order_list() {
 ?>
@@ -22,17 +22,19 @@ function oda_circunscripcion_styling_admin_order_list() {
             color: red;
         }
     </style>
-<?php 
+<?php
 }
 
-function oda_circunscripcioncolumns_head($defaults){
+function oda_circunscripcion_columns_head($defaults){
     if ( $_GET['post_type'] == 'circunscripcion' ){
+        unset($defaults['date']);
         $defaults['ciudad'] = 'Ciudad';
+        $defaults['date'] = __('Fecha', 'oda');
     }
     return $defaults;
 }
 
-function oda_circunscripcioncolumns_content($column_name, $post_ID){
+function oda_circunscripcion_columns_content($column_name, $post_ID){
 
     if ( $_GET['post_type'] == 'circunscripcion' ){
 
@@ -52,10 +54,10 @@ function oda_circunscripcioncolumns_content($column_name, $post_ID){
 function oda_circunscripcion_add_dashboard_widget() {
 
 	wp_add_dashboard_widget(
-		'gmDir_listado_capacitaciones',         
-		'<img width="20" src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . _x('Próximas Capacitaciones', 'oda'),        
-		'oda_circunscripcion_dashboard_order_label_statues' 
-	);	
+		'gmDir_listado_capacitaciones',
+		'<img width="20" src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . _x('Próximas Capacitaciones', 'oda'),
+		'oda_circunscripcion_dashboard_order_label_statues'
+	);
 }
 add_action( 'wp_dashboard_setup', 'oda_circunscripcion_add_dashboard_widget' );
 function oda_circunscripcion_dashboard_order_label_statues() {
@@ -86,7 +88,7 @@ function oda_circunscripcion_dashboard_order_label_statues() {
 			echo '<tr>';
 			echo '<td height="40">'. get_the_title() .'</td>';
             echo '<td>'. date('d-m-Y', strtotime(get_post_meta(get_the_ID(),'gmDir_inicio', true)) ) .'</td>';
-            
+
             $today = date('U');
             $event_date = date('U', strtotime(get_post_meta(get_the_ID(), 'gmDir_inicio', true)));
             $dia1 = date('Ymd',$today);
@@ -99,7 +101,7 @@ function oda_circunscripcion_dashboard_order_label_statues() {
                     echo '<td><span class="label-status status-1">Programada</span></td>';
                 }
             }
-            
+
 			echo '<td aligh="center"><a href="'. get_edit_post_link(get_the_ID()).'"><span class="dashicons dashicons-admin-generic"></span></a></td>';
 			echo '</tr>';
 		}

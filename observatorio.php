@@ -32,7 +32,8 @@ $oda_objects = [
     'miembro',
     'partido',
     'ordenanza',
-    'resolucion'
+    'resolucion',
+    'publicacion'
 ];
 
 define('ODA_VERISON', '0.0.1' );
@@ -97,9 +98,17 @@ require_once( ODA_DIR_PATH . 'backend/resoluciones/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/resoluciones/Admin-columns.php' );
 
 /**
+ * Support for CTP Publicaciones
+ */
+require_once( ODA_DIR_PATH . 'backend/publicaciones/Publicaciones.php' );
+require_once( ODA_DIR_PATH . 'backend/publicaciones/Metaboxes.php' );
+require_once( ODA_DIR_PATH . 'backend/publicaciones/Admin-columns.php' );
+
+/**
  * Support for Tax Temas
  */
 require_once( ODA_DIR_PATH . 'backend/common/Taxonomy-Temas.php' );
+require_once( ODA_DIR_PATH . 'backend/common/Filters-Thickbox.php' );
 
 //-----------------------------------------------------------------
 // Frontend Files

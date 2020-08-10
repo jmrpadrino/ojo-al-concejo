@@ -50,7 +50,7 @@ function oda_ordenanza_columns_head($defaults){
         $defaults['tramite'] = 'Número de Trámite';
         $defaults['presentacion'] = 'Fecha de Presentación';
         $defaults['iniciativa'] = 'Iniciativa';
-        $defaults['date'] = __('Date');
+        $defaults['date'] = __('Fecha', 'oda');
     }
     return $defaults;
 }
@@ -100,7 +100,12 @@ function oda_ordenanza_columns_content($column_name, $post_ID){
                 'ciudadania'    => __( 'Ciudadanía', 'oda' ),
             );
 
-            echo $iniciativa_array[$iniciativa_value];
+            $ciudad_color = get_post_meta( $ciudad_ID, ODA_PREFIX . 'ciudad_color', true);
+            if ( empty( $iniciativa_value ) ){
+                echo '<span class="label-status no-relation">Sin Iniciativa</span>';
+            }else{
+                echo '<span class="label-status" style="border-color:'. $ciudad_color .';">' . $iniciativa_array[$iniciativa_value] . '</span>';
+            }
         }
     }
 
@@ -109,7 +114,7 @@ function oda_ordenanza_columns_content($column_name, $post_ID){
 /**
  * Edit List Filters form
  */
-
+/*
 add_action('manage_posts_extra_tablenav', 'oda_filter_form_ordenanzas');
 
 function oda_filter_form_ordenanzas(){
@@ -139,3 +144,4 @@ function oda_filter_form_ordenanzas(){
 </div>
 <?php
 }
+*/

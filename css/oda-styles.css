@@ -19,6 +19,10 @@
     text-align: right;
 }
 
+.oda-metabox .cmb-group-title {
+    padding-left: 3rem !important;
+}
+
 /* CLASS: Select2 Size Limiter */
 .oda_select2 .select2-container {
     max-width: 400px !important;
