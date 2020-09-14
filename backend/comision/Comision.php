@@ -42,7 +42,7 @@ function oda_Comision() {
         'label'                 => __( 'Comisión', 'oda' ),
         'description'           => __( 'Soporte para Comisiones', 'oda' ),
         'labels'                => $labels,
-        'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt', 'revisions' ),
+        'supports'              => array( 'title', 'editor', 'revisions' ),
         'hierarchical'          => false,
         'public'                => true,
         'show_ui'               => true,

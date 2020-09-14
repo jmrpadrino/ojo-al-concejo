@@ -33,10 +33,21 @@ function oda_add_my_scripts(){
         */
         wp_enqueue_style('oda-fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css', array(), FALSE, 'all');
         wp_enqueue_style('oda-admin', ODA_DIR_URL . '/css/oda-styles.css', array(), FALSE, 'all');
+        wp_deregister_script('jquery');
+        wp_enqueue_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js', array(), null, true);
+        wp_enqueue_script('oda-cmb2-conditional', ODA_DIR_URL . 'js/oda-scripts.js', array('jquery'), null, true);
+        wp_enqueue_script('oda-admin-script', ODA_DIR_URL . 'backend/metaboxes/js/cmb2-conditional-logic.min.js', array('jquery'), null, true);
         
     }
 }
 
+/**
+ * Change CMB2 Conditionas JS src
+ */
+add_filter('cmb2_conditionals_enqueue_script_src', function(){
+    $src = plugins_url( 'metaboxes/conditionals/cmb2-conditionals.js', __FILE__ );
+    return $src;
+}, 100, 1);
 
 
 /**
@@ -76,9 +87,166 @@ function oda_get_cities(){
     
 }
 
+
+add_action( 'cmb2_admin_init', 'oda_metabox_for_contacto' );
+/**
+ * Hook in and add a metabox that only appears on the 'About' page
+ */
+function oda_metabox_for_contacto() {
+    $about = get_page_by_path('sobre-nosotros');
+	/**
+	 * Metabox to be displayed on a single page ID
+	 */
+	$cmb_about_page = new_cmb2_box( array(
+		'id'           => 'yourprefix_about_metabox',
+		'title'        => esc_html__( 'Textos Página Sobre Nosotros', 'cmb2' ),
+		'object_types' => array( 'page' ), // Post type
+		'context'      => 'normal',
+		'priority'     => 'high',
+		'show_names'   => true, // Show field names on the left
+		'show_on'      => array(
+			'id' => array( $about->ID ),
+		), // Specific post IDs to display this metabox
+	) );
+
+	$cmb_about_page->add_field( array(
+		'name' => esc_html__( 'Texto área superior', 'cmb2' ),
+		'id'   => 'oca_texto_sup',
+		'type' => 'wysiwyg',
+    ) );
+    $cmb_about_page->add_field( array(
+		'name' => esc_html__( 'ID Youtube Video área superior', 'cmb2' ),
+		'id'   => 'oca_videp_sup',
+		'type' => 'text',
+    ) );
+    $cmb_about_page->add_field( array(
+		'name' => esc_html__( 'Texto área inferior', 'cmb2' ),
+		'id'   => 'oca_texto_inf',
+		'type' => 'wysiwyg',
+    ) );
+    $cmb_about_page->add_field( array(
+		'name' => esc_html__( 'ID Youtube Video área inferior', 'cmb2' ),
+		'id'   => 'oca_videp_inf',
+		'type' => 'text',
+	) );
+
+}
+
+/**
+ * Remove below links on list view CPT
+ */
+
+add_filter( 'post_row_actions', 'remove_row_actions', 10, 1 );
+function remove_row_actions( $actions )
+{
+    $current_post_type = get_post_type();
+    if( $current_post_type === 'ciudad' ){
+        //unset( $actions['edit'] );
+        //unset( $actions['view'] );
+        unset( $actions['trash'] );
+        unset( $actions['inline hide-if-no-js'] );
+    }
+    if( $current_post_type === 'partido' ){
+        //unset( $actions['edit'] );
+        unset( $actions['view'] );
+        unset( $actions['trash'] );
+        unset( $actions['inline hide-if-no-js'] );
+    }
+    if( $current_post_type === 'sesion' ){
+        //unset( $actions['edit'] );
+        unset( $actions['view'] );
+        unset( $actions['trash'] );
+        unset( $actions['inline hide-if-no-js'] );
+    }
+    if( $current_post_type === 'asistencia' ){
+        //unset( $actions['edit'] );
+        unset( $actions['view'] );
+        unset( $actions['trash'] );
+        unset( $actions['inline hide-if-no-js'] );
+    }
+    return $actions;
+}
+
+function directory_skip_trash($post_id) {
+    if (
+        get_post_type($post_id) == 'ciudad' ||
+        get_post_type($post_id) == 'asistencia' ||
+        get_post_type($post_id) == 'sesion' 
+    ) {
+        wp_die('No se puede eliminar este elemento. Evite malfuncionamientos del sistema. <a href="'. get_dashboard_url() .'">Ir al escritorio</a>');
+    }
+} 
+//add_action('wp_trash_post', 'directory_skip_trash');
+
+
+/* Helper functions */
+/**
+ * Devulve ciudades
+ */
+function get_object_ciudades(){
+    $ciudades = array();
+    $args = array(
+        'post_type' => 'ciudad',
+        'posts_per_page' => -1,
+        'post_status' => 'publish'
+    );
+    $ciudades = new WP_Query($args);
+    wp_reset_query();
+    return $ciudades;
+}
+
+/**
+ * Devuelve sesiones de una ciudad $city_id
+ */
+function get_sesion_object($city, $current_sesion){
+    $sesiones = array();
+
+    $args = array(
+        'post_type' => 'sesion',
+        'posts_per_page' => -1,
+        'post_status' => 'publish',
+        'post__not_in' => array($current_sesion),
+        'meta_query' => array(
+            array(
+                'key' => 'oda_ciudad_owner',
+                'value' => $city,
+                'compare' => '='
+            )
+        )
+    );
+    $sesiones = new WP_Query($args);
+    wp_reset_query();
+    return $sesiones;
+}
+
+function get_miembros($city){
+    $query_miembros = new WP_Query(array(
+        'post_type' => 'miembro',
+        'order' => 'ASC',
+        'order_by' => 'meta_value_num',
+        'meta_key' => 'oda_miembro_curul',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => 'oda_ciudad_owner',
+                'value' => $city,
+                'compare' => '='
+            )
+        )
+    ));
+    $miembros_ciudad = $query_miembros;
+    wp_reset_query();
+    return $miembros_ciudad;
+}
+
+
 //add_action('save_post', 'mostrarlo');
 function mostrarlo(){
-    echo '<pre>';
-    var_dump($_POST);
-    echo '</pre>';
+    if ('asistencia' == get_post_type()){
+        if(isset($_POST['publish_and_back'])){
+            echo '<pre>';
+            var_dump($_POST);
+            echo '</pre>';
+        }
+    }
 }

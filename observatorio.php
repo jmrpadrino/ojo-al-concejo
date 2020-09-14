@@ -33,7 +33,8 @@ $oda_objects = [
     'partido',
     'ordenanza',
     'resolucion',
-    'publicacion'
+    'publicacion',
+    'sesion'
 ];
 
 define('ODA_VERISON', '0.0.1' );
@@ -84,6 +85,13 @@ require_once( ODA_DIR_PATH . 'backend/partidos-politicos/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/partidos-politicos/Admin-columns.php' );
 
 /**
+ * Support for CTP Carrusel
+ */
+require_once( ODA_DIR_PATH . 'backend/slider/Carrusel.php' );
+require_once( ODA_DIR_PATH . 'backend/slider/Metaboxes.php' );
+
+
+/**
  * Support for CTP Ordenanzas
  */
 require_once( ODA_DIR_PATH . 'backend/ordenanzas/Ordenanzas.php' );
@@ -96,6 +104,18 @@ require_once( ODA_DIR_PATH . 'backend/ordenanzas/Admin-columns.php' );
 require_once( ODA_DIR_PATH . 'backend/resoluciones/Resoluciones.php' );
 require_once( ODA_DIR_PATH . 'backend/resoluciones/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/resoluciones/Admin-columns.php' );
+
+/**
+ * Support for CTP Sesiones
+ */
+require_once( ODA_DIR_PATH . 'backend/metaboxes/conditionals/cmb2-conditionals.php' );
+require_once( ODA_DIR_PATH . 'backend/sesiones/Sesion.php' );
+require_once( ODA_DIR_PATH . 'backend/sesiones/Metaboxes.php' );
+require_once( ODA_DIR_PATH . 'backend/sesiones/Taxonomias.php' );
+require_once( ODA_DIR_PATH . 'backend/asistencias/Asistencia.php' );
+require_once( ODA_DIR_PATH . 'backend/asistencias/Metaboxes.php' );
+require_once( ODA_DIR_PATH . 'backend/asistencias/Functions.php' );
+require_once( ODA_DIR_PATH . 'backend/mociones/Mocion.php' );
 
 /**
  * Support for CTP Publicaciones

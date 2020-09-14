@@ -51,13 +51,19 @@ function oda_partido_metabox() {
 		'default' => '#ffffff',
 	) );
 
-	/**
-	 * Get all post from Alcaldia
-	 */
+
 	$mtb_metas->add_field( array(
 		'name'    => esc_html__( 'Color Secundario', 'oda' ),
 		'desc'    => esc_html__( 'Identificación visual para el sistema', 'oda' ),
 		'id'      => ODA_PREFIX . 'partido_color_secundario',
+		'type'    => 'colorpicker',
+		'default' => '#ffffff',
+	) );
+
+	$mtb_metas->add_field( array(
+		'name'    => esc_html__( 'Color Alternativo', 'oda' ),
+		'desc'    => esc_html__( 'Identificación visual para el sistema', 'oda' ),
+		'id'      => ODA_PREFIX . 'partido_color_alternativo',
 		'type'    => 'colorpicker',
 		'default' => '#ffffff',
 	) );

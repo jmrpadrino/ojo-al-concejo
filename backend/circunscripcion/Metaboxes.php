@@ -51,6 +51,7 @@ function oda_register_demo_metabox() {
 		while ( $ciudad->have_posts() ) { $ciudad->the_post();
 			$ciudad_array[get_the_ID()] = get_the_title();
 		}
+		wp_reset_query();
 		//var_dump( $alcaldias_array );
 		//die;
 		$mtb_rel->add_field( array(

@@ -24,7 +24,13 @@ add_action( 'cmb2_admin_init', 'oda_resolucion_metabox' );
 function oda_resolucion_metabox() {
 
     /* RESOLUCIONES: OBTENER CIUDAD ASOCIADA A CPT */
-    $city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
+    $city = null;
+    if (isset($_GET['post'])){
+        $city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
+    }
+    if (isset($_POST['post_ID'])){
+        $city = get_post_meta($_POST['post_ID'], ODA_PREFIX . 'ciudad_owner', true);        
+    }
 
     /* --------------------------------------------------------------
         RESOLUCIONES: METABOX METADATA

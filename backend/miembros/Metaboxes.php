@@ -88,10 +88,15 @@ add_action( 'cmb2_admin_init', 'oda_register_miembro_metabox' );
  * Hook in and add a demo metabox. Can only happen on the 'cmb2_admin_init' or 'cmb2_init' hook.
  */
 function oda_register_miembro_metabox() {
+	$city = null;
+	$current_post = null;
 	if (isset($_GET['post'])){
 		$city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
-	}else{
+		$current_post = $_GET['post'];
+	}
+	if (isset($_POST['post_ID'])){
 		$city = get_post_meta($_POST['post_ID'], ODA_PREFIX . 'ciudad_owner', true);
+		$current_post = $_POST['post_ID'];
 	}
 
 
@@ -129,6 +134,7 @@ function oda_register_miembro_metabox() {
 		while ( $alcaldias->have_posts() ) { $alcaldias->the_post();
 			$alcaldias_array[get_the_ID()] = get_the_title();
 		}
+		wp_reset_query();
 		//var_dump( $alcaldias_array );
 		//die;
 		$mtb_rel->add_field( array(
@@ -189,6 +195,7 @@ function oda_register_miembro_metabox() {
 			while ( $circunscripcion->have_posts() ) { $circunscripcion->the_post();
 				$circunscripcion_array[get_the_ID()] = get_the_title();
 			}
+			wp_reset_query();
 			//var_dump( $alcaldias_array );
 			//die;
 			$mtb_rel->add_field( array(
@@ -226,6 +233,7 @@ function oda_register_miembro_metabox() {
 		while ( $partido->have_posts() ) { $partido->the_post();
 			$partido_array[get_the_ID()] = get_the_title();
 		}
+		$partido->wp_reset_query();
 		//var_dump( $alcaldias_array );
 		//die;
 		$mtb_rel->add_field( array(
@@ -233,7 +241,6 @@ function oda_register_miembro_metabox() {
 			'desc'       => esc_html__( 'Este campo es obligatorio', 'cmb2' ),
 			'id'         => ODA_PREFIX . 'partido_owner',
 			'type'             => 'select',
-			'column'          => true,
 			'show_option_none' => true,
 			'options' => $partido_array,
 			'attributes' => array(
@@ -245,7 +252,7 @@ function oda_register_miembro_metabox() {
 	/**
 	 * Metabox para metadatos
 	 */
-	$suplente = get_post_meta($_GET['post'], ODA_PREFIX . 'miembro_es_supente', true);
+	$suplente = get_post_meta($current_post, ODA_PREFIX . 'miembro_es_supente', true);
 	if ( !'on' == $suplente ){
 		$mtb_rel = new_cmb2_box( array(
 			'id'            => 'oda_miembros_suplentes_metadatos',
@@ -258,7 +265,8 @@ function oda_register_miembro_metabox() {
 		) );
 
 		// get suplentes of same city
-		$suplente = get_post_meta($_GET['post'], ODA_PREFIX . 'comision_composicion_miembros', false);		
+		$suplente = get_post_meta($current_post, ODA_PREFIX . 'comision_composicion_miembros', false);		
+		$excluir_suplentes = array();
 		$args = array(
 			'post_type' => 'miembro',
 			'posts_per_page' => -1,
@@ -280,11 +288,12 @@ function oda_register_miembro_metabox() {
 		);
 		$miembros = new WP_Query($args);
 
+		$miembros_array = array();
 		if ( $miembros->have_posts() ){
-			$miembros_array = array();
 			while ( $miembros->have_posts() ) { $miembros->the_post();
 				$miembros_array[get_the_ID()] = get_the_title();
 			}
+			wp_reset_query();
 		}
 		$mtb_rel->add_field( array(
 			'name'       => esc_html__( 'Miembro Suplente', 'oda' ),
@@ -335,6 +344,16 @@ function oda_register_miembro_metabox() {
 		'name'       => esc_html__( '¿Participa en el Concejo?', 'oda' ),
 		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
 		'id'         => ODA_PREFIX . 'miembro_participa',
+		'type' => 'checkbox',
+	) );
+
+	/**
+	 * Get the Full first name
+	 */
+	$mtb_rel->add_field( array(
+		'name'       => esc_html__( '¿Participa como Concejal Rural?', 'oda' ),
+		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
+		'id'         => ODA_PREFIX . 'miembro_rural',
 		'type' => 'checkbox',
 	) );
 		
@@ -454,10 +473,10 @@ function oda_register_miembro_metabox() {
 	 * Get the twitter
 	 */
 	$mtb_rel->add_field( array(
-		'name'       => esc_html__( 'Twitter', 'oda' ),
+		'name'       => esc_html__( 'Usuario Twitter', 'oda' ),
 		//'desc'       => esc_html__( 'field description (optional)', 'cmb2' ),
 		'id'         => ODA_PREFIX . 'miembro_twitter',
-		'type'             => 'text_url',
+		'type'             => 'text',
 	) );
 
 	/**

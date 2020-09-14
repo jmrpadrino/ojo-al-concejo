@@ -43,9 +43,17 @@ function oda_comision_metabox() {
 		$miembros_suplentes->the_post();
 		$excluir_suplentes[] = get_the_ID();
 	}
+	wp_reset_query();
 
 	// get city meta for comision to filter members
-	$city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
+	//$city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
+	$city = null;
+	if (isset($_GET['post'])){
+		$city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
+	}
+	if (isset($_POST['post_ID'])){
+		$city = get_post_meta($_POST['post_ID'], ODA_PREFIX . 'ciudad_owner', true);
+	}
 
 	
 	$args = array(
@@ -63,11 +71,12 @@ function oda_comision_metabox() {
 	);
 	$miembros = new WP_Query($args);
 
+	$miembros_array = array();
 	if ( $miembros->have_posts() ){
-		$miembros_array = array();
 		while ( $miembros->have_posts() ) { $miembros->the_post();
 			$miembros_array[get_the_ID()] = get_the_title();
 		}
+		wp_reset_query();
 	}
 
 	$mtb_metas->add_field( array(
@@ -185,6 +194,7 @@ function oda_comision_metabox() {
 		while ( $ciudad->have_posts() ) { $ciudad->the_post();
 			$ciudad_array[get_the_ID()] = get_the_title();
 		}
+		wp_reset_query();
 		//var_dump( $alcaldias_array );
 		//die;
 		$mtb_rel->add_field( array(
