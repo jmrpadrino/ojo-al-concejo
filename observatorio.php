@@ -116,6 +116,8 @@ require_once( ODA_DIR_PATH . 'backend/asistencias/Asistencia.php' );
 require_once( ODA_DIR_PATH . 'backend/asistencias/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/asistencias/Functions.php' );
 require_once( ODA_DIR_PATH . 'backend/mociones/Mocion.php' );
+require_once( ODA_DIR_PATH . 'backend/mociones/Metaboxes.php' );
+require_once( ODA_DIR_PATH . 'backend/mociones/Functions.php' );
 
 /**
  * Support for CTP Publicaciones

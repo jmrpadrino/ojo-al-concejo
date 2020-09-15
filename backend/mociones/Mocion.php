@@ -46,7 +46,7 @@ function oda_Mocion() {
         'hierarchical'          => false,
         'public'                => true,
         'show_ui'               => true,
-        'show_in_menu'          => true,
+        'show_in_menu'          => false,
 		'menu_position'         => 33,
 		'menu_icon'             => ODA_DIR_URL . 'images/FCD-menu-icon.png',
         'show_in_admin_bar'     => false,

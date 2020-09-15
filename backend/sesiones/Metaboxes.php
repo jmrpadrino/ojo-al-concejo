@@ -68,12 +68,18 @@ function oda_sesion_proceso_mocion(  $field_args, $field ){
     // Obtener listado de asistencias en Asistencia
     $asistencia = new WP_Query(
         array(
-            'post_type' => 'asistencia',
+            'post_type' => 'mocion',
             'posts_per_page' => -1,
             'meta_key' => 'oda_parent_sesion',
             'meta_query' => array(
+                'relation' => 'AND',
                 array(
                     'key' => 'oda_parent_sesion',
+                    'value' => $current_sesion,
+                    'compare' => '='
+                ),
+                array(
+                    'key' => 'oda_item_sesion',
                     'value' => $current_sesion,
                     'compare' => '='
                 )
@@ -89,7 +95,7 @@ function oda_sesion_proceso_mocion(  $field_args, $field ){
             <?php if (count($mociones->posts) > 0){ ?>
                 <a href="<?php echo admin_url('post.php?post='. $asistencia->posts[0]->ID .'&action=edit&parent_sesion=') . $current_sesion; ?>" class="button">Ver</a>    
             <?php }else{ ?>
-            <a href="<?php echo admin_url('post-new.php?post_type=asistencia&parent_sesion=') . $current_sesion; ?>" class="button">Empezar</a>
+            <a href="<?php echo admin_url('post-new.php?post_type=mocion&parent_sesion=' . $current_sesion); ?>" class="button">Empezar</a>
             <?php } ?>
         </div>
     </div>

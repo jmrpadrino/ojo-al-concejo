@@ -2,38 +2,23 @@
 /**
  * Metabox for asistencias
 */
-function asistencia_register_meta_boxes() {
-    $show_metabox = false;
-    if(
-        isset($_GET['parent_sesion']) ||
-        isset($_POST['oda_parent_sesion'])
-    ){
-        $city = get_post_meta($_GET['parent_sesion'], 'oda_ciudad_owner', true);
-        $show_metabox = true;
-    }else{
-        $city = get_post_meta($_POST['parent_sesion'], 'oda_ciudad_owner', true);
-        $show_metabox = true;
-    }
-
-    if ($show_metabox){
-        add_meta_box( 
-            'listado_asistencias_mtb', 
-            'Listado de asistencia', 
-            'oda_mostrar_listado_asistencia', 
-            'mocion', 
-            'normal', 
-            'high',
-            array(
-                'parent_sesion' => $_GET['parent_sesion'],
-                'city' => $city,
-            )
-        );
-    }
+function mocion_register_meta_boxes() {
+    
+    add_meta_box( 
+        'listado_mocion_mtb', 
+        'Listado de Votación en Moción', 
+        'oda_mostrar_listado_mocion', 
+        'mocion', 
+        'normal', 
+        'high'
+    );
 }
-add_action( 'add_meta_boxes', 'asistencia_register_meta_boxes' );
+add_action( 'add_meta_boxes', 'mocion_register_meta_boxes' );
 
-function oda_mostrar_listado_asistencia($post, $args){    
-    $query_miembros = get_miembros($args['args']['city']);
+function oda_mostrar_listado_mocion($post, $args){    
+    $city = 9;
+    //$query_miembros = get_miembros($args['args']['city']);
+    $query_miembros = get_miembros(9);
     echo '<pre>';    
     var_dump(get_post_meta($_GET['post']));
     echo '</pre>';    
@@ -50,6 +35,14 @@ function oda_mostrar_listado_asistencia($post, $args){
                 padding: 5px 0;
             }            
             .oda_col1 { width: 20%;}
+            .oda_col4 { min-width: 25%; }
+            .oda_col5 { min-width: 25%; }
+            .oda_col5 ul{ 
+                margin: 0;
+                display: flex;
+                justify-content:space-around;
+                align-items: flex-start;
+             }
             .col-same { width: 15%; text-align: right;}
             .col-same label { display: block; text-align: right;}
             .disabled { color: #a0a5aa; opacity: .7; }
@@ -76,6 +69,14 @@ function oda_mostrar_listado_asistencia($post, $args){
             ¿Se excusa? <!--<input title="Marcar Todos" class="excusa_miembro_all" type="checkbox">-->
         </div>
         <div class="oda_col oda_col4"></div>
+        <div class="oda_col oda_col5 oda_col_voto">
+            <ul>
+                <li><strong title="Vota Si">SI</strong></li>
+                <li><strong title="Vota No">NO</strong></li>
+                <li><strong title="Se abstiene">AB</strong></li>
+                <li><strong title="Vota Blanco">BL</strong></li>
+            </ul>
+        </div>
     </div>
     <?php
             $i = 0;
@@ -83,7 +84,7 @@ function oda_mostrar_listado_asistencia($post, $args){
                 $query_miembros->the_post();
                 $miembros_suplentes = get_post_meta(get_the_ID(), 'oda_miembro_miembros_suplentes', true);
     ?>
-    <input type="hidden" name="oda_sesion_asistencia[<?php echo $i; ?>][member_id]" value="<?php echo get_the_ID(); ?>">
+    <input type="hidden" name="oda_sesion_mocion[<?php echo $i; ?>][member_id]" value="<?php echo get_the_ID(); ?>">
     <div class="oda_row">
         <div class="oda_col oda_col1">
             <strong><?php echo get_the_title(); ?></strong>
@@ -99,23 +100,23 @@ function oda_mostrar_listado_asistencia($post, $args){
             <?php } ?>
         </div>
         <div class="oda_col col-same oda_col2 text-center">
-            <label for="asiste-<?php echo get_the_ID(); ?>"><input name="oda_sesion_asistencia[<?php echo $i; ?>][member_ausente]" class="asiste_miembro" type="checkbox"></label>
+            <label for="asiste-<?php echo get_the_ID(); ?>"><input name="oda_sesion_mocion[<?php echo $i; ?>][member_ausente]" class="asiste_miembro" type="checkbox"></label>
         </div>
         <div class="oda_col col-same oda_col3 text-center">
             <?php if ( $miembros_suplentes ){ ?>
-                <label for="excusa-<?php echo get_the_ID(); ?>"><input name="oda_sesion_asistencia[<?php echo $i; ?>][member_excusa]" class="excusa_miembro" type="checkbox" data-option="suplente-<?php echo get_the_ID(); ?>"></label>
+                <label for="excusa-<?php echo get_the_ID(); ?>"><input name="oda_sesion_mocion[<?php echo $i; ?>][member_excusa]" class="excusa_miembro" type="checkbox" data-option="suplente-<?php echo get_the_ID(); ?>"></label>
             <?php } ?>
         </div>
         <?php if ( $miembros_suplentes ){ ?>
-        <div class="oda_col oda_col3">
+        <div class="oda_col oda_col4">
             <?php
                     if (count($miembros_suplentes) == 1){
                         $suplente = get_post($miembros_suplentes[0]);
             ?>
             <span id="suplente-<?php echo get_the_ID(); ?>" class="disabled"><strong><?php echo $suplente->post_title; ?></strong></span>
-            <input type="hidden" name="oda_sesion_asistencia[<?php echo $i; ?>][member_suplente]" value="<?php echo $suplente->ID; ?>">
+            <input type="hidden" name="oda_sesion_mocion[<?php echo $i; ?>][member_suplente]" value="<?php echo $suplente->ID; ?>">
             <?php }else{ ?>
-            <select id="suplente-<?php echo get_the_ID(); ?>" name="oda_sesion_asistencia[<?php echo $i; ?>][member_suplente]" disabled>
+            <select id="suplente-<?php echo get_the_ID(); ?>" name="oda_sesion_mocion[<?php echo $i; ?>][member_suplente]" disabled>
                 <option value="">Seleccione un suplente</option>
                 <?php 
                     foreach($miembros_suplentes as $suplente){ 
@@ -125,6 +126,22 @@ function oda_mostrar_listado_asistencia($post, $args){
                 <?php } // END foreach ?>
             </select>
             <?php } ?>    
+        </div>
+        <div class="oda_col oda_col5 oda_col_voto">
+            <ul>
+                <li>
+                    <input type="radio" name="oda_sesion_mocion[<?php echo $i; ?>][mocion_voto]" value="1">
+                </li>
+                <li>
+                    <input type="radio" name="oda_sesion_mocion[<?php echo $i; ?>][mocion_voto]" value="2">
+                </li>
+                <li>
+                    <input type="radio" name="oda_sesion_mocion[<?php echo $i; ?>][mocion_voto]" value="3">
+                </li>
+                <li>
+                    <input type="radio" name="oda_sesion_mocion[<?php echo $i; ?>][mocion_voto]" value="4">
+                </li>
+            </ul>
         </div>
         <?php } ?>
     </div>
@@ -144,14 +161,14 @@ function oda_mostrar_listado_asistencia($post, $args){
     <?php
 }
 
-function oda_save_asistencia_meta( $post_id ) {
+function oda_save_mocion_meta( $post_id ) {
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
     if ( $parent_id = wp_is_post_revision( $post_id ) ) {
         $post_id = $parent_id;
     }
     $fields = [
         'oda_parent_sesion',
-        'oda_sesion_asistencia',
+        'oda_sesion_mocion',
     ];
     foreach ( $fields as $field ) {
         if ( array_key_exists( $field, $_POST ) ) {
@@ -165,4 +182,4 @@ function oda_save_asistencia_meta( $post_id ) {
         }
     }
 }
-add_action( 'save_post', 'oda_save_asistencia_meta' );
+add_action( 'save_post', 'oda_save_mocion_meta' );
