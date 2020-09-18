@@ -92,11 +92,7 @@ function oda_sesion_proceso_mocion(  $field_args, $field ){
             <label for="oda_sesion_preside">Proceso de Votación</label>
         </div>
         <div class="cmb-td">
-            <?php if (count($mociones->posts) > 0){ ?>
-                <a href="<?php echo admin_url('post.php?post='. $asistencia->posts[0]->ID .'&action=edit&parent_sesion=') . $current_sesion; ?>" class="button">Ver</a>    
-            <?php }else{ ?>
-            <a href="<?php echo admin_url('post-new.php?post_type=mocion&parent_sesion=' . $current_sesion); ?>" class="button">Empezar</a>
-            <?php } ?>
+            <a href="<?php echo admin_url('post-new.php?post_type=mocion&parent_sesion=' . $current_sesion); ?>" class="button mocion-btn" >Empezar proceso</a><span class="spinner" style="visibility: visible; float: left;"></span>
         </div>
     </div>
     <?php
@@ -285,7 +281,7 @@ function oda_sesion_metabox() {
         $mtb_sesion_puntos->add_group_field( $group_field_pat, array(
             'name' => esc_html__( 'Aplicar votación a moción', 'cmb2' ),
             'id'   => ODA_PREFIX . 'mocion_votacion',
-            'type' => 'text',
+            'type' => 'button',
             'render_row_cb' => 'oda_sesion_proceso_mocion',
             'classes' => 'mocion-child mocion-hidden'
         ) );
@@ -299,25 +295,66 @@ function oda_scripts_sesion(){
 ?>
 <style>    
     .mocion-hidden { display: none; }
+    .mocion-btn { float: left; }
 </style>
 <script>
     $(document).ready(function(){
+        var formHaschanged = false;
+        $.each($('.mocion-btn'), function(index, value){
+            var parentHash = $('#oda_sesion_pats_group_'+index+'_sesion_pat_semociona');
+            $(this).addClass('parent-' + parentHash.data('hash'));
+            $(this).attr('href', oda_refresh_mocion_links( 
+                $(this),
+                parentHash,
+                index
+            ));
+
+        });
         $('.cmb2-option').change(function(e){
             if($(this).is(':checked')){
                 $.each($(this).parents('.mocion-parent').siblings('.mocion-child'), function(){
                     $(this).removeClass('mocion-hidden');
                 })
-                console.log('encender', $(this).parents('.mocion-parent').siblings('.mocion-child'))
             }else{
                 $.each($(this).parents('.mocion-parent').siblings('.mocion-child'), function(){
                     $(this).addClass('mocion-hidden');
-                })
-                console.log('apagar', $(this).parents('.mocion-parent').siblings('.mocion-child'))
+                })                
+            }
+        })  
+        $('form').change(function(){
+            formHaschanged = true;
+        })
+        $('.mocion-btn').click(function(){
+            if(formHaschanged){
+                alert('Debe guardar o actualizar los cambios antes de continuar.');
+                return false;
             }
         })
-    })
-    function oda_refresh_mocion_links(){
+        window.setTimeout(function () {
+            formHaschanged = false;
+        }, 0);
 
+    })
+    function oda_refresh_mocion_links(e,hash,index){
+        var currentHref = e[0].href;
+        var nextHref = '';
+        nextHref = currentHref + '&item=' + hash.data('hash') + '&position='+ index;
+        if (hash.is(':checked')){
+            $.each(oda_mocion_object, function(index, value){
+                console.log(value);
+                console.log(hash.data('hash'), value.mocionSesionitem);
+                if (hash.data('hash') == value.mocionSesionitem){
+                    nextHref = 'post.php?post='+ value.mocionID +
+                        '&parent_sesion='+ value.mocionSesionparent +
+                        '&item='+ value.mocionSesionitem + 
+                        '&position='+ index + 
+                        '&action=edit';
+                    $('.parent-' + hash.data('hash')).html('Editar');
+                    $('.parent-' + hash.data('hash')).siblings('.spinner').remove();
+                }
+            })            
+        }
+        return nextHref;
     }
 </script>   
 <?php

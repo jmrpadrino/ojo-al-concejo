@@ -37,6 +37,47 @@ function oda_add_my_scripts(){
         wp_enqueue_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js', array(), null, true);
         wp_enqueue_script('oda-cmb2-conditional', ODA_DIR_URL . 'js/oda-scripts.js', array('jquery'), null, true);
         wp_enqueue_script('oda-admin-script', ODA_DIR_URL . 'backend/metaboxes/js/cmb2-conditional-logic.min.js', array('jquery'), null, true);
+        if( 'sesion' === get_post_type() ){
+            if (isset($_GET['post'])){
+                $active_mociones = array();
+                $mociones = new WP_Query(
+                    array(
+                        'post_type' => 'mocion',
+                        'posts_per_page' => -1,
+                        'meta_key' => 'oda_parent_sesion',
+                        'meta_query' => array(
+                            array(
+                                'key' => 'oda_parent_sesion',
+                                'value' => $_GET['post'],
+                                'compare' => '='
+                            )
+                        )
+                    )
+                );
+                foreach($mociones->posts as $mocion){
+
+                    $values = array(
+                        'mocionID' => $mocion->ID,
+                        'mocionSesionparent' => $_GET['post'],
+                        'mocionSesionitem' => get_post_meta($mocion->ID, 'oda_sesion_item', true)
+                    );
+                    $active_mociones[] = $values;
+                } ;
+                wp_localize_script( 'oda-admin-script', 'oda_mocion_object', $active_mociones );
+            }
+
+        }
+
+        // if( 'mocion' === get_post_type() ){
+        //     if (isset($_GET['parent_sesion'])){
+        //         $metas = get_post_meta( $_GET['parent_sesion'], 'oda_sesion_pats_group', true);
+        //         $parent_sesion = array(
+        //             'sesion_list_item_parent' => $metas[$_GET['position']],
+        //         );
+        //         wp_localize_script( 'oda-admin-script', 'oda_sesion_object', $parent_sesion );
+        //     }
+
+        // }
         
     }
 }

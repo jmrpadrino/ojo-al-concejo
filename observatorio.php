@@ -3,7 +3,7 @@
  * @package Observatorio
  */
 /*
-Plugin Name: Observatorio de Alcaldias
+Plugin Name: Observatorio de Concejos Municipales de Ecuador - OCME
 Plugin URI: http://urbadigital.com/wordpress-plugins/
 Description: Aqui viene una descripción pronto...
 Version: 0.0.1
@@ -32,6 +32,7 @@ $oda_objects = [
     'miembro',
     'partido',
     'ordenanza',
+    'observacion',
     'resolucion',
     'publicacion',
     'sesion'
@@ -97,6 +98,7 @@ require_once( ODA_DIR_PATH . 'backend/slider/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/ordenanzas/Ordenanzas.php' );
 require_once( ODA_DIR_PATH . 'backend/ordenanzas/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/ordenanzas/Admin-columns.php' );
+require_once( ODA_DIR_PATH . 'backend/ordenanzas/Observaciones.php' );
 
 /**
  * Support for CTP Resoluciones

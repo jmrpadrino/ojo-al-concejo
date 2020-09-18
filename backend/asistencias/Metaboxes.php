@@ -18,7 +18,7 @@ function asistencia_register_meta_boxes() {
     if ($show_metabox){
         add_meta_box( 
             'listado_asistencias_mtb', 
-            'Listado de asistencia', 
+            '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . 'Listado de asistencia', 
             'oda_mostrar_listado_asistencia', 
             'asistencia', 
             'normal', 
@@ -34,9 +34,7 @@ add_action( 'add_meta_boxes', 'asistencia_register_meta_boxes' );
 
 function oda_mostrar_listado_asistencia($post, $args){    
     $query_miembros = get_miembros($args['args']['city']);
-    echo '<pre>';    
-    var_dump(get_post_meta($_GET['post']));
-    echo '</pre>';    
+    $asistencias = get_post_meta($_GET['post'], 'oda_sesion_asistencia', true); 
 	?>
     <div class="custom-field-row <?php echo esc_attr( $classes ); ?>">
     <input type="hidden" name="oda_parent_sesion" value="<?php echo $args['args']['parent_sesion']; ?>">
@@ -83,7 +81,7 @@ function oda_mostrar_listado_asistencia($post, $args){
                 $query_miembros->the_post();
                 $miembros_suplentes = get_post_meta(get_the_ID(), 'oda_miembro_miembros_suplentes', true);
     ?>
-    <input type="hidden" name="oda_sesion_asistencia[<?php echo $i; ?>][member_id]" value="<?php echo get_the_ID(); ?>">
+    <input type="hidden" name="oda_sesion_asistencia[<?php echo get_the_ID(); ?>][member_id]" value="<?php echo get_the_ID(); ?>">
     <div class="oda_row">
         <div class="oda_col oda_col1">
             <strong><?php echo get_the_title(); ?></strong>
@@ -99,11 +97,23 @@ function oda_mostrar_listado_asistencia($post, $args){
             <?php } ?>
         </div>
         <div class="oda_col col-same oda_col2 text-center">
-            <label for="asiste-<?php echo get_the_ID(); ?>"><input name="oda_sesion_asistencia[<?php echo $i; ?>][member_ausente]" class="asiste_miembro" type="checkbox"></label>
+            <?php
+                $checked_ausente = '';
+                if (array_key_exists('member_ausente', $asistencias[get_the_ID()])){
+                    $checked_ausente = 'checked';
+                }
+            ?>
+            <label for="asiste-<?php echo get_the_ID(); ?>"><input name="oda_sesion_asistencia[<?php echo get_the_ID(); ?>][member_ausente]" class="asiste_miembro" type="checkbox" <?php echo $checked_ausente; ?>></label>
         </div>
         <div class="oda_col col-same oda_col3 text-center">
-            <?php if ( $miembros_suplentes ){ ?>
-                <label for="excusa-<?php echo get_the_ID(); ?>"><input name="oda_sesion_asistencia[<?php echo $i; ?>][member_excusa]" class="excusa_miembro" type="checkbox" data-option="suplente-<?php echo get_the_ID(); ?>"></label>
+            <?php 
+                if ( $miembros_suplentes ){ 
+                    $checked_excusa = '';
+                    if (array_key_exists('member_excusa', $asistencias[get_the_ID()])){
+                        $checked_excusa = 'checked';
+                    }
+            ?>
+                <label for="excusa-<?php echo get_the_ID(); ?>"><input name="oda_sesion_asistencia[<?php echo get_the_ID(); ?>][member_excusa]" class="excusa_miembro" type="checkbox" data-option="suplente-<?php echo get_the_ID(); ?>" <?php echo $checked_excusa; ?>></label>
             <?php } ?>
         </div>
         <?php if ( $miembros_suplentes ){ ?>
@@ -113,15 +123,23 @@ function oda_mostrar_listado_asistencia($post, $args){
                         $suplente = get_post($miembros_suplentes[0]);
             ?>
             <span id="suplente-<?php echo get_the_ID(); ?>" class="disabled"><strong><?php echo $suplente->post_title; ?></strong></span>
-            <input type="hidden" name="oda_sesion_asistencia[<?php echo $i; ?>][member_suplente]" value="<?php echo $suplente->ID; ?>">
+            <input type="hidden" name="oda_sesion_asistencia[<?php echo get_the_ID(); ?>][member_suplente]" value="<?php echo $suplente->ID; ?>">
             <?php }else{ ?>
-            <select id="suplente-<?php echo get_the_ID(); ?>" name="oda_sesion_asistencia[<?php echo $i; ?>][member_suplente]" disabled>
+            <select id="suplente-<?php echo get_the_ID(); ?>" name="oda_sesion_asistencia[<?php echo get_the_ID(); ?>][member_suplente]" disabled>
                 <option value="">Seleccione un suplente</option>
                 <?php 
                     foreach($miembros_suplentes as $suplente){ 
                         $suplente = get_post($suplente);
+                        $selected = '';
+                        $suplente_seleccionado = '';
+                        if (array_key_exists('member_suplente', $asistencias[get_the_ID()])){
+                            $suplente_seleccionado = $asistencias[get_the_ID()]['member_suplente'];
+                            if($suplente_seleccionado == $suplente->ID){
+                                $selected = 'selected';
+                            }
+                        }
                 ?>
-                <option value="<?php echo $suplente->ID; ?>"><?php echo $suplente->post_title; ?></option>
+                <option value="<?php echo $suplente->ID; ?>" <?php echo $selected; ?>><?php echo $suplente->post_title; ?></option>
                 <?php } // END foreach ?>
             </select>
             <?php } ?>    
@@ -152,6 +170,8 @@ function oda_save_asistencia_meta( $post_id ) {
     $fields = [
         'oda_parent_sesion',
         'oda_sesion_asistencia',
+        'asistencia_ausentes',
+        'asistencia_excusas'
     ];
     foreach ( $fields as $field ) {
         if ( array_key_exists( $field, $_POST ) ) {
@@ -164,5 +184,46 @@ function oda_save_asistencia_meta( $post_id ) {
             exit();
         }
     }
-}
+} // END oda_save_asistencia_meta
 add_action( 'save_post', 'oda_save_asistencia_meta' );
+
+function asistencia_show_resumen(){
+    if ('asistencia' === get_post_type()){
+    $sesion = get_post($_GET['parent_sesion']);
+    // echo '<pre>';
+    // var_dump(get_post_meta($_GET['post']));
+    // echo '</pre>';
+?>
+<h3>Asistencia para la sesión: <?php echo $sesion->post_title; ?></h3>
+<style scope>
+    .asistencia_resumem_value { border: 0; background: transparent; }
+</style>
+<ul>
+    <li><strong>Total Miembros:</strong> <span id="total_miembros">0</span></li>
+    <li><strong>Total Ausentes:</strong> <input class="asistencia_resumem_value" name="asistencia_ausentes" id="total_ausentes" value="0" readonly></li>
+    <li><strong>Total Excusas:</strong> <input class="asistencia_resumem_value" name="asistencia_excusas" id="total_excusas" value="0" readonly></li>
+</ul>
+<script>
+    $(document).ready(function(){
+        var total = ausentes = excusas = 0;
+        total = $('.asiste_miembro').length;
+        $.each($('.asiste_miembro'), function(){
+            if ($(this).is(':checked')){
+                ausentes++;
+            }
+        })
+        $.each($('.excusa_miembro'), function(){
+            if ($(this).is(':checked')){
+                excusas++;
+            }
+        })
+
+        $('#total_miembros').text(total);
+        $('#total_ausentes').val(ausentes);
+        $('#total_excusas').val(excusas);
+    })
+</script>
+<?php
+    } // END
+} // END asistencia_show_resumen
+add_action('edit_form_after_editor', 'asistencia_show_resumen');

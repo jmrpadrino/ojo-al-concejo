@@ -1,7 +1,6 @@
 $(document).ready(function(){
     $('.excusa_miembro').change(function(e){
         var suplente = $(this).data('option');
-        console.log(suplente);
         if ($(this).is(':checked')){
             if ($('#'+suplente).is('select')) {
                 $('#'+suplente).removeAttr('disabled');

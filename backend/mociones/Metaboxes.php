@@ -3,28 +3,60 @@
  * Metabox for asistencias
 */
 function mocion_register_meta_boxes() {
-    
-    add_meta_box( 
-        'listado_mocion_mtb', 
-        'Listado de Votación en Moción', 
-        'oda_mostrar_listado_mocion', 
-        'mocion', 
-        'normal', 
-        'high'
-    );
+    $show_metabox = false;
+    if(
+        isset($_GET['parent_sesion']) ||
+        isset($_POST['oda_parent_sesion'])
+    ){
+        $city = get_post_meta($_GET['parent_sesion'], 'oda_ciudad_owner', true);
+        $show_metabox = true;
+    }else{
+        $city = get_post_meta($_POST['oda_parent_sesion'], 'oda_ciudad_owner', true);
+        $show_metabox = true;
+    }
+    if ($show_metabox){
+        add_meta_box( 
+            'listado_mocion_mtb_0', 
+            '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . 'Tipo de Votación', 
+            'oda_mostrar_tipo_mocion', 
+            'mocion', 
+            'side', 
+            'high'
+        );
+        
+        add_meta_box( 
+            'listado_mocion_mtb_1', 
+            '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . 'Listado de Votación en Moción', 
+            'oda_mostrar_listado_mocion', 
+            'mocion', 
+            'normal', 
+            'high',
+            array(
+                'parent_sesion' => $_GET['parent_sesion'],
+                'city' => $city,
+                'item' => $_GET['item'],
+                'position' => $_GET['position'],
+            )
+        );
+    }
 }
 add_action( 'add_meta_boxes', 'mocion_register_meta_boxes' );
 
 function oda_mostrar_listado_mocion($post, $args){    
-    $city = 9;
-    //$query_miembros = get_miembros($args['args']['city']);
-    $query_miembros = get_miembros(9);
-    echo '<pre>';    
-    var_dump(get_post_meta($_GET['post']));
-    echo '</pre>';    
+    $query_miembros = get_miembros($args['args']['city']);
+    $votos = get_post_meta($_GET['post'], 'oda_sesion_mocion', true);
 	?>
-    <div class="custom-field-row <?php echo esc_attr( $classes ); ?>">
+    <div class="custom-field-row">
     <input type="hidden" name="oda_parent_sesion" value="<?php echo $args['args']['parent_sesion']; ?>">
+    <input type="hidden" name="oda_sesion_item" value="<?php echo $args['args']['item']; ?>">
+    <input type="hidden" name="oda_mocion_nombre" value="<?php echo $args['args']['item']; ?>">
+    <input type="hidden" name="oda_mocion_position" value="<?php echo $args['args']['position']; ?>">
+    <input type="hidden" name="oda_mocion_ausentes" value="0">
+    <input type="hidden" name="oda_mocion_excusas" value="0">
+    <input type="hidden" name="oda_mocion_voto_1" value="0">
+    <input type="hidden" name="oda_mocion_voto_2" value="0">
+    <input type="hidden" name="oda_mocion_voto_3" value="0">
+    <input type="hidden" name="oda_mocion_voto_4" value="0">
         <style scoped>
             .oda_row{ 
                 width:100%; 
@@ -84,7 +116,7 @@ function oda_mostrar_listado_mocion($post, $args){
                 $query_miembros->the_post();
                 $miembros_suplentes = get_post_meta(get_the_ID(), 'oda_miembro_miembros_suplentes', true);
     ?>
-    <input type="hidden" name="oda_sesion_mocion[<?php echo $i; ?>][member_id]" value="<?php echo get_the_ID(); ?>">
+    <input type="hidden" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][member_id]" value="<?php echo get_the_ID(); ?>">
     <div class="oda_row">
         <div class="oda_col oda_col1">
             <strong><?php echo get_the_title(); ?></strong>
@@ -100,50 +132,78 @@ function oda_mostrar_listado_mocion($post, $args){
             <?php } ?>
         </div>
         <div class="oda_col col-same oda_col2 text-center">
-            <label for="asiste-<?php echo get_the_ID(); ?>"><input name="oda_sesion_mocion[<?php echo $i; ?>][member_ausente]" class="asiste_miembro" type="checkbox"></label>
+            <?php
+                $checked_ausente = '';
+                if (array_key_exists('member_ausente', $votos[get_the_ID()])){
+                    $checked_ausente = 'checked';
+                }
+            ?>
+            <label for="asiste-<?php echo get_the_ID(); ?>">
+                <input name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][member_ausente]" class="asiste_miembro" type="checkbox" <?php echo $checked_ausente; ?>>
+            </label>
         </div>
         <div class="oda_col col-same oda_col3 text-center">
-            <?php if ( $miembros_suplentes ){ ?>
-                <label for="excusa-<?php echo get_the_ID(); ?>"><input name="oda_sesion_mocion[<?php echo $i; ?>][member_excusa]" class="excusa_miembro" type="checkbox" data-option="suplente-<?php echo get_the_ID(); ?>"></label>
+            <?php 
+                if ( $miembros_suplentes ){ 
+                    $checked_excusa = '';
+                    if (array_key_exists('member_excusa', $votos[get_the_ID()])){
+                        $checked_excusa = 'checked';
+                    }
+            ?>
+                <label for="excusa-<?php echo get_the_ID(); ?>"><input name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][member_excusa]" class="excusa_miembro" type="checkbox" data-option="suplente-<?php echo get_the_ID(); ?>" <?php echo $checked_excusa; ?>></label>
             <?php } ?>
         </div>
-        <?php if ( $miembros_suplentes ){ ?>
         <div class="oda_col oda_col4">
+        <?php if ( $miembros_suplentes ){ ?>
             <?php
                     if (count($miembros_suplentes) == 1){
                         $suplente = get_post($miembros_suplentes[0]);
             ?>
             <span id="suplente-<?php echo get_the_ID(); ?>" class="disabled"><strong><?php echo $suplente->post_title; ?></strong></span>
-            <input type="hidden" name="oda_sesion_mocion[<?php echo $i; ?>][member_suplente]" value="<?php echo $suplente->ID; ?>">
+            <input type="hidden" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][member_suplente]" value="<?php echo $suplente->ID; ?>">
             <?php }else{ ?>
-            <select id="suplente-<?php echo get_the_ID(); ?>" name="oda_sesion_mocion[<?php echo $i; ?>][member_suplente]" disabled>
+            <select id="suplente-<?php echo get_the_ID(); ?>" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][member_suplente]" disabled>
                 <option value="">Seleccione un suplente</option>
                 <?php 
                     foreach($miembros_suplentes as $suplente){ 
                         $suplente = get_post($suplente);
+                        $selected = '';
+                        $suplente_seleccionado = '';
+                        if (array_key_exists('member_suplente', $votos[get_the_ID()])){
+                            $suplente_seleccionado = $votos[get_the_ID()]['member_suplente'];
+                            if($suplente_seleccionado == $suplente->ID){
+                                $selected = 'selected';
+                            }
+                        }
                 ?>
-                <option value="<?php echo $suplente->ID; ?>"><?php echo $suplente->post_title; ?></option>
+                <option value="<?php echo $suplente->ID; ?>" <?php echo $selected; ?>><?php echo $suplente->post_title; ?></option>
                 <?php } // END foreach ?>
             </select>
             <?php } ?>    
+        <?php } ?>
         </div>
         <div class="oda_col oda_col5 oda_col_voto">
+            <?php
+                $voto = '';
+                if (array_key_exists('mocion_voto', $votos[get_the_ID()])){
+                    $voto = $votos[get_the_ID()]['mocion_voto'];
+                }
+            ?>
             <ul>
                 <li>
-                    <input type="radio" name="oda_sesion_mocion[<?php echo $i; ?>][mocion_voto]" value="1">
+                    <input class="voto_miembro" type="radio" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][mocion_voto]" value="1" <?php echo ($voto == 1) ? 'checked' : ''; ?>>
                 </li>
                 <li>
-                    <input type="radio" name="oda_sesion_mocion[<?php echo $i; ?>][mocion_voto]" value="2">
+                    <input class="voto_miembro" type="radio" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][mocion_voto]" value="2" <?php echo ($voto == 2) ? 'checked' : ''; ?>>
                 </li>
                 <li>
-                    <input type="radio" name="oda_sesion_mocion[<?php echo $i; ?>][mocion_voto]" value="3">
+                    <input class="voto_miembro" type="radio" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][mocion_voto]" value="3" <?php echo ($voto == 3) ? 'checked' : ''; ?>>
                 </li>
                 <li>
-                    <input type="radio" name="oda_sesion_mocion[<?php echo $i; ?>][mocion_voto]" value="4">
+                    <input class="voto_miembro" type="radio" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][mocion_voto]" value="4" <?php echo ($voto == 4) ? 'checked' : ''; ?>>
                 </li>
             </ul>
         </div>
-        <?php } ?>
     </div>
     <?php
            $i++; } // END While
@@ -161,6 +221,49 @@ function oda_mostrar_listado_mocion($post, $args){
     <?php
 }
 
+function oda_mostrar_tipo_mocion(){    
+    $tipos_votaciones = get_terms(
+        array(
+            'taxonomy' => 'tipo_votacion',
+            'hide_empty' => false,
+            'parent'   => 0,
+            'orderby' => 'id', 
+            'order' => 'ASC',  
+        )
+    );    
+?>
+<div class="custom-field-row">
+    <ul>
+        <?php foreach($tipos_votaciones as $tipo){ $tipo_seleccionado = '';?>
+        <li>
+            <label for="tipo_general">
+                <strong><?php echo $tipo->name; ?></strong><br/>
+                <?php $tipo_seleccionado = get_post_meta($_GET['post'], 'tipo_votacion_' . $tipo->slug, true); ?>
+                <select id="tipo_general" name="tipo_votacion_<?php echo $tipo->slug; ?>">
+                    <option value="">Seleccione</option>
+                    <?php
+                        $subtipos_votaciones = get_terms(
+                            array(
+                                'taxonomy' => 'tipo_votacion',
+                                'hide_empty' => false,
+                                'parent'   => $tipo->term_id,
+                                'orderby' => 'id', 
+                                'order' => 'ASC',  
+                            )
+                        );
+                        foreach($subtipos_votaciones as $subtipo){
+                    ?>
+                    <option value="<?php echo $subtipo->term_id; ?>" <?php echo ($tipo_seleccionado == $subtipo->term_id) ? 'selected' :'';?>><?php echo $subtipo->name; ?></option>
+                    <?php } ?>
+                </select>
+            </label>
+        </li>
+        <?php } // END Foreach ?>
+    </ul>
+</div>
+<?php
+}
+
 function oda_save_mocion_meta( $post_id ) {
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
     if ( $parent_id = wp_is_post_revision( $post_id ) ) {
@@ -168,14 +271,19 @@ function oda_save_mocion_meta( $post_id ) {
     }
     $fields = [
         'oda_parent_sesion',
+        'oda_sesion_item',
         'oda_sesion_mocion',
+        'oda_mocion_position',
+        'tipo_votacion_general',
+        'tipo_votacion_media',
+        'tipo_votacion_especifica',
     ];
     foreach ( $fields as $field ) {
         if ( array_key_exists( $field, $_POST ) ) {
-            update_post_meta( $post_id, $field, sanitize_text_field( $_POST[$field] ) );
+            update_post_meta( $post_id, $field, $_POST[$field] );
         }
     }
-    if ('asistencia' == get_post_type()){
+    if ('mocion' == get_post_type()){
         if(isset($_POST['oda_parent_sesion'])){
             header('Location:' . admin_url('post.php?post='. $_POST['oda_parent_sesion'] .'&action=edit&asistencia=true'));
             exit();
@@ -183,3 +291,72 @@ function oda_save_mocion_meta( $post_id ) {
     }
 }
 add_action( 'save_post', 'oda_save_mocion_meta' );
+
+function mocion_show_resume(){
+    if ('mocion' === get_post_type()){
+    $metas = get_post_meta( $_GET['parent_sesion'], 'oda_sesion_pats_group', true);    
+?>
+<h3>Votación para la moción: <u><?php echo $metas[$_GET['position']]['sesion_pat_title']; ?></u></h3>
+<style scope>
+    .asistencia_resumem_value { border: 0; background: transparent; }
+    .data-row { 
+        width:100%;
+        display: flex;
+        justify-content:space-between;
+        align-items: flex-start;
+    }
+</style>
+<div class="data-row">
+    <div class="data-col">
+        <ul>
+            <li><strong>Total Miembros:</strong> <span id="total_miembros">0</span></li>
+            <li><strong>Total Ausentes:</strong> <input class="asistencia_resumem_value" name="asistencia_ausentes" id="total_ausentes" value="0" readonly></li>
+            <li><strong>Total Excusas:</strong> <input class="asistencia_resumem_value" name="asistencia_excusas" id="total_excusas" value="0" readonly></li>
+        </ul>
+    </div>
+    <div class="data-col">
+        <ul>
+            <li><strong>Total SI:</strong> <input class="asistencia_resumem_value" name="votos_si" id="total_1" value="0" readonly></li>
+            <li><strong>Total NO:</strong> <input class="asistencia_resumem_value" name="votos_no" id="total_2" value="0" readonly></li>
+            <li><strong>Total Abstenciones:</strong> <input class="asistencia_resumem_value" name="votos_ab" id="total_3" value="0" readonly></li>
+            <li><strong>Total Blancos:</strong> <input class="asistencia_resumem_value" name="votos_bl" id="total_4" value="0" readonly></li>
+        </ul>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        var total = ausentes = excusas = votoSi = votoNo = votoAb = votoBl = 0;        
+        total = $('.asiste_miembro').length;
+        $.each($('.asiste_miembro'), function(){
+            if ($(this).is(':checked')){
+                ausentes++;
+            }
+        })
+        $.each($('.excusa_miembro'), function(){
+            if ($(this).is(':checked')){
+                excusas++;
+            }
+        })
+
+        $.each($('.voto_miembro'), function(){
+            if($(this).is(':checked')){
+                if($(this).val() == 1){ votoSi++; }
+                if($(this).val() == 2){ votoNo++; }
+                if($(this).val() == 3){ votoAb++; }
+                if($(this).val() == 4){ votoBl++; }
+            }
+        })
+
+        $('#total_miembros').text(total);
+        $('#total_ausentes').val(ausentes);
+        $('#total_excusas').val(excusas);
+        $('#total_1').val(votoSi);
+        $('#total_2').val(votoNo);
+        $('#total_3').val(votoAb);
+        $('#total_4').val(votoBl);
+    })
+</script>
+<?php
+    } // END
+} // END asistencia_show_resumen
+add_action('edit_form_after_editor', 'mocion_show_resume');

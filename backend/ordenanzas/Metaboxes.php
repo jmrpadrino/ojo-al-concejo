@@ -19,6 +19,7 @@ if ( file_exists( ODA_DIR_PATH . 'backend/metaboxes/init.php' ) ) {
     ORDENANZAS: MAIN CMB2 CALLBACK
 -------------------------------------------------------------- */
 add_action( 'cmb2_admin_init', 'oda_ordenanza_metabox' );
+add_action( 'cmb2_admin_init', 'oda_observacion_metabox' );
 
 /* ORDENANZAS: MAIN METABOX CALLBACK HANDLER */
 function oda_ordenanza_metabox() {
@@ -107,7 +108,7 @@ function oda_ordenanza_metabox() {
     /* --------------------------------------------------------------
         ORDENANZAS: METABOX INFORMACIÓN PRINCIPAL
     -------------------------------------------------------------- */
-    $mtb_ordenanza_data = new_cmb2_box( array(
+    $mtb_observacion_data = new_cmb2_box( array(
         'id'            => 'oda_ordenanza_data_metabox',
         'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Información Básica', 'oda' ),
         'object_types'  => array( 'ordenanza' ),
@@ -117,7 +118,7 @@ function oda_ordenanza_metabox() {
     ) );
 
     /* DATA ORDENANZA: Número de Tramite */
-    $mtb_ordenanza_data->add_field( array(
+    $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'ordenanza_nro_tramite',
         'name' => esc_html__( 'Número de Trámite', 'oda' ),
         'desc' => __( 'Agregue el número de trámite asignado a esta ordenanza.', 'oda' ),
@@ -125,7 +126,7 @@ function oda_ordenanza_metabox() {
     ) );
 
     /* DATA ORDENANZA: Fecha */
-    $mtb_ordenanza_data->add_field( array(
+    $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'ordenanza_fecha',
         'name' => esc_html__( 'Fecha de Presentación', 'oda' ),
         'desc' => __( 'Agregue la fecha de presentación de la Ordenanza.', 'oda' ),
@@ -133,7 +134,7 @@ function oda_ordenanza_metabox() {
     ) );
 
     /* DATA ORDENANZA: Iniciativa */
-    $mtb_ordenanza_data->add_field( array(
+    $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'ordenanza_iniciativa',
         'name' => esc_html__( 'Iniciativa', 'oda' ),
         'desc' => __( 'Seleccione la Iniciativa de esta Ordenanza.', 'oda' ),
@@ -149,7 +150,7 @@ function oda_ordenanza_metabox() {
     ) );
 
     /* DATA ORDENANZA: Proponente */
-    $mtb_ordenanza_data->add_field( array(
+    $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'ordenanza_proponente',
         'name' => esc_html__( 'Proponente de Ordenanza', 'oda' ),
         'desc' => __( 'Agregue el Proponente de esta Ordenanza.', 'oda' ),
@@ -171,7 +172,7 @@ function oda_ordenanza_metabox() {
 
     if ( !$query_miembros->have_posts() ){
         /* DATA ORDENANZA: Aviso [Si no hay miembros disponibles para la ciudad] */
-        $mtb_ordenanza_data->add_field( array(
+        $mtb_observacion_data->add_field( array(
             'id'   => ODA_PREFIX . 'ordenanza_miembros',
             'name' => esc_html__( 'Aviso Importante', 'oda' ),
             'desc' => __( 'Aun no tiene miembros asignados a la ciudad, por favor asigne uno. Haga clic <a href="'. admin_url('/post-new.php?post_type=miembro') .'">aqui</a>.', 'oda' ),
@@ -185,7 +186,7 @@ function oda_ordenanza_metabox() {
         wp_reset_query();
 
         /* DATA ORDENANZA: Miembros */
-        $mtb_ordenanza_data->add_field( array(
+        $mtb_observacion_data->add_field( array(
             'id'         => ODA_PREFIX . 'ordenanza_miembros',
             'name' => esc_html__( 'Miembros del Consejo', 'oda' ),
             'desc' => __( 'Seleccione el/os miembros del consejo para esta Ordenanza.', 'oda' ),
@@ -196,7 +197,7 @@ function oda_ordenanza_metabox() {
     }
 
     /* DATA ORDENANZA: Estado */
-    $mtb_ordenanza_data->add_field( array(
+    $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'ordenanza_estado',
         'name' => esc_html__( 'Estado', 'oda' ),
         'desc' => __( 'Seleccione el estado de esta Ordenanza.', 'oda' ),
@@ -226,7 +227,7 @@ function oda_ordenanza_metabox() {
 
     if ( !$query_comision->have_posts() ){
         /* DATA ORDENANZA: Aviso [Si no hay comisiones disponibles para la ciudad] */
-        $mtb_ordenanza_data->add_field( array(
+        $mtb_observacion_data->add_field( array(
             'id'   => ODA_PREFIX . 'ordenanza_comision',
             'name' => esc_html__( 'Aviso Importante', 'oda' ),
             'desc' => __( 'Aun no tiene comisiones asignadas a la ciudad, por favor asigne una. Haga clic <a href="'. admin_url('/post-new.php?post_type=comision') .'">aqui</a>.', 'oda' ),
@@ -240,7 +241,7 @@ function oda_ordenanza_metabox() {
         wp_reset_query();
 
         /* DATA ORDENANZA: Comisión */
-        $mtb_ordenanza_data->add_field( array(
+        $mtb_observacion_data->add_field( array(
             'id'         => ODA_PREFIX . 'ordenanza_comision',
             'name' => esc_html__( 'Comision de la Ordenanza', 'oda' ),
             'desc' => __( 'Seleccione la comisión para esta Ordenanza.', 'oda' ),
@@ -251,7 +252,7 @@ function oda_ordenanza_metabox() {
 
 
     /* DATA ORDENANZA: Fecha */
-    $mtb_ordenanza_data->add_field( array(
+    $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'ordenanza_vigencia',
         'name' => esc_html__( 'Fecha de Vigencia', 'oda' ),
         'desc' => __( 'Agregue la fecha de vigencia de la Ordenanza.', 'oda' ),
@@ -259,7 +260,7 @@ function oda_ordenanza_metabox() {
     ) );
 
     /* DATA ORDENANZA: Link del Registro Oficial */
-    $mtb_ordenanza_data->add_field( array(
+    $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'ordenanza_oficial_link',
         'name' => esc_html__( 'Link del Registro Oficial', 'oda' ),
         'desc' => __( 'Agregue la URL del Registro Oficial de esta Ordenanza.', 'oda' ),
@@ -465,4 +466,191 @@ function oda_ordenanza_metabox() {
             ) );
             $i++; }
     }
+}
+
+
+
+/* Metabox for Observaciones / Ordenanzas */
+function oda_observacion_metabox(){
+
+    $city = null;
+    if (isset($_GET['post'])){
+        $city = get_post_meta($_GET['post'], ODA_PREFIX . 'ciudad_owner', true);
+    }
+    if (isset($_POST['post_ID'])){
+        $city = get_post_meta($_POST['post_ID'], ODA_PREFIX . 'ciudad_owner', true);        
+    }
+    /* --------------------------------------------------------------
+        OBSERVACIONES: METABOX RELACIONES
+    -------------------------------------------------------------- */
+    $mtb_observacion_rel = new_cmb2_box( array(
+        'id'            => 'oda_observacion_relaciones',
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Relaciones', 'oda' ),
+        'object_types'  => array( 'observacion' ),
+        'context'    => 'side',
+        'priority'   => 'high',
+        'show_names' => true
+    ) );
+
+    /* ORDENANZAS: CIUDAD [PRE GET POSTS] */
+    $args = array(
+        'post_type' => 'ciudad',
+        'posts_per_page' => -1,
+        'post_status' => 'publish'
+    );
+    $alcaldias = new WP_Query($args);
+
+
+    if ( !$alcaldias->have_posts() ){
+        /* ORDENANZAS: Titulo si no hay ninguna ciudad */
+        $mtb_observacion_rel->add_field( array(
+            'id'   => ODA_PREFIX . 'ordenanza_ciudad_title',
+            'name' => esc_html__( 'Aviso Importante', 'oda' ),
+            'desc' => __( 'Aun no tiene ciudades agregadas por favor agregue una. Haga clic <a href="'. admin_url('/post-new.php?post_type=ciudad') .'">aqui</a>.', 'oda' ),
+            'type' => 'title'
+        ) );
+    }else{
+        $alcaldias_array = array();
+        while ( $alcaldias->have_posts() ) : $alcaldias->the_post();
+        $alcaldias_array[get_the_ID()] = get_the_title();
+        endwhile;
+        wp_reset_query();
+
+        /* ORDENANZAS: Ciudades */
+        $mtb_observacion_rel->add_field( array(
+            'name'       => esc_html__( '¿A qué ciudad pertenece esta Observación?', 'oda' ),
+            'desc'       => esc_html__( 'Este campo es obligatorio', 'oda' ),
+            'id'         => ODA_PREFIX . 'ciudad_owner',
+            'type'             => 'select',
+            'show_option_none' => true,
+            'attributes' => array(
+                'required' => 'required',
+            ),
+            'options' => $alcaldias_array
+        ) );
+        
+    }
+
+    /* --------------------------------------------------------------
+        ORDENANZAS: METABOX INFORMACIÓN PRINCIPAL
+    -------------------------------------------------------------- */
+    if($city !== null){
+        $query_miembros = new WP_Query(array(
+            'post_type' => 'miembro',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                array(
+                    'key' => 'oda_ciudad_owner',
+                    'value' => $city,
+                    'compare' => '='
+                )
+            )
+        ));        
+        $mtb_observacion_data = new_cmb2_box( array(
+            'id'            => 'oda_observacion_data_metabox',
+            'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Información Básica', 'oda' ),
+            'object_types'  => array( 'observacion' ),
+            'context'    => 'normal',
+            'priority'   => 'high',
+            'show_names' => true
+        ) );
+
+        $mtb_observacion_data->add_field( array(
+            'id'         => ODA_PREFIX . 'observacion_fecha',
+            'name' => esc_html__( 'Fecha de la observación', 'oda' ),            
+            'type' => 'text_date',
+        ) );
+
+        if ( !$query_miembros->have_posts() ){
+            /* DATA ORDENANZA: Aviso [Si no hay miembros disponibles para la ciudad] */
+            $mtb_observacion_data->add_field( array(
+                'id'   => ODA_PREFIX . 'ordenanza_miembros',
+                'name' => esc_html__( 'Aviso Importante', 'oda' ),
+                'desc' => __( 'Aun no tiene miembros asignados a la ciudad, por favor asigne uno. Haga clic <a href="'. admin_url('/post-new.php?post_type=miembro') .'">aqui</a>.', 'oda' ),
+                'type' => 'title'
+            ) );
+        } else {
+            /* DATA ORDENANZA: Miembros [ PRE GET POSTS ] */
+            while ($query_miembros->have_posts()) : $query_miembros->the_post();
+            $array_miembros[get_the_ID()] = get_the_title();
+            endwhile;
+            wp_reset_query();
+
+            /* DATA ORDENANZA: Miembros */
+            $mtb_observacion_data->add_field( array(
+                'id'         => ODA_PREFIX . 'observacion_miembro',
+                'name' => esc_html__( 'Miembro del Consejo', 'oda' ),
+                'desc' => __( 'Seleccione el/os miembros del consejo para esta Ordenanza.', 'oda' ),
+                'type' => 'pw_select',
+                'classes_cb' => 'oda_select2',
+                'options' => $array_miembros
+            ) );
+        }
+
+        $query_ordenanzas = new WP_Query(array(
+            'post_type' => 'ordenanza',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                array(
+                    'key' => 'oda_ciudad_owner',
+                    'value' => $city,
+                    'compare' => '='
+                )
+            )
+        ));  
+        if ( !$query_ordenanzas->have_posts() ){
+            /* DATA ORDENANZA: Aviso [Si no hay miembros disponibles para la ciudad] */
+            $mtb_observacion_data->add_field( array(
+                'id'   => ODA_PREFIX . 'observacion_item',
+                'name' => esc_html__( 'Aviso Importante', 'oda' ),
+                'desc' => __( 'Aun no tiene miembros asignados a la ciudad, por favor asigne uno. Haga clic <a href="'. admin_url('/post-new.php?post_type=miembro') .'">aqui</a>.', 'oda' ),
+                'type' => 'title'
+            ) );
+        } else {
+            /* DATA ORDENANZA: Miembros [ PRE GET POSTS ] */
+            $array_ordenanzas = array();
+            while ($query_ordenanzas->have_posts()) : $query_ordenanzas->the_post();
+            $array_ordenanzas[get_the_ID()] = get_the_title();
+            endwhile;
+            wp_reset_query();
+
+            /* DATA ORDENANZA: Miembros */
+            $mtb_observacion_data->add_field( array(
+                'id'         => ODA_PREFIX . 'observacion_ordenanza',
+                'name' => esc_html__( 'Miembros del Consejo', 'oda' ),
+                'desc' => __( 'Seleccione el/os miembros del consejo para esta Ordenanza.', 'oda' ),
+                'type' => 'pw_select',
+                'classes_cb' => 'oda_select2',
+                'options'          => $array_ordenanzas
+            ) );
+        }
+
+        /* DATA ORDENANZA: Número de Tramite */
+        $mtb_observacion_data->add_field( array(
+            'id'         => ODA_PREFIX . 'observacion_documento',
+            'name' => esc_html__( 'Documento', 'oda' ),   
+            'type' => 'file',
+            'options' => array(
+                'url' => true,
+            ),
+            'text'    => array(
+                'add_upload_file_text' => 'Añadir PDF'
+            ),
+            'query_args' => array(
+                'type' => 'application/pdf',
+            ),
+            'preview_size' => 'large'
+        ) );
+    }
+}
+
+add_filter('wp_insert_post_data', 'change_name_observacion', 99, 1);
+function change_name_observacion( $data ){
+    if($data['post_type'] == 'observacion' && isset($_POST['oda_ciudad_owner'])) { // If the actual field name of the rating date is different, you'll have to update this.
+        $ciudad = get_post($_POST['oda_ciudad_owner']);
+        $ordenanza = get_post($_POST['oda_observacion_ordenanza']);
+        $title = 'OBS: '. $ordenanza->post_title .' - ' . $ciudad->post_title;
+        $data['post_title'] =  $title ; //Updates the post title to your new title.
+    }
+    return $data; // Returns the modified data.
 }
