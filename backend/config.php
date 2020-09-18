@@ -34,9 +34,9 @@ function oda_add_my_scripts(){
         wp_enqueue_style('oda-fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css', array(), FALSE, 'all');
         wp_enqueue_style('oda-admin', ODA_DIR_URL . '/css/oda-styles.css', array(), FALSE, 'all');
         wp_deregister_script('jquery');
-        wp_enqueue_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js', array(), null, true);
-        wp_enqueue_script('oda-cmb2-conditional', ODA_DIR_URL . 'js/oda-scripts.js', array('jquery'), null, true);
-        wp_enqueue_script('oda-admin-script', ODA_DIR_URL . 'backend/metaboxes/js/cmb2-conditional-logic.min.js', array('jquery'), null, true);
+        wp_enqueue_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js', array(), null, false);
+        wp_enqueue_script('oda-cmb2-conditional', ODA_DIR_URL . 'js/oda-scripts.js', array('jquery'), null, false);
+        wp_enqueue_script('oda-admin-script', ODA_DIR_URL . 'backend/metaboxes/js/cmb2-conditional-logic.min.js', array('jquery'), null, false);
         if( 'sesion' === get_post_type() ){
             if (isset($_GET['post'])){
                 $active_mociones = array();
