@@ -58,11 +58,12 @@ function oda_add_my_scripts(){
 
                     $values = array(
                         'mocionID' => $mocion->ID,
+                        'mocionTitle' => $mocion->post_title,
                         'mocionSesionparent' => $_GET['post'],
                         'mocionSesionitem' => get_post_meta($mocion->ID, 'oda_sesion_item', true)
                     );
                     $active_mociones[] = $values;
-                } ;
+                };
                 wp_localize_script( 'oda-admin-script', 'oda_mocion_object', $active_mociones );
             }
 
