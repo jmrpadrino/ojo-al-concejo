@@ -35,7 +35,9 @@ $oda_objects = [
     'observacion',
     'resolucion',
     'publicacion',
-    'sesion'
+    'sesion',
+    'solicitud-info',
+    'instituciones'
 ];
 
 define('ODA_VERISON', '0.0.1' );
@@ -127,6 +129,20 @@ require_once( ODA_DIR_PATH . 'backend/mociones/Functions.php' );
 require_once( ODA_DIR_PATH . 'backend/publicaciones/Publicaciones.php' );
 require_once( ODA_DIR_PATH . 'backend/publicaciones/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/publicaciones/Admin-columns.php' );
+
+/**
+ * Support for Fiscalizacion Module
+ * -- 2 CPT - 2 Metaboxes - 2 Admin Columns - 1 Functions
+ */
+require_once( ODA_DIR_PATH . 'backend/fiscalizacion/Solicitud-Informacion.php' );
+require_once( ODA_DIR_PATH . 'backend/fiscalizacion/Solicitud-Comparecencias.php' );
+require_once( ODA_DIR_PATH . 'backend/fiscalizacion/Metaboxes-info.php' );
+require_once( ODA_DIR_PATH . 'backend/fiscalizacion/Metaboxes-comp.php' );
+//require_once( ODA_DIR_PATH . 'backend/fiscalizacion/Admin-columns.php' );
+require_once( ODA_DIR_PATH . 'backend/instituciones/Instituciones.php' );
+//require_once( ODA_DIR_PATH . 'backend/instituciones/Metaboxes.php' );
+//require_once( ODA_DIR_PATH . 'backend/instituciones/Admin-columns.php' );
+require_once( ODA_DIR_PATH . 'backend/fiscalizacion/Functions.php' );
 
 /**
  * Support for Tax Temas
