@@ -13,7 +13,7 @@ echo '</pre>';
 */
 
 add_theme_support('post-thumbnails');
-//add_post_type_support( 'partido', 'thumbnail' );  
+//add_post_type_support( 'partido', 'thumbnail' );
 
 add_action('admin_enqueue_scripts', 'oda_add_my_scripts');
 function oda_add_my_scripts(){
@@ -26,7 +26,7 @@ function oda_add_my_scripts(){
             'campaign'      === $screen_id ||
             'commercial'    === $screen_id ||
             'toplevel_page_crmec' === $screen_id ||
-            'crmec_page_funnel-de-ventas' === $screen_id 
+            'crmec_page_funnel-de-ventas' === $screen_id
         ) {
             wp_enqueue_style('gadmur-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css', array(), FALSE, 'all');
         }
@@ -78,7 +78,7 @@ function oda_add_my_scripts(){
         //     }
 
         // }
-        
+
     }
 }
 
@@ -97,8 +97,8 @@ add_filter('cmb2_conditionals_enqueue_script_src', function(){
  */
 add_filter('use_block_editor_for_post_type', 'oda_disable_gutenberg', 100, 2);
 function oda_disable_gutenberg($current_status, $post_type)
-{  
-    if ( in_array($post_type, ODA_OBJECTS) ) return false; 
+{
+    if ( in_array($post_type, ODA_OBJECTS) ) return false;
     return $current_status;
 }
 /**
@@ -106,7 +106,7 @@ function oda_disable_gutenberg($current_status, $post_type)
  */
 function oda_comment_status( $open, $post_id ) {
     $post = get_post( $post_id );
-    if ( in_array($post->post_type, ODA_OBJECTS) ) return false; 
+    if ( in_array($post->post_type, ODA_OBJECTS) ) return false;
     return $open;
 }
 add_filter( 'comments_open', 'oda_comment_status', 10 , 2 );
@@ -125,7 +125,7 @@ function oda_get_cities(){
         'posts_per_page' => -1
     );
     return new WP_Query($args);
-    
+
 }
 
 
@@ -135,6 +135,12 @@ add_action( 'cmb2_admin_init', 'oda_metabox_for_contacto' );
  */
 function oda_metabox_for_contacto() {
     $about = get_page_by_path('sobre-nosotros');
+
+    if ($about == null) {
+        $about_id = 0;
+    } else {
+        $about_id = $about->ID;
+    }
 	/**
 	 * Metabox to be displayed on a single page ID
 	 */
@@ -146,7 +152,7 @@ function oda_metabox_for_contacto() {
 		'priority'     => 'high',
 		'show_names'   => true, // Show field names on the left
 		'show_on'      => array(
-			'id' => array( $about->ID ),
+			'id' => array( $about_id ),
 		), // Specific post IDs to display this metabox
 	) );
 
@@ -212,11 +218,11 @@ function directory_skip_trash($post_id) {
     if (
         get_post_type($post_id) == 'ciudad' ||
         get_post_type($post_id) == 'asistencia' ||
-        get_post_type($post_id) == 'sesion' 
+        get_post_type($post_id) == 'sesion'
     ) {
         wp_die('No se puede eliminar este elemento. Evite malfuncionamientos del sistema. <a href="'. get_dashboard_url() .'">Ir al escritorio</a>');
     }
-} 
+}
 //add_action('wp_trash_post', 'directory_skip_trash');
 
 
