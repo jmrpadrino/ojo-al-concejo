@@ -314,11 +314,12 @@ function oda_scripts_sesion(){
             var parentHash = $('#oda_sesion_pats_group_'+index+'_sesion_pat_semociona');
             $(this).addClass('parent-' + parentHash.data('hash'));
             $('.cmb2-id-oda-sesion-pats-group-'+index+'-oda-mocion-votacion').find('.lista-mocion').addClass(parentHash.data('hash'));
-            $(this).attr('href', oda_refresh_mocion_links( 
+            oda_refresh_mocion_links( 
                 $(this),
                 parentHash,
                 index
-            ));
+            );
+            $(this).attr('href', $(this).attr('href') + '&item=' + parentHash.data('hash'));
 
         });
         

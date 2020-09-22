@@ -45,6 +45,8 @@ function oda_add_my_scripts(){
                         'post_type' => 'mocion',
                         'posts_per_page' => -1,
                         'meta_key' => 'oda_parent_sesion',
+                        'orderby' => 'post_id',
+                        'order' => 'ASC',
                         'meta_query' => array(
                             array(
                                 'key' => 'oda_parent_sesion',
