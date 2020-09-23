@@ -42,7 +42,7 @@ function oda_Mocion() {
         'label'                 => __( 'Moción', 'oda' ),
         'description'           => __( 'Soporte para Mociones', 'oda' ),
         'labels'                => $labels,
-        'supports'              => array( 'revisions' ),
+        'supports'              => array( 'title', 'revisions' ),
         'hierarchical'          => false,
         'public'                => true,
         'show_ui'               => true,

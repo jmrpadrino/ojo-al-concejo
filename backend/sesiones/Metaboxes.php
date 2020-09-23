@@ -88,11 +88,20 @@ function oda_sesion_proceso_mocion(  $field_args, $field ){
     );
     ?>
     <div class="cmb-row <?php echo esc_attr( $classes ); ?>" style="margin-top: 10px;">
-        <div class="cmb-th">
-            <label for="oda_sesion_preside">Proceso de Votación</label>
+        <div class="mocion-list-container">
+        <div class="cmb-th" style="margin-top: 12px;">
+            <label for="oda_sesion_preside">Mociones</label>
         </div>
         <div class="cmb-td">
-            <a href="<?php echo admin_url('post-new.php?post_type=mocion&parent_sesion=' . $current_sesion); ?>" class="button mocion-btn" >Empezar proceso</a><span class="spinner" style="visibility: visible; float: left;"></span>
+            <ol class="lista-mocion"></ol>
+            <span class="spinner" style="visibility: visible; float: left; margin-bottom: 10px;"></span>
+        </div>
+        </div>
+        <div class="cmb-th">
+            <label for="oda_sesion_preside"></label>
+        </div>
+        <div class="cmb-td">
+            <a href="<?php echo admin_url('post-new.php?post_type=mocion&parent_sesion=' . $current_sesion); ?>" class="button mocion-btn" >Agregar nueva moción</a>
         </div>
     </div>
     <?php
@@ -300,16 +309,20 @@ function oda_scripts_sesion(){
 <script>
     $(document).ready(function(){
         var formHaschanged = false;
+        
         $.each($('.mocion-btn'), function(index, value){
             var parentHash = $('#oda_sesion_pats_group_'+index+'_sesion_pat_semociona');
             $(this).addClass('parent-' + parentHash.data('hash'));
-            $(this).attr('href', oda_refresh_mocion_links( 
+            $('.cmb2-id-oda-sesion-pats-group-'+index+'-oda-mocion-votacion').find('.lista-mocion').addClass(parentHash.data('hash'));
+            oda_refresh_mocion_links( 
                 $(this),
                 parentHash,
                 index
-            ));
+            );
+            $(this).attr('href', $(this).attr('href') + '&item=' + parentHash.data('hash'));
 
         });
+        
         $('.cmb2-option').change(function(e){
             if($(this).is(':checked')){
                 $.each($(this).parents('.mocion-parent').siblings('.mocion-child'), function(){
@@ -338,22 +351,40 @@ function oda_scripts_sesion(){
     function oda_refresh_mocion_links(e,hash,index){
         var currentHref = e[0].href;
         var nextHref = '';
-        nextHref = currentHref + '&item=' + hash.data('hash') + '&position='+ index;
+        //nextHref = currentHref + '&item=' + hash.data('hash') + '&position='+ index;
+        nextHref = currentHref + '&item=' + hash.data('hash');
+        //console.log(oda_mocion_object);
+        $.each(oda_mocion_object, function(index, value){
+            if(value.mocionSesionitem == hash.data('hash')){
+                var html = '';
+                console.log(value);
+                nextHref = 'post.php?post='+ value.mocionID +
+                        '&parent_sesion='+ value.mocionSesionparent +
+                        '&item='+ value.mocionSesionitem + 
+                        //'&position='+ index + 
+                        '&action=edit';
+                html = '<li><a href="'+nextHref+'">'+value.mocionTitle+'</a></li>';
+                $('.lista-mocion.' + hash.data('hash')).append(html);
+                $('.lista-mocion.' + hash.data('hash')).siblings('.spinner').remove();
+            }
+        })
+        /*
         if (hash.is(':checked')){
             $.each(oda_mocion_object, function(index, value){
-                console.log(value);
-                console.log(hash.data('hash'), value.mocionSesionitem);
                 if (hash.data('hash') == value.mocionSesionitem){
                     nextHref = 'post.php?post='+ value.mocionID +
                         '&parent_sesion='+ value.mocionSesionparent +
                         '&item='+ value.mocionSesionitem + 
-                        '&position='+ index + 
+                        //'&position='+ index + 
                         '&action=edit';
-                    $('.parent-' + hash.data('hash')).html('Editar');
+                    //$('.parent-' + hash.data('hash')).html('Editar');
                     $('.parent-' + hash.data('hash')).siblings('.spinner').remove();
+
+                    //<li>Titulo de la moción - <a href="#">Editar</a></li>
                 }
             })            
         }
+        */
         return nextHref;
     }
 </script>   

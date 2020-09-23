@@ -1,12 +1,4 @@
 <?php
-add_filter('wp_insert_post_data', 'change_name_listado_mocion', 99, 1);
-function change_name_listado_mocion( $data ){
-    if($data['post_type'] == 'mocion' && isset($_POST['oda_parent_sesion'])) { // If the actual field name of the rating date is different, you'll have to update this.
-        $title = 'Votación para la moción ' . $_POST['oda_parent_sesion'];
-        $data['post_title'] =  $title ; //Updates the post title to your new title.
-    }
-    return $data; // Returns the modified data.
-}
 add_action('post_submitbox_start', 'oda_cancel_buton_mociones');
 function oda_cancel_buton_mociones(){
     if ('mocion' == get_post_type() ) {

@@ -45,6 +45,8 @@ function oda_add_my_scripts(){
                         'post_type' => 'mocion',
                         'posts_per_page' => -1,
                         'meta_key' => 'oda_parent_sesion',
+                        'orderby' => 'post_id',
+                        'order' => 'ASC',
                         'meta_query' => array(
                             array(
                                 'key' => 'oda_parent_sesion',
@@ -58,11 +60,12 @@ function oda_add_my_scripts(){
 
                     $values = array(
                         'mocionID' => $mocion->ID,
+                        'mocionTitle' => $mocion->post_title,
                         'mocionSesionparent' => $_GET['post'],
                         'mocionSesionitem' => get_post_meta($mocion->ID, 'oda_sesion_item', true)
                     );
                     $active_mociones[] = $values;
-                } ;
+                };
                 wp_localize_script( 'oda-admin-script', 'oda_mocion_object', $active_mociones );
             }
 

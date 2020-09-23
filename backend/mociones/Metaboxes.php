@@ -17,13 +17,13 @@ function mocion_register_meta_boxes() {
     if ($show_metabox){
         add_meta_box( 
             'listado_mocion_mtb_0', 
-            '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . 'Tipo de Votación', 
+            '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . 'Configuración', 
             'oda_mostrar_tipo_mocion', 
             'mocion', 
             'side', 
             'high'
         );
-        
+
         add_meta_box( 
             'listado_mocion_mtb_1', 
             '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . 'Listado de Votación en Moción', 
@@ -50,7 +50,9 @@ function oda_mostrar_listado_mocion($post, $args){
     <input type="hidden" name="oda_parent_sesion" value="<?php echo $args['args']['parent_sesion']; ?>">
     <input type="hidden" name="oda_sesion_item" value="<?php echo $args['args']['item']; ?>">
     <input type="hidden" name="oda_mocion_nombre" value="<?php echo $args['args']['item']; ?>">
+    <!--
     <input type="hidden" name="oda_mocion_position" value="<?php echo $args['args']['position']; ?>">
+    -->
     <input type="hidden" name="oda_mocion_ausentes" value="0">
     <input type="hidden" name="oda_mocion_excusas" value="0">
     <input type="hidden" name="oda_mocion_voto_1" value="0">
