@@ -140,7 +140,7 @@ require_once( ODA_DIR_PATH . 'backend/fiscalizacion/Metaboxes-info.php' );
 require_once( ODA_DIR_PATH . 'backend/fiscalizacion/Metaboxes-comp.php' );
 //require_once( ODA_DIR_PATH . 'backend/fiscalizacion/Admin-columns.php' );
 require_once( ODA_DIR_PATH . 'backend/instituciones/Instituciones.php' );
-//require_once( ODA_DIR_PATH . 'backend/instituciones/Metaboxes.php' );
+require_once( ODA_DIR_PATH . 'backend/instituciones/Metaboxes.php' );
 //require_once( ODA_DIR_PATH . 'backend/instituciones/Admin-columns.php' );
 require_once( ODA_DIR_PATH . 'backend/fiscalizacion/Functions.php' );
 

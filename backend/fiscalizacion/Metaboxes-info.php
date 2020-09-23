@@ -197,6 +197,53 @@ function oda_solicitud_info_metabox() {
         'type' => 'text_medium'
     ) );
 
+    /* DATA ORDENANZA: Miembros [ PRE GET POSTS ] */
+    $query_instituciones = new WP_Query(array(
+        'post_type' => 'instituciones',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => 'oda_ciudad_owner',
+                'value' => $city,
+                'compare' => '='
+            )
+        )
+    ));
+
+    if ( !$query_miembros->have_posts() ){
+        /* DATA ORDENANZA: Aviso [Si no hay miembros disponibles para la ciudad] */
+        $mtb_observacion_data->add_field( array(
+            'id'   => ODA_PREFIX . 'solicitud_instituciones',
+            'name' => esc_html__( 'Aviso Importante', 'oda' ),
+            'desc' => __( 'Aun no tiene miembros asignados a la ciudad, por favor asigne uno. Haga clic <a href="'. admin_url('/post-new.php?post_type=miembro') .'">aqui</a>.', 'oda' ),
+            'type' => 'title'
+        ) );
+    } else {
+        /* DATA ORDENANZA: Miembros [ PRE GET POSTS ] */
+        while ($query_instituciones->have_posts()) : $query_instituciones->the_post();
+        $array_instituciones[get_the_ID()] = get_the_title();
+        endwhile;
+        wp_reset_query();
+
+        /* DATA ORDENANZA: Miembros */
+        $mtb_observacion_data->add_field( array(
+            'id'         => ODA_PREFIX . 'solicitud_instituciones',
+            'name' => esc_html__( 'Institución requerida', 'oda' ),
+            'desc' => __( 'Seleccione la institución requerida para esta solicitud.', 'oda' ),
+            'type' => 'select',
+            'options' => $array_instituciones
+        ) );
+    }
+
+    /* DATA ORDENANZA: Miembros */
+    $mtb_observacion_data->add_field( array(
+        'id'         => ODA_PREFIX . 'solicitud_persona_requerida',
+        'name' => esc_html__( 'Persona requerida', 'oda' ),
+        'desc' => __( 'Seleccione la Persona requerida para esta solicitud.', 'oda' ),
+        'type' => 'select',
+        'options' => array()
+    ) );
+
     /* DATA SOLICITUD: Estado */
     $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'solicitud_info_estado',
@@ -234,7 +281,7 @@ function oda_solicitud_info_metabox() {
     -------------------------------------------------------------- */
     $mtb_solicitud_info_docs = new_cmb2_box( array(
         'id'            => ODA_PREFIX . 'solicitud_info_documentos_metabox',
-        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Fases de la Ordenanza', 'oda' ),
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Documento de la Solicitud', 'oda' ),
         'object_types'  => array( 'solicitud-info' ),
         'context'    => 'normal',
         'priority'   => 'high',
@@ -269,7 +316,7 @@ function oda_solicitud_info_metabox() {
             'add_upload_file_text' => esc_html__( 'Cargar Imagen', 'oda' ),
         ),
         'query_args' => array(
-            'type' => 'application/pdf', // Make library only display PDFs.
+            'type' => 'application/pdf'
         ),
         'preview_size' => 'medium'
     ) );

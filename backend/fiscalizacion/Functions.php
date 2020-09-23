@@ -42,9 +42,17 @@ function oda_fiscalizacion_admin_menu() {
 
 }
 
-/**
- * Disply callback for the Unsub page.
- */
-function oda_fiscalizacion_admin_callback() {
-    echo 'Unsubscribe Email List';
+add_action('wp_ajax_oda_solicitud_instituciones', 'oda_solicitud_instituciones_handler');
+
+function oda_solicitud_instituciones_handler() {
+    $idinstituciones = $_POST['idInstitucion'];
+
+    $group_inst = get_post_meta($idinstituciones, 'oda_instituciones_cargos_group', true);
+
+    $json_array = array();
+    foreach ($group_inst as $item) {
+        $json_array[] = $item['nombre'] . ' - ' . $item['posicion'];
+    }
+
+    wp_send_json_success( $json_array, 200 );
 }

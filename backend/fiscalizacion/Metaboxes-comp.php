@@ -234,7 +234,7 @@ function oda_solicitud_comp_metabox() {
     -------------------------------------------------------------- */
     $mtb_solicitud_comp_docs = new_cmb2_box( array(
         'id'            => ODA_PREFIX . 'solicitud_comp_documentos_metabox',
-        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Fases de la Ordenanza', 'oda' ),
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Documento de la Solicitud', 'oda' ),
         'object_types'  => array( 'solicitud-comp' ),
         'context'    => 'normal',
         'priority'   => 'high',
