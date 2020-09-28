@@ -520,8 +520,7 @@ function oda_register_miembro_metabox() {
 		'repeatable' => true
 	) );
 
-
-	/**
+		/**
 	 * Metabox para documentos
 	 */
 	$mtb_rel = new_cmb2_box( array(
@@ -530,7 +529,7 @@ function oda_register_miembro_metabox() {
 		'object_types'  => array( 'miembro' ), // Post type
 		// 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
 		'context'    => 'normal',
-		'priority'   => 'high',
+		'priority'   => 'low',
 		'show_names' => true, // Show field names on the left
 		'classes'    => 'oda-metabox'
 	) );
@@ -668,6 +667,31 @@ function oda_register_miembro_metabox() {
 			) );
 		}	
 	}
+
+	/**
+	 * Metabox para Tituralizacion
+	 */
+	$mtb_titular = new_cmb2_box( array(
+		'id'            => 'oda_miembro_titularizacion',
+		'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Titularización', 'oda' ),
+		'object_types'  => array( 'miembro' ), // Post type
+		// 'show_on_cb' => 'oda_show_if_front_page', // function should return a bool value
+		'context'    => 'normal',
+		'priority'   => 'low',
+		'show_names' => true, // Show field names on the left
+		'classes'    => 'oda-metabox'
+	) );
+
+	$mtb_titular->add_field( array(
+		'name' => esc_html__( '¿Este miembro es titularizado?', 'oda' ),
+		'id'   => ODA_PREFIX . 'miembro_titularizado',
+		'type' => 'checkbox',
+	) );
+	$mtb_titular->add_field( array(
+		'name' => esc_html__( 'Fecha de titularización', 'oda' ),
+		'id'   => ODA_PREFIX . 'miembro_titularizado_fecha',
+		'type' => 'text_date',
+	) );
 	
 
 

@@ -62,7 +62,7 @@ function oda_add_my_scripts(){
                         'mocionID' => $mocion->ID,
                         'mocionTitle' => $mocion->post_title,
                         'mocionSesionparent' => $_GET['post'],
-                        'mocionSesionitem' => get_post_meta($mocion->ID, 'oda_sesion_item', true)
+                        'mocionSesionitem' => get_post_meta($mocion->ID, 'oda_sesion_item', true),
                     );
                     $active_mociones[] = $values;
                 };
@@ -71,16 +71,13 @@ function oda_add_my_scripts(){
 
         }
 
-        // if( 'mocion' === get_post_type() ){
-        //     if (isset($_GET['parent_sesion'])){
-        //         $metas = get_post_meta( $_GET['parent_sesion'], 'oda_sesion_pats_group', true);
-        //         $parent_sesion = array(
-        //             'sesion_list_item_parent' => $metas[$_GET['position']],
-        //         );
-        //         wp_localize_script( 'oda-admin-script', 'oda_sesion_object', $parent_sesion );
-        //     }
+        if( 'mocion' === get_post_type() ){
+            wp_register_style( 'select2css', '//cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.css', false, '1.0', 'all' );
+            wp_register_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.js', array( 'jquery' ), '1.0', true );
+            wp_enqueue_style( 'select2css' );
+            wp_enqueue_script( 'select2' );
 
-        // }
+        }
 
     }
 }
@@ -299,4 +296,13 @@ function mostrarlo(){
             echo '</pre>';
         }
     }
+}
+
+// AJAX recuperar fases de ordenanza
+add_action('wp_ajax_get_fases_ordenanzas','get_fases_ordenanzas');
+function get_fases_ordenanzas(){
+    $ordenanza_metas = get_post_meta($_GET['id'], 'oda_ciudad_owner', true);
+    $fases_ciudad = get_post_meta(intval($ordenanza_metas), 'oda_items_ordenanza_fases', true);
+    echo json_encode( $fases_ciudad );
+    wp_die();
 }
