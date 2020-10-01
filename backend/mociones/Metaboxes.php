@@ -23,7 +23,7 @@ function mocion_register_meta_boxes()
             'oda_mostrar_configuracion_mocion',
             'mocion',
             'side',
-            'high'
+            'low'
         );
 
         add_meta_box(
@@ -259,20 +259,6 @@ function oda_mostrar_configuracion_mocion()
     $city = get_post_meta($_GET['parent_sesion'], 'oda_ciudad_owner', true);
 
     $args = array(
-        'post_type' => 'ordenanza',
-        'posts_per_page' => -1,
-        'meta_key' => 'oda_ciudad_owner',
-        'meta_query' => array(
-            array(
-                'key' => 'oda_ciudad_owner',
-                'value' => $city,
-                'compare' => '=',
-            )
-        )
-    );
-    $ordenanzas_ciudad = new WP_Query($args);
-
-    $args = array(
         'post_type' => 'miembro',
         'posts_per_page' => -1,
         'meta_key' => 'oda_ciudad_owner',
@@ -330,7 +316,7 @@ function oda_mostrar_configuracion_mocion()
                     <label for="tipo_general">
                         <strong><?php echo $tipo->name; ?></strong><br />
                         <?php $tipo_seleccionado = get_post_meta($_GET['post'], 'tipo_votacion_' . $tipo->slug, true); ?>
-                        <select id="tipo_general" name="tipo_votacion_<?php echo $tipo->slug; ?>">
+                        <select id="tipo_<?php echo $tipo->slug; ?>" name="tipo_votacion_<?php echo $tipo->slug; ?>">
                             <option value="">Seleccione</option>
                             <?php
                             $subtipos_votaciones = get_terms(
@@ -354,89 +340,99 @@ function oda_mostrar_configuracion_mocion()
         </ul>
     </div>
     <hr />
-    <?php
-    if ($ordenanzas_ciudad->have_posts()) {
-        $para_ordenanza = get_post_meta($_GET['post'], 'para_ordenanza', true); 
-        $ordenanza_seleccionada = get_post_meta($_GET['post'], 'mocion_ordenanza', true); 
-        $ordenanza_fase_seleccionada = get_post_meta($_GET['post'], 'ordenanza_fase', true); 
+    <?php 
+        $se_mociona = 0;
+        $se_mociona_meta = get_post_meta($_GET['post'], 'se_mociona', true);
+        if ($se_mociona_meta == 1){ $se_mociona = 1; }
+        if ($se_mociona_meta == 2){ $se_mociona = 2; }
     ?>
-        <input id="fase_seleccionada" type="hidden" value="<?php echo $ordenanza_fase_seleccionada; ?>">
-        <div class="custom-field-row">
-            <p style="font-size: 13px; text-transform: italic; color: gray;">Use este elemento solo si esta moción es para  una ordenanza o fase de una ordenanza</p>
-            <label for="para_ordenanza"><strong>¿Moción para ordenanza?</strong><br/>
-                <input type="checkbox" name="para_ordenanza" id="para_ordenanza" <?php echo ($para_ordenanza == 'on') ? 'checked': ''; ?>>
-            </label>
+    <div class="custom-field-row">
+        <p style="font-size: 13px; text-transform: italic; color: gray;">Use este elemento solo si esta moción es para una Ordenanza o una Resolución</p>
+        <span for="para_ordenanza"><strong>¿Se mociona documento?</span><br/>
+        <label for="no_doc"><input id="no_doc" type="radio" name="se_mociona" value="0" <?php echo (0 == $se_mociona) ? 'checked' : '';?>> No</label><br />
+        <label for="si_ord"><input id="si_ord" type="radio" name="se_mociona" value="1" <?php echo (1 == $se_mociona) ? 'checked' : '';?>> Si, Ordenanza</label><br />
+        <label for="si_res"><input id="si_res" type="radio" name="se_mociona" value="2" <?php echo (2 == $se_mociona) ? 'checked' : '';?>> Si, Resolución</label><br />
+        <br />
+    </div>
+    <div class="custom-field-row row-documento disabled">
+        <label id="label_ordenanza" for="documento">
+            <strong>Seleccione Documento</strong>
             <br />
-            <label id="label_ordenanza" for="ordenanza">
-                <strong>Seleccione Ordenanza</strong>
-                <br />
-                <select id="ordenanza" name="mocion_ordenanza" class="select-mocion-ordenanza" title="Seleccione un elemento de la lista de ordenanzas" <?php echo (!empty($ordenanza_seleccionada)) ? '' : 'disabled required'; ?>>
-                    <option value="">Seleccione</option>
-                    <?php while ($ordenanzas_ciudad->have_posts()) {
-                        $ordenanzas_ciudad->the_post(); ?>
-                        <option value="<?php echo get_the_ID(); ?>" <?php echo ($ordenanza_seleccionada == get_the_ID()) ? 'selected="selected"' : ''; ?>><?php echo get_the_title(); ?></option>
-                    <?php } //end while 
-                    ?>
-                </select>
-            </label>
-            <div id="fase_ordenanza_container"></div>
-        </div>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                var selectMocion = $('.select-mocion-ordenanza');
-                $('#mocion_preside').select2();
-                selectMocion
-                    .select2()
-                    .change(function(e){
-                        var ordenanzaID = $(this).val();
-                        if(ordenanzaID > 0){
-                            $.ajax({
-                                url: ajaxurl,
-                                data: {
-                                    action: 'get_fases_ordenanzas',
-                                    id: ordenanzaID,
-                                },
-                                beforeSend: function(){
-                                    $('#fase_ordenanza_container').html('<p>Cargando...</p>');
-                                },
-                                success: function(data){
-                                    data = JSON.parse(data);
-                                    console.log(data.length);
-                                    if(data.length > 0){
-                                        var html = '<label><strong>Seleccione una fase</strong><br />' + 
-                                            '<select name="ordenanza_fase" required>' +
-                                            '<option value="">Seleccione una fase</option>';
-                                        var faseSeleccionada = $('#fase_seleccionada').val();
-                                        $.each(data, function(index, value){
-                                            if (faseSeleccionada == index){
-                                                html += '<option value="'+index+'" selected>' + value + '</option>';
-                                            }else{
-                                                html += '<option value="'+index+'">' + value + '</option>';
-                                            }
-                                        });
-                                        html += '</select></label>';
-                                        $('#fase_ordenanza_container').html('');
-                                        $('#fase_ordenanza_container').html(html);
-                                    }else{
-                                        $('#fase_ordenanza_container').html('<p style="color: red; font-weight: bold;">No hay fases configuradas en la ciudad, revise por favor.</p>');
-                                    }
-                                }
-                            })
-                        }
-                    })
-                $('#para_ordenanza').change(function(){
-                    if($(this).is(':checked')){
-                        $('#ordenanza').removeAttr('disabled');
-                    }else{
-                        $('#ordenanza').val('').trigger('change');
-                        $('#ordenanza').attr('disabled', 'disabled');
-                        $('#fase_ordenanza_container').html('');
-                    }
-                })
-            });
-        </script>
+            <select id="documento" name="mocion_documento" title="Seleccione un elemento de la lista de documentos" disabled required>
+                <option value="">Seleccione Documento</option>                
+            </select>
+        </label>
+        <br />
+        <label id="label_ordenanza" for="fase">
+            <strong>Seleccione Fase</strong>
+            <br />
+            <select id="fase" name="mocion_fase" title="Seleccione un elemento de la lista de fases" disabled required>
+                <option value="">Seleccione Fase</option>                
+            </select>
+        </label>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#mocion_preside').select2();
+            $('#tipo_especifica').select2();
+            var mocionaDocumento = $('[name="se_mociona"]:checked');
+            var mocionDocumentoInput = $('[name="se_mociona"]');
+            if( mocionaDocumento.val() > 0 ){
+                loadDocumentos(mocionaDocumento.val());
+                loadFases(mocionaDocumento.val());
+                $('.row-documento').removeClass('disabled');
+            };
+            mocionDocumentoInput.change(function(){
+                console.log($(this).val())
+                if ($(this).val() == 0){
+                    $('.row-documento').addClass('disabled');
+                    $('#documento').attr('disabled', true);
+                    $('#fase').attr('disabled', true);
+                    $('#documento').val('').trigger('change');
+                    $('#fase').val('').trigger('change');
+                }else{
+                    $('.row-documento').removeClass('disabled');
+                    $('#documento').removeAttr('disabled');
+                    $('#fase').removeAttr('disabled');
+                    loadDocumentos($(this).val());
+                    loadFases($(this).val());
+                }
+            })
+        });
+        function loadDocumentos(index){
+            var selectvalues = '';
+            var html = '';
+            if (1 == index){ selectvalues = oda_documentos_object.ordenanzas; }
+            if (2 == index){ selectvalues = oda_documentos_object.resoluciones; }
+            html += '<option value="">Seleccione documento</option>';
+            $.each(selectvalues, function(index, value){
+                var selected = '';
+                if (oda_documentos_object.documento_id == value.documento_id) { selected = 'selected'; }
+                html += '<option value="'+value.documento_id+'" '+selected+'>'+value.documento_title+'</option>';
+            })
+            $('#documento').html('');
+            $('#documento').append(html);
+            $('#documento').select2();
+            $('#documento').removeAttr('disabled');
+        }
+        function loadFases(index){
+            var selectvalues = '';
+            var html = '';
+            if (1 == index){ selectvalues = oda_documentos_object.fases_ordenanzas; }
+            if (2 == index){ selectvalues = oda_documentos_object.fases_resoluciones; }
+            html += '<option value="">Seleccione fase</option>';
+            $.each(selectvalues, function(index, value){
+                var selected = '';
+                if (oda_documentos_object.fase_pos == value.index) { selected = 'selected'; }
+                html += '<option value="'+value.index+'" '+selected+'>'+value.title+'</option>';
+            })
+            $('#fase').html('');
+            $('#fase').append(html);
+            $('#fase').select2();
+            $('#fase').removeAttr('disabled');
+        }
+    </script>
     <?php
-    } // END if have posts
     echo '<pre>';
     //var_dump($ordenanzas_ciudad);
     echo '</pre>';
@@ -456,13 +452,14 @@ function oda_save_mocion_meta($post_id)
         'tipo_votacion_general',
         'tipo_votacion_media',
         'tipo_votacion_especifica',
-        'mocion_ordenanza',
-        'ordenanza_fase',
-        'para_ordenanza',
         'mocion_fecha',
         'mocion_hora',
         'mocion_preside',
         'mocion_orden',
+        // Para guardar datos si es ordenanza o resolucion
+        'se_mociona',
+        'mocion_documento',
+        'mocion_fase'
     ];
     foreach ($fields as $field) {
         if (array_key_exists($field, $_POST)) {
@@ -471,6 +468,9 @@ function oda_save_mocion_meta($post_id)
     }
     if (!isset($_POST['ordenanza_fase'])){
         update_post_meta($post_id, 'para_ordenanza', 'off');
+    }
+    if (!isset($_POST['resolucion_fase'])){
+        update_post_meta($post_id, 'para_resolucion', 'off');
     }
     // echo '<pre>';
     // var_dump($_POST);

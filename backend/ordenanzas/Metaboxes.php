@@ -34,28 +34,6 @@ function oda_ordenanza_metabox() {
     }
 
     /* --------------------------------------------------------------
-        ORDENANZAS: METABOX METADATA
-    -------------------------------------------------------------- */
-    $mtb_metas = new_cmb2_box( array(
-        'id'            => 'oda_ordenanza_metas',
-        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Metadatos', 'oda' ),
-        'object_types'  => array( 'ordenanza' ),
-        'context'    => 'side',
-        'priority'   => 'high',
-        'show_names' => true,
-        'classes'    => 'oda-metabox'
-    ) );
-
-    /* ORDENANZAS: Etiqueta de Color */
-    $mtb_metas->add_field( array(
-        'name'    => esc_html__( 'Etiqueta de Color', 'oda' ),
-        'desc'    => esc_html__( 'Identificación visual para el sistema', 'oda' ),
-        'id'      => ODA_PREFIX . 'ordenanza_color',
-        'type'    => 'colorpicker',
-        'default' => '#ffffff'
-    ) );
-
-    /* --------------------------------------------------------------
         ORDENANZAS: METABOX RELACIONES
     -------------------------------------------------------------- */
     $mtb_ordenanza_rel = new_cmb2_box( array(
@@ -93,7 +71,7 @@ function oda_ordenanza_metabox() {
 
         /* ORDENANZAS: Ciudades */
         $mtb_ordenanza_rel->add_field( array(
-            'name'       => esc_html__( '¿A qué ciudad pertenece este miembro?', 'oda' ),
+            'name'       => esc_html__( '¿A qué ciudad pertenece esta ordenanza?', 'oda' ),
             'desc'       => esc_html__( 'Este campo es obligatorio', 'oda' ),
             'id'         => ODA_PREFIX . 'ciudad_owner',
             'type'             => 'select',

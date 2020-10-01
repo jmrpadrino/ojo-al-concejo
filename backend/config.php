@@ -76,6 +76,90 @@ function oda_add_my_scripts(){
             wp_register_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.js', array( 'jquery' ), '1.0', true );
             wp_enqueue_style( 'select2css' );
             wp_enqueue_script( 'select2' );
+            if (isset($_GET['parent_sesion'])){
+                $city = get_post_meta($_GET['parent_sesion'], ODA_PREFIX . 'ciudad_owner', true);
+                $ordenanzas = new WP_Query(
+                    array(
+                        'post_type' => 'ordenanza',
+                        'posts_per_page' => -1,
+                        'meta_key' => ODA_PREFIX . 'ciudad_owner',
+                        'orderby' => 'post_id',
+                        'order' => 'ASC',
+                        'meta_query' => array(
+                            array(
+                                'key' => ODA_PREFIX . 'ciudad_owner',
+                                'value' => $city,
+                                'compare' => '='
+                            )
+                        )
+                    )
+                );
+                $values = array();
+                foreach($ordenanzas->posts as $ordenanza){
+                    $values = array(
+                        'documento_id' => $ordenanza->ID,
+                        'documento_title' => $ordenanza->post_title,
+                    );
+                    $active_ordenanzas[] = $values;
+                };
+
+                $resoluciones = new WP_Query(
+                    array(
+                        'post_type' => 'resolucion',
+                        'posts_per_page' => -1,
+                        'meta_key' => ODA_PREFIX . 'ciudad_owner',
+                        'orderby' => 'post_id',
+                        'order' => 'ASC',
+                        'meta_query' => array(
+                            array(
+                                'key' => ODA_PREFIX . 'ciudad_owner',
+                                'value' => $city,
+                                'compare' => '='
+                            )
+                        )
+                    )
+                );
+                $values = array();
+                foreach($resoluciones->posts as $resolucion){
+                    $values = array(
+                        'documento_id' => $resolucion->ID,
+                        'documento_title' => $resolucion->post_title,
+                    );
+                    $active_resoluciones[] = $values;
+                };
+
+                $fases_ordenanza = array();
+                foreach(
+                    get_post_meta($city, ODA_PREFIX . 'items_ordenanza_fases', true) as
+                    $index => $fase
+                ){
+                    $fases_ordenanza[] = array(
+                        'index' => $index,
+                        'title' => $fase
+                    );
+                }
+                $fases_resolucion = array();
+                foreach(
+                    get_post_meta($city, ODA_PREFIX . 'items_resolucion_fases', true) as
+                    $index => $fase
+                ){
+                    $fases_resolucion[] = array(
+                        'index' => $index,
+                        'title' => $fase
+                    );
+                }
+
+                $ordenanzas_y_fases['ordenanzas'] = $active_ordenanzas;
+                $ordenanzas_y_fases['resoluciones'] = $active_resoluciones;
+                $ordenanzas_y_fases['fases_ordenanzas'] = $fases_ordenanza ;
+                $ordenanzas_y_fases['fases_resoluciones'] = $fases_resolucion;
+                $ordenanzas_y_fases['documento_id'] = get_post_meta($_GET['post'], 'mocion_documento', true);
+                $ordenanzas_y_fases['fase_pos'] = get_post_meta($_GET['post'], 'mocion_fase', true);
+
+
+            }
+
+            wp_localize_script( 'oda-admin-script', 'oda_documentos_object', $ordenanzas_y_fases );
 
         }
 
@@ -306,3 +390,44 @@ function get_fases_ordenanzas(){
     echo json_encode( $fases_ciudad );
     wp_die();
 }
+
+// AJAX recuperar fases de resoluciones
+add_action('wp_ajax_get_fases_resolucion','get_fases_resolucion');
+function get_fases_resolucion(){
+    $resolucion_meta = get_post_meta($_GET['id'], 'oda_ciudad_owner', true);
+    $fases_ciudad = get_post_meta(intval($resolucion_meta), 'oda_items_resolucion_fases', true);
+    echo json_encode( $fases_ciudad );
+    wp_die();
+}
+
+// Script para vista de mociones
+add_action( 'admin_footer', 'oda_mociones_script' ); // For back-end
+function oda_mociones_script(){
+?>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $('#para_ordenanza').click(function(){
+            if ($(this).is(':checked')){
+                $('#para_resolucion').prop('checked',false);
+                $('#resolucion').val('').trigger('change');
+                $('#resolucion').attr('disabled', 'disabled');
+                $('#fase_resolucion_container').html('');
+            }
+        })
+        
+        $('#para_resolucion').click(function(){
+            if ($(this).is(':checked')){
+                $('#para_ordenanza').prop('checked',false);
+                $('#ordenanza').val('').trigger('change');
+                $('#ordenanza').attr('disabled', 'disabled');
+                $('#fase_ordenanza_container').html('');
+            }
+        });
+        
+    })
+</script>
+<?php
+}
+
+
