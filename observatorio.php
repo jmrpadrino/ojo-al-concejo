@@ -116,6 +116,7 @@ require_once( ODA_DIR_PATH . 'backend/metaboxes/conditionals/cmb2-conditionals.p
 require_once( ODA_DIR_PATH . 'backend/sesiones/Sesion.php' );
 require_once( ODA_DIR_PATH . 'backend/sesiones/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/sesiones/Taxonomias.php' );
+require_once( ODA_DIR_PATH . 'backend/sesiones/Admin-columns.php' );
 require_once( ODA_DIR_PATH . 'backend/asistencias/Asistencia.php' );
 require_once( ODA_DIR_PATH . 'backend/asistencias/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/asistencias/Functions.php' );

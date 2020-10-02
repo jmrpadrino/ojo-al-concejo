@@ -49,6 +49,11 @@ function oda_mostrar_listado_mocion($post, $args)
     $query_miembros = get_miembros($args['args']['city']);
     $votos = get_post_meta($_GET['post'], 'oda_sesion_mocion', true);
 ?>
+    <script>
+        $(document).ready(function(){
+            $('#title').attr('required', true);
+        })
+    </script>
     <div class="custom-field-row">
         <input type="hidden" name="oda_parent_sesion" value="<?php echo $args['args']['parent_sesion']; ?>">
         <input type="hidden" name="oda_sesion_item" value="<?php echo $args['args']['item']; ?>">
@@ -147,7 +152,7 @@ function oda_mostrar_listado_mocion($post, $args)
                 $miembros_suplentes = get_post_meta(get_the_ID(), 'oda_miembro_miembros_suplentes', true);
             ?>
                 <input type="hidden" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][member_id]" value="<?php echo get_the_ID(); ?>">
-                <div class="oda_row">
+                <div class="oda_row member-item">
                     <div class="oda_col oda_col1">
                         <strong><?php echo get_the_title(); ?></strong>
                         <?php if ($miembros_suplentes) { ?>
@@ -169,7 +174,7 @@ function oda_mostrar_listado_mocion($post, $args)
                         }
                         ?>
                         <label for="asiste-<?php echo get_the_ID(); ?>">
-                            <input name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][member_ausente]" class="asiste_miembro" type="checkbox" <?php echo $checked_ausente; ?>>
+                            <input id="asiste-<?php echo get_the_ID(); ?>" data-rowid="<?php echo get_the_ID(); ?>" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][member_ausente]" class="asiste_miembro" type="checkbox" <?php echo $checked_ausente; ?>>
                         </label>
                     </div>
                     <div class="oda_col col-same oda_col3 text-center">
@@ -180,7 +185,9 @@ function oda_mostrar_listado_mocion($post, $args)
                                 $checked_excusa = 'checked';
                             }
                         ?>
-                            <label for="excusa-<?php echo get_the_ID(); ?>"><input name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][member_excusa]" class="excusa_miembro" type="checkbox" data-option="suplente-<?php echo get_the_ID(); ?>" <?php echo $checked_excusa; ?>></label>
+                            <label for="excusa-<?php echo get_the_ID(); ?>">
+                                <input id="excusa-<?php echo get_the_ID(); ?>" data-rowid="<?php echo get_the_ID(); ?>" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][member_excusa]" class="excusa_miembro" type="checkbox" data-option="suplente-<?php echo get_the_ID(); ?>" <?php echo $checked_excusa; ?>>
+                            </label>
                         <?php } ?>
                     </div>
                     <div class="oda_col oda_col4">
@@ -220,7 +227,7 @@ function oda_mostrar_listado_mocion($post, $args)
                             $voto = $votos[get_the_ID()]['mocion_voto'];
                         }
                         ?>
-                        <ul>
+                        <ul id="row-voto-<?php echo get_the_ID(); ?>">
                             <li>
                                 <input class="voto_miembro" type="radio" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][mocion_voto]" value="1" <?php echo ($voto == 1) ? 'checked' : ''; ?>>
                             </li>
@@ -249,6 +256,27 @@ function oda_mostrar_listado_mocion($post, $args)
                 <input type="submit" name="publish_and_back" id="publish" class="button button-primary button-large" value="Guardar y volver">
             </div>
         </div>
+        <script>
+            $(document).ready(function(){                
+                $('.asiste_miembro').change(function(){
+                    var siblingId = $(this).data('rowid');
+                    //console.log($(this).data('rowid'));
+                    if($(this).is(':checked')){
+                        if($('#excusa-'+ siblingId ).is(':checked')){
+                            $('#excusa-'+ siblingId ).click().attr('disabled', true);
+                        }else{
+                            $('#excusa-'+ siblingId ).attr('disabled', true);
+                        }
+                        console.log($('#row-voto-'+ siblingId + ' .voto_miembro' )) //.prop('checked', false).attr('disabled', true);
+                        $('#row-voto-'+ siblingId + ' .voto_miembro' ).prop('checked', false).attr('disabled', true);
+                    }else{
+                        $('#excusa-'+ siblingId ).removeAttr('disabled');
+                        $('#row-voto-'+ siblingId + ' .voto_miembro' ).removeAttr('disabled');
+                    }
+                })
+
+            })
+        </script>
     </div><!-- END custom-field-row -->
 <?php
 }
@@ -285,6 +313,7 @@ function oda_mostrar_configuracion_mocion()
     );
     $preside_seleccionado = get_post_meta($_GET['post'], 'mocion_preside', true);
 ?>
+    <input type="hidden" name="oda_ciudad_owner" value="<?php echo $city; ?>">
     <div class="custom-field-row">
         <label><strong>Preside la moción</strong><br/>
             <select id="mocion_preside" name="mocion_preside">
@@ -383,7 +412,6 @@ function oda_mostrar_configuracion_mocion()
                 $('.row-documento').removeClass('disabled');
             };
             mocionDocumentoInput.change(function(){
-                console.log($(this).val())
                 if ($(this).val() == 0){
                     $('.row-documento').addClass('disabled');
                     $('#documento').attr('disabled', true);
@@ -445,6 +473,7 @@ function oda_save_mocion_meta($post_id)
         $post_id = $parent_id;
     }
     $fields = [
+        'oda_ciudad_owner',
         'oda_parent_sesion',
         'oda_sesion_item',
         'oda_sesion_mocion',

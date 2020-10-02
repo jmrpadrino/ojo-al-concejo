@@ -405,27 +405,6 @@ add_action( 'admin_footer', 'oda_mociones_script' ); // For back-end
 function oda_mociones_script(){
 ?>
 <script type="text/javascript">
-    $(document).ready(function(){
-
-        $('#para_ordenanza').click(function(){
-            if ($(this).is(':checked')){
-                $('#para_resolucion').prop('checked',false);
-                $('#resolucion').val('').trigger('change');
-                $('#resolucion').attr('disabled', 'disabled');
-                $('#fase_resolucion_container').html('');
-            }
-        })
-        
-        $('#para_resolucion').click(function(){
-            if ($(this).is(':checked')){
-                $('#para_ordenanza').prop('checked',false);
-                $('#ordenanza').val('').trigger('change');
-                $('#ordenanza').attr('disabled', 'disabled');
-                $('#fase_ordenanza_container').html('');
-            }
-        });
-        
-    })
 </script>
 <?php
 }
