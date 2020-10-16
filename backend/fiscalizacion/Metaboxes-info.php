@@ -209,6 +209,7 @@ function oda_solicitud_info_metabox() {
             'name' => esc_html__( 'Institución requerida', 'oda' ),
             'desc' => __( 'Seleccione la institución requerida para esta solicitud.', 'oda' ),
             'type' => 'select',
+            'classes_cb' => 'oda_select2',
             'options' => $array_instituciones
         ) );
     }
@@ -219,6 +220,7 @@ function oda_solicitud_info_metabox() {
         'name' => esc_html__( 'Persona requerida', 'oda' ),
         'desc' => __( 'Seleccione la Persona requerida para esta solicitud.', 'oda' ),
         'type' => 'select',
+        'classes_cb' => 'oda_select2',
         'options' => array()
     ) );
 
@@ -231,10 +233,8 @@ function oda_solicitud_info_metabox() {
         'show_option_none' => true,
         'default'          => 'alcalde',
         'options'          => array(
-            'aprobado'       => __( 'Aprobado', 'oda' ),
-            'discusion'      => __( 'En Discusión', 'oda' ),
-            'derogado'    => __( 'Derogado', 'oda' ),
-            'noaprobado'    => __( 'No Aprobado', 'oda' ),
+            '1'       => __( 'Solicitud presentada', 'oda' ),
+            '2'      => __( 'Respuesta', 'oda' ),
         )
     ) );
 

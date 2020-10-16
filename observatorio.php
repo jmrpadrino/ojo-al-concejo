@@ -51,6 +51,7 @@ define('ODA_OBJECTS', $oda_objects );
 // Backend files
 // ----------------------------------------------------------------
 require_once( ODA_DIR_PATH . 'backend/config.php' );
+require_once( ODA_DIR_PATH . 'backend/metaboxes/conditionals/cmb2-conditionals.php' );
 
 /**
  * Support for CTP Ciudad
@@ -115,7 +116,6 @@ require_once( ODA_DIR_PATH . 'backend/resoluciones/Admin-columns.php' );
 /**
  * Support for CTP Sesiones
  */
-require_once( ODA_DIR_PATH . 'backend/metaboxes/conditionals/cmb2-conditionals.php' );
 require_once( ODA_DIR_PATH . 'backend/sesiones/Sesion.php' );
 require_once( ODA_DIR_PATH . 'backend/sesiones/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/sesiones/Taxonomias.php' );
