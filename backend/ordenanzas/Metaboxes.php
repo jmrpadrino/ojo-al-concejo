@@ -305,6 +305,7 @@ function oda_ordenanza_metabox() {
             )
         )
     ));
+    $array_temas = array();
     while ($query_temas->have_posts()) : $query_temas->the_post();
         $array_temas[get_the_ID()] = get_the_title();
     endwhile;

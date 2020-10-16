@@ -110,6 +110,30 @@ function oda_solicitud_info_metabox() {
         'type' => 'text_date'
     ) );
 
+    $query_miembros = new WP_Query(array(
+        'post_type' => 'miembro',
+        'posts_per_page' => -1,
+        //'meta_key'=> 'oda_miembro_curul',
+        'order' => 'ASC',
+        //'order_by' => 'meta_value_num',
+        'order_by' => 'id',
+        'meta_query' => array(
+            array(
+                'key' => 'oda_ciudad_owner',
+                'value' => $city,
+                'compare' => '='
+            )
+        )
+    ));
+    while ($query_miembros->have_posts()) : $query_miembros->the_post();
+        $array_miembros[get_the_ID()] = get_the_title();
+        $curul = get_post_meta(get_the_ID(), 'oda_miembro_curul', true);
+        if('1' != $curul){
+            $array_concejales[get_the_ID()] = get_the_title();
+        }
+    endwhile;
+    wp_reset_query();
+
     /* DATA SOLICITUD: Iniciativa */
     $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'solicitud_info_iniciativa',
@@ -121,16 +145,13 @@ function oda_solicitud_info_metabox() {
         'options'          => array(
             'alcalde'       => __( 'Alcalde', 'oda' ),
             'concejal'      => __( 'Concejal', 'oda' ),
-            'comisiones'    => __( 'Comisiones', 'oda' ),
+            'comision'    => __( 'Comisión', 'oda' ),
             'ciudadania'    => __( 'Ciudadanía', 'oda' ),
         )
     ) );
-
-
-
-    /* DATA SOLICITUD: Miembros [ PRE GET POSTS ] */
-    $query_miembros = new WP_Query(array(
-        'post_type' => 'miembro',
+    // comisiones
+    $args = array(
+        'post_type' => 'comision',
         'posts_per_page' => -1,
         'meta_query' => array(
             array(
@@ -139,7 +160,59 @@ function oda_solicitud_info_metabox() {
                 'compare' => '='
             )
         )
-    ));
+    );
+    $array_comisiones = array();
+    $comisiones = new WP_Query($args);
+    while ($comisiones->have_posts()) : $comisiones->the_post();
+        $array_comisiones[get_the_ID()] = get_the_title();
+    endwhile;
+    wp_reset_query();
+    $mtb_observacion_data->add_field (array(
+        'name' => esc_html__( 'Comisión Solicitante', 'oda' ),
+        'desc' => __( 'Seleccione la comisión solicitante.', 'oda' ),
+        'id'         => ODA_PREFIX . 'solicitud_info_iniciativa_solicitante_comision',
+        'type'          => 'select',
+        'options'       => $array_comisiones,
+        'attributes'    => array(
+            'data-conditional-id'     => ODA_PREFIX . 'solicitud_info_iniciativa',
+            'data-conditional-value'  => 'comision',
+        ),
+    ) );
+    $mtb_observacion_data->add_field( array(
+        'id'         => ODA_PREFIX . 'solicitud_info_iniciativa_solicitante_concejal',
+        'name' => esc_html__( 'Consejal Solicitante', 'oda' ),
+        'desc' => __( 'Seleccione el consejal solicitante.', 'oda' ),
+        'type' => 'select',
+        'options'          => $array_concejales,
+        'attributes'    => array(
+            'data-conditional-id'     => ODA_PREFIX . 'solicitud_info_iniciativa',
+            'data-conditional-value'  => 'concejal',
+        ),
+    ) );
+    $mtb_observacion_data->add_field( array(
+        'id'         => ODA_PREFIX . 'solicitud_info_iniciativa_solicitante_ciudadania',
+        'name' => esc_html__( 'Nombre del Solicitante', 'oda' ),
+        'desc' => __( 'Indique el nombre del ciudadano solicitante', 'oda' ),
+        'type' => 'text',
+        'attributes'    => array(
+            'data-conditional-id'     => ODA_PREFIX . 'solicitud_info_iniciativa',
+            'data-conditional-value'  => 'ciudadania',
+        ),
+    ) );
+
+
+    /* DATA SOLICITUD: Miembros [ PRE GET POSTS ] */
+    // $query_miembros = new WP_Query(array(
+    //     'post_type' => 'miembro',
+    //     'posts_per_page' => -1,
+    //     'meta_query' => array(
+    //         array(
+    //             'key' => 'oda_ciudad_owner',
+    //             'value' => $city,
+    //             'compare' => '='
+    //         )
+    //     )
+    // ));
 
     if ( !$query_miembros->have_posts() ){
         /* DATA SOLICITUD: Aviso [Si no hay miembros disponibles para la ciudad] */
@@ -150,11 +223,6 @@ function oda_solicitud_info_metabox() {
             'type' => 'title'
         ) );
     } else {
-        /* DATA SOLICITUD: Miembros [ PRE GET POSTS ] */
-        while ($query_miembros->have_posts()) : $query_miembros->the_post();
-        $array_miembros[get_the_ID()] = get_the_title();
-        endwhile;
-        wp_reset_query();
 
         /* DATA SOLICITUD: Miembros */
         $mtb_observacion_data->add_field( array(
