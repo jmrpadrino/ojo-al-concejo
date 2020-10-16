@@ -33,28 +33,6 @@ function oda_instituciones_metabox() {
     }
 
     /* --------------------------------------------------------------
-        INSTITUCIONES: METABOX METADATA
-    -------------------------------------------------------------- */
-    $mtb_metas = new_cmb2_box( array(
-        'id'            => 'oda_instituciones_metas',
-        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Metadatos', 'oda' ),
-        'object_types'  => array( 'instituciones' ),
-        'context'    => 'side',
-        'priority'   => 'high',
-        'show_names' => true,
-        'classes'    => 'oda-metabox'
-    ) );
-
-    /* INSTITUCIONES: Etiqueta de Color */
-    $mtb_metas->add_field( array(
-        'name'    => esc_html__( 'Etiqueta de Color', 'oda' ),
-        'desc'    => esc_html__( 'Identificación visual para el sistema', 'oda' ),
-        'id'      => ODA_PREFIX . 'ordenanza_color',
-        'type'    => 'colorpicker',
-        'default' => '#ffffff'
-    ) );
-
-    /* --------------------------------------------------------------
         INSTITUCIONES: METABOX RELACIONES
     -------------------------------------------------------------- */
     $mtb_ordenanza_rel = new_cmb2_box( array(

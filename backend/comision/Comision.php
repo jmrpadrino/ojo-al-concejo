@@ -33,7 +33,7 @@ function oda_Comision() {
 		'filter_items_list'     => __( 'Filtrar lista de Comisiones', 'oda' ),
 	);
 	$rewrite = array(
-        'slug'                  => '%ciudad_owner%/comision',
+        'slug'                  => 'comision',
         'with_front'            => true,
         'pages'                 => true,
         'feeds'                 => true,

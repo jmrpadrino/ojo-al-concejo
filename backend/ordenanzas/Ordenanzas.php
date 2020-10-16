@@ -32,7 +32,7 @@ function oda_Ordenanzas() {
 		'filter_items_list'     => __( 'Filtrar lista de Ordenanzas', 'oda' ),
 	);
 	$rewrite = array(
-        'slug'                  => 'resolucion',
+        'slug'                  => 'ordenanza',
         'with_front'            => true,
         'pages'                 => true,
         'feeds'                 => true,
@@ -54,7 +54,7 @@ function oda_Ordenanzas() {
         'has_archive'           => 'todas-las-ordenanzas',
         'exclude_from_search'   => false,
         'publicly_queryable'    => true,
-        'query_var'             => 'resolucion',
+        'query_var'             => 'ordenanza',
         'rewrite'               => $rewrite,
         'capability_type'       => 'post',
         'show_in_rest'          => true,

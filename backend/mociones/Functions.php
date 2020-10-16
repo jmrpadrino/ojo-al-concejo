@@ -186,9 +186,9 @@ Adicional:
 
                         $si = $no = $ab = $bl = 0;
                         foreach ($votacion as $voto) {
-                            echo '<pre>';
-                            //var_dump($voto);
-                            echo '</pre>';
+                            /* echo '<pre>';
+                            var_dump($voto);
+                            echo '</pre>'; */
                             switch ($voto['mocion_voto']) {
                                 case '1':
                                     $si++;
@@ -228,6 +228,131 @@ Adicional:
                                 <td><strong><?php echo $bl; ?></strong></td>
                             </tr>
                         </table>
+                        <br />
+                        <br />
+                        <h3>Votación</h3>
+                        <table width="100%" cellspacing="0" border="1">
+                            <tr>
+                                <td><strong>MIEMBRO</strong></td>
+                                <td align="center"><strong>AS</strong></td>
+                                <td align="center"><strong>AU</strong></td>
+                                <td align="center"><strong>EX</strong></td>
+                                <td align="center"><strong>DE</strong></td>
+                                <td align="center"><strong>SI</strong></td>
+                                <td align="center"><strong>NO</strong></td>
+                                <td align="center"><strong>AB</strong></td>
+                                <td align="center"><strong>BL</strong></td>
+                            </tr>
+                            <?php
+                                $personas = $miembros->posts;
+                                $suplentes = array();
+                                foreach ($personas as $persona) {
+                                    $as = $au = $ex = $de = $si = $no = $ab = $bl = 0;
+                                    echo '<tr>';
+                                    echo '<td><strong>'.$persona->post_title.'</strong><br/></td>';
+                                    $metas = get_post_meta($mociones->ID, 'oda_sesion_mocion',true);
+                                    if(isset($metas[$persona->ID]['member_excusa'])){
+                                        // se excusó
+                                        $ex++;
+                                        if(isset($metas[$persona->ID]['member_suplente'])){
+                                            $de++;
+                                            $suplentes[] = array(
+                                                'suplente_id' => $metas[$persona->ID]['member_suplente'],
+                                                'miembro' => $persona->ID,
+                                                'voto' => $metas[$persona->ID]['mocion_voto']
+                                            );
+                                        }
+                                    }else{
+                                        // no se excusó, asistíó o no
+                                        if (isset($metas[$persona->ID]['member_ausente'])){
+                                            // No asistió y se excusó se cuentan votos para suplente
+                                            $au++;
+                                        }else{
+                                            // Asistió se cuentan votos a miembro principal
+                                            switch ($metas[$persona->ID]['mocion_voto']) {
+                                                case '1':
+                                                    $si++; $as++;
+                                                    break;
+                                                case '2':
+                                                    $no++; $as++;
+                                                    break;
+                                                case '3':
+                                                    $ab++; $as++;
+                                                    break;
+                                                case '4':
+                                                    $bl++; $as++;
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    echo '<td align="center">' . $as . '</td>';
+                                    echo '<td align="center">' . $au . '</td>';
+                                    echo '<td align="center">' . $ex . '</td>';
+                                    echo '<td align="center">' . $de . '</td>';
+                                    echo '<td align="center">' . $si . '</td>';
+                                    echo '<td align="center">' . $no . '</td>';
+                                    echo '<td align="center">' . $ab . '</td>';
+                                    echo '<td align="center">' . $bl . '</td>';
+                                    echo '</tr>';
+                                }
+                            ?>
+                            <?php if (count($suplentes) > 0){ ?>
+                            <tr style="background: yellow;">
+                                <td colspan="9" align="center"><strong>Suplentes</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>MIEMBRO SUPLENTE</strong></td>
+                                <td align="center"><strong>AS</strong></td>
+                                <td align="center"><strong>AU</strong></td>
+                                <td align="center"><strong>--</strong></td>
+                                <td align="center"><strong>--</strong></td>
+                                <td align="center"><strong>SI</strong></td>
+                                <td align="center"><strong>NO</strong></td>
+                                <td align="center"><strong>AB</strong></td>
+                                <td align="center"><strong>BL</strong></td>
+                            </tr>
+                            <?php 
+                                foreach($suplentes as $suplente){ 
+                                    $sas = $sau = $ssi = $sno = $sab = $sbl = 0;
+                                    if(NULL == $suplente['voto']){
+                                        $sau++;
+                                    }else{
+                                        $sas++;
+                                        switch ($suplente['voto']) {
+                                            case '1':
+                                                $ssi++;
+                                                break;
+                                            case '2':
+                                                $sno++;
+                                                break;
+                                            case '3':
+                                                $sab++;
+                                                break;
+                                            case '4':
+                                                $sbl++;
+                                                break;
+                                        }
+                                    }
+                            ?>
+                            <tr>
+                                <td><strong><?php echo get_the_title($suplente['suplente_id']); ?></strong>. En reemplazo de <?php echo get_the_title($suplente['miembro']); ?></td>
+                                <td align="center"><strong><?php echo $sas; ?></strong></td>
+                                <td align="center"><strong><?php echo $sau; ?></strong></td>
+                                <td align="center"><strong>--</strong></td>
+                                <td align="center"><strong>--</strong></td>
+                                <td align="center"><strong><?php echo $ssi; ?></strong></td>
+                                <td align="center"><strong><?php echo $sno; ?></strong></td>
+                                <td align="center"><strong><?php echo $sab; ?></strong></td>
+                                <td align="center"><strong><?php echo $sbl; ?></strong></td>
+                            </tr>
+                            <?php } ?>
+                            <?php } ?>                            
+                        </table>
+                        <?php
+                            /* echo '<pre>';
+                            var_dump($suplentes);
+                            echo '</pre>'; */
+                        ?>
                         <br />
                         <hr />
                         <br />

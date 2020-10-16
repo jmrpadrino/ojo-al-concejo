@@ -174,6 +174,13 @@ function oda_ordenanza_metabox() {
         ) );
     }
 
+    /* DATA ORDENANZA: Proponente */
+    $mtb_observacion_data->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_iniciativa_ciudadana',
+        'name' => esc_html__( 'Iniciativa Ciudadana', 'oda' ),        
+        'type' => 'text'
+    ) );
+
     /* DATA ORDENANZA: Estado */
     $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'ordenanza_estado',
@@ -182,12 +189,15 @@ function oda_ordenanza_metabox() {
         'type' => 'select',
         'show_option_none' => true,
         'default'          => 'alcalde',
+        'options' => ORDENANZA_STATUS
+        /*
         'options'          => array(
             'aprobado'       => __( 'Aprobado', 'oda' ),
             'discusion'      => __( 'En Discusión', 'oda' ),
             'derogado'    => __( 'Derogado', 'oda' ),
             'noaprobado'    => __( 'No Aprobado', 'oda' ),
         )
+        */
     ) );
 
     /* DATA ORDENANZA: Comisión [ PRE GET POSTS ] */
@@ -245,6 +255,69 @@ function oda_ordenanza_metabox() {
         'type' => 'text_url'
     ) );
 
+    /* DATA INCIDENCIA: Urgente [Checkbox] */
+    $mtb_observacion_data->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_incidencia_urgente',
+        'name' => esc_html__( '¿Esta incidencia es Urgente?', 'oda' ),
+        'desc' => __( 'Seleccione si esta ordenanza es urgente.', 'oda' ),
+        'type' => 'checkbox'
+    ) );
+
+    /* DATA INCIDENCIA: Activar [Checkbox] */
+    $mtb_observacion_data->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_incidencia_act',
+        'name' => esc_html__( '¿Esta ordenanza tiene incidencias?', 'oda' ),
+        'desc' => __( 'Seleccione si esta ordenanza tiene alguna incidencia.', 'oda' ),
+        'type' => 'checkbox'
+    ) );
+
+    /* DATA INCIDENCIA: Análisis y Boletínes */
+    $mtb_observacion_data->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_analisis_boletines',
+        'name' => esc_html__( 'URL de Análisis y Boletines', 'oda' ),
+        'desc' => __( 'Agregue el URL de Análisis y Boletines.', 'oda' ),
+        'type' => 'text'
+    ) );
+
+    /* DATA INCIDENCIA: Temas [Taxonomy Select] */
+    /* $mtb_observacion_data->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_incidencia_temas',
+        'name' => esc_html__( 'Temas de Ordenanza', 'oda' ),
+        'desc' => __( 'Seleccione el / los temas de esta incidencia.', 'oda' ),
+        'taxonomy'       => 'temas',
+        'type'           => 'taxonomy_select',
+        'remove_default' => 'true',
+        'query_args' => array(
+            'orderby' => 'slug',
+            'hide_empty' => false,
+            'parent_id' => 9
+        )
+    ) ); */
+    // colocar los temas CPT
+    $query_temas = new WP_Query(array(
+        'post_type' => 'tema_ordenanza',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => 'oda_ciudad_owner',
+                'value' => $city,
+                'compare' => '='
+            )
+        )
+    ));
+    while ($query_temas->have_posts()) : $query_temas->the_post();
+        $array_temas[get_the_ID()] = get_the_title();
+    endwhile;
+    $mtb_observacion_data->add_field( array(
+        'id'         => ODA_PREFIX . 'ordenanza_incidencia_temas',
+        'name' => esc_html__( 'Temas de Ordenanza', 'oda' ),
+        'desc' => __( 'Seleccione el / los temas de esta incidencia.', 'oda' ),
+        'type' => 'select',
+        'classes_cb' => 'oda_select2',
+        'options' => $array_temas
+    ) );
+
+
     /* --------------------------------------------------------------
         DATA ORDENANZA: INCIDENCIA METABOX
     -------------------------------------------------------------- */
@@ -258,26 +331,18 @@ function oda_ordenanza_metabox() {
         'classes'    => 'oda-metabox'
     ) );
 
-    /* DATA INCIDENCIA: Activar [Checkbox] */
-    $mtb_ordenanza_inc->add_field( array(
-        'id'         => ODA_PREFIX . 'ordenanza_incidencia_act',
-        'name' => esc_html__( '¿Esta ordenanza es una incidencia?', 'oda' ),
-        'desc' => __( 'Seleccione si esta ordenanza tiene alguna incidencia.', 'oda' ),
-        'type' => 'checkbox'
-    ) );
-
     /* DATA INCIDENCIA: Imágenes de la incidencia */
     $group_field_id = $mtb_ordenanza_inc->add_field( array(
         'id'            => ODA_PREFIX . 'ordenanza_incidencia_group',
         'name'          => esc_html__( 'Incidencias Relacionadas', 'oda' ),
-        'description'   => __( 'Incidencias relacionadas de la ordenanza', 'oda' ),
+        'description'   => __( 'Incidencias relacionadas a la ordenanza', 'oda' ),
         'type'          => 'group',
         'options'     => array(
             'group_title'       => __( 'Incidencia {#}', 'oda' ),
             'add_button'        => __( 'Agregar Otra Incidencia', 'oda' ),
             'remove_button'     => __( 'Remover Incidencia', 'oda' ),
             'sortable'          => true,
-            'closed'         => true,
+            //'closed'         => true,
             'remove_confirm' => esc_html__( '¿Esta seguro de remover esta incidencia?', 'oda' )
         ),
     ) );
@@ -314,52 +379,13 @@ function oda_ordenanza_metabox() {
         'desc' => __( 'Agregue el ID del video de la incidencia. <br/> EG: https://www.youtube.com/watch?v=<b>kXShLPXJSJSH</b>.', 'oda' ),
         'type' => 'text'
     ) );
-
     /* DATA INCIDENCIA: Urgente [Checkbox] */
-    $mtb_ordenanza_inc->add_field( array(
-        'id'         => ODA_PREFIX . 'ordenanza_incidencia_urgente',
-        'name' => esc_html__( '¿Esta ordenanza es Urgente?', 'oda' ),
-        'desc' => __( 'Seleccione si esta ordenanza es urgente.', 'oda' ),
+    $mtb_ordenanza_inc->add_group_field( $group_field_id, array(
+        'id'         => ODA_PREFIX . 'ordenanza_incidencia_iniciativa_alcalde',
+        'name' => esc_html__( '¿Es iniciativa del Alcalde?', 'oda' ),
         'type' => 'checkbox'
     ) );
 
-    /* DATA INCIDENCIA: Análisis y Boletínes */
-    $mtb_ordenanza_inc->add_field( array(
-        'id'         => ODA_PREFIX . 'ordenanza_analisis_boletines',
-        'name' => esc_html__( 'URL de Análisis y Boletines', 'oda' ),
-        'desc' => __( 'Agregue el URL de Análisis y Boletines.', 'oda' ),
-        'type' => 'text'
-    ) );
-
-    /* DATA INCIDENCIA: Incidencias Relacionadas */
-    $mtb_ordenanza_inc->add_field( array(
-        'id'         => ODA_PREFIX . 'ordenanza_incidencia_related',
-        'name' => esc_html__( 'Incidencias Relacionadas', 'oda' ),
-        'desc' => __( 'Seleccione la/las indicencias relacionadas.', 'oda' ),
-        'type' => 'select',
-        'show_option_none' => true,
-        'default'          => 'alcalde',
-        'options'          => array(
-            'aprobado'       => __( 'Aprobado', 'oda' ),
-            'discusion'      => __( 'En Discusión', 'oda' ),
-            'derogado'    => __( 'Derogado', 'oda' ),
-            'noaprobado'    => __( 'No Aprobado', 'oda' ),
-        )
-    ) );
-
-    /* DATA INCIDENCIA: Temas [Taxonomy Select] */
-    $mtb_ordenanza_inc->add_field( array(
-        'id'         => ODA_PREFIX . 'ordenanza_incidencia_temas',
-        'name' => esc_html__( 'Temas de Ordenanza', 'oda' ),
-        'desc' => __( 'Seleccione el / los temas de esta incidencia.', 'oda' ),
-        'taxonomy'       => 'temas',
-        'type'           => 'taxonomy_select',
-        'remove_default' => 'true',
-        'query_args' => array(
-            'orderby' => 'slug',
-            'hide_empty' => false
-        )
-    ) );
 
     /* --------------------------------------------------------------
         DATA ORDENANZA: FASES METABOX
@@ -375,8 +401,9 @@ function oda_ordenanza_metabox() {
     ) );
 
     /* DATA ORDENANZA: FASES [ PRE GET POSTS ] */
-    $documentos = get_post_meta($city, ODA_PREFIX . 'items_ordenanza_fases', true);
+    $documentos = get_post_meta($city, ODA_PREFIX . 'ciudad_fase', true);
 
+    
     if ( !$documentos ){
         /* DATA ORDENANZA: Aviso [Si no hay fases disponibles para la ciudad] */
         $mtb_ordenanza_fases->add_field( array(
@@ -398,30 +425,12 @@ function oda_ordenanza_metabox() {
                 ) );
             }
             /* DATA ORDENANZA: Ícono representativo del Item */
-            $mtb_ordenanza_fases->add_field( array(
-                'id'         => ODA_PREFIX . 'ord_fases_icon_' . $index,
-                'name'       => __('Ícono para representar la fase', 'oda'),
-                'type'             => 'file',
-                'options' => array(
-                    'url' => true,
-                ),
-                'text'    => array(
-                    'add_upload_file_text' => 'Añadir Ícono'
-                ),
-                'query_args' => array(
-                    'type' => array(
-                        'image/gif',
-                        'image/jpeg',
-                        'image/png',
-                    ),
-                ),
-                'preview_size' => 'thumbnail'
-            ) );
+            //$mtb_ordenanza_fases->add_field( array() );
 
             /* DATA ORDENANZA: Documento PDF representativo del Item */
             $mtb_ordenanza_fases->add_field( array(
                 'id'         => ODA_PREFIX . 'ord_fases_item_' . $index,
-                'name'       => __('Fase: ') . ' ' . $value,
+                'name'       => __('Fase: ') . ' <strong>' . $value['items_ordenanza_fases'] . '</strong>',
                 'type'             => 'file',
                 'options' => array(
                     'url' => true,
@@ -595,7 +604,7 @@ function oda_observacion_metabox(){
             /* DATA ORDENANZA: Miembros */
             $mtb_observacion_data->add_field( array(
                 'id'         => ODA_PREFIX . 'observacion_ordenanza',
-                'name' => esc_html__( 'Miembros del Consejo', 'oda' ),
+                'name' => esc_html__( 'Ordenanza que se le aplica observación', 'oda' ),
                 'desc' => __( 'Seleccione el/os miembros del consejo para esta Ordenanza.', 'oda' ),
                 'type' => 'pw_select',
                 'classes_cb' => 'oda_select2',

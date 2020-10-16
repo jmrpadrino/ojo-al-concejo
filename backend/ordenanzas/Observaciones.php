@@ -54,7 +54,7 @@ function oda_Observacion() {
         'has_archive'           => 'todas-las-observaciones',
         'exclude_from_search'   => false,
         'publicly_queryable'    => true,
-        'query_var'             => 'resolucion',
+        'query_var'             => 'observacion',
         'rewrite'               => $rewrite,
         'capability_type'       => 'post',
         'show_in_rest'          => true,

@@ -6,6 +6,17 @@ $icons = array('fab fa-buromobelexperte','fas fa-burn','fas fa-bullseye','fas fa
 
 define('ODA_ICONS', $icons);
 
+$status_tramite_ordenanza = array(
+    '1' => 'Iniciativa de proyecto de ordenanza',
+    '2' => 'Informe para primer debate',
+    '3' => 'Informe para segundo debate',
+    '4' => 'Aprobación Proyecto Final (Pleno) ',
+    '5' => 'Sanción/observación (Alcalde)',
+    '6' => 'Promulgación y publicación',
+);
+
+define('ORDENANZA_STATUS', $status_tramite_ordenanza);
+
 /*
 echo '<pre>';
 var_dump($icons);
@@ -130,12 +141,12 @@ function oda_add_my_scripts(){
 
                 $fases_ordenanza = array();
                 foreach(
-                    get_post_meta($city, ODA_PREFIX . 'items_ordenanza_fases', true) as
+                    get_post_meta($city, 'oda_ciudad_fase', true) as
                     $index => $fase
                 ){
                     $fases_ordenanza[] = array(
                         'index' => $index,
-                        'title' => $fase
+                        'title' => $fase['items_ordenanza_fases']
                     );
                 }
                 $fases_resolucion = array();

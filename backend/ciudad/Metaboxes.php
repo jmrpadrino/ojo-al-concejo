@@ -221,15 +221,54 @@ function oda_ciudad_metabox() {
         'show_names' => true
     ) );
 
+    // $group_field_id is the field id string, so in this case: 'yourprefix_group_demo'
+    $group_field_fases = $mtb_ciudad_ordenanzas_fases->add_field( array(
+        'id'          => 'oda_ciudad_fase',
+        'type'        => 'group',
+        'description' => esc_html__( 'Administración de las fases para las Ordenanzas de la Ciudad', 'cmb2' ),
+        'options'     => array(
+            'group_title'    => esc_html__( '&nbsp;&nbsp;&nbsp;&nbsp;Fase {#}', 'cmb2' ), // {#} gets replaced by row number
+            'add_button'     => esc_html__( 'Agregar otra Fase', 'cmb2' ),
+            'remove_button'  => esc_html__( 'Eliminar Fase', 'cmb2' ),
+            'sortable'       => true,
+            // 'closed'      => true, // true to have the groups closed by default
+            // 'remove_confirm' => esc_html__( 'Are you sure you want to remove?', 'cmb2' ), // Performs confirmation before removing group.
+        ),
+    ) );
+    $mtb_ciudad_ordenanzas_fases->add_group_field( $group_field_fases, array(
+        'id'         => 'ord_fases_icon',
+        'name'       => __('Ícono para representar la fase', 'oda'),
+        'type'             => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir Ícono'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+
 
     /* DATA ORDENANZA: ITEMS DE FASES */
 
-    $mtb_ciudad_ordenanzas_fases->add_field( array(
-        'id'   => ODA_PREFIX . 'items_ordenanza_fases',
+    $mtb_ciudad_ordenanzas_fases->add_group_field( $group_field_fases, array(
+        'id'   => 'items_ordenanza_fases',
         'name' => esc_html__( 'Nombre de la Fase', 'cmb2' ),
         'desc' => __( 'Este nombre se mostrará en otras partes del sistema', 'cmb2' ),
         'type' => 'text',
-        'repeatable' => true
+    ) );
+    $mtb_ciudad_ordenanzas_fases->add_group_field( $group_field_fases, array(
+        'id'         => 'ord_fases_front',
+        'name' => esc_html__( '¿Es la fase aprobatoria?', 'oda' ),
+        'desc' => __( 'Active la casilla para mostrar votaciones en el frontpage.', 'oda' ),
+        'type' => 'checkbox'
     ) );
 
 

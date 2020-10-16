@@ -42,7 +42,7 @@ function oda_taxonomy_temas() {
         'show_tagcloud'              => true,
         'show_in_rest'               => true,
     );
-    register_taxonomy( 'temas', array( 'ordenanza', 'resolucion' ), $args );
+    //register_taxonomy( 'temas', array( 'ordenanza', 'resolucion' ), $args );
 
 }
 

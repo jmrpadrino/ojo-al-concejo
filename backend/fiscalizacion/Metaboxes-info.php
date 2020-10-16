@@ -33,28 +33,6 @@ function oda_solicitud_info_metabox() {
     }
 
     /* --------------------------------------------------------------
-        SOLICITUDS: METABOX METADATA
-    -------------------------------------------------------------- */
-    $mtb_metas = new_cmb2_box( array(
-        'id'            => 'oda_solicitud_info_metas',
-        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Metadatos', 'oda' ),
-        'object_types'  => array( 'solicitud-info' ),
-        'context'    => 'side',
-        'priority'   => 'high',
-        'show_names' => true,
-        'classes'    => 'oda-metabox'
-    ) );
-
-    /* SOLICITUDS: Etiqueta de Color */
-    $mtb_metas->add_field( array(
-        'name'    => esc_html__( 'Etiqueta de Color', 'oda' ),
-        'desc'    => esc_html__( 'Identificación visual para el sistema', 'oda' ),
-        'id'      => ODA_PREFIX . 'solicitud_info_color',
-        'type'    => 'colorpicker',
-        'default' => '#ffffff'
-    ) );
-
-    /* --------------------------------------------------------------
         SOLICITUDS: METABOX RELACIONES
     -------------------------------------------------------------- */
     $mtb_solicitud_info_rel = new_cmb2_box( array(

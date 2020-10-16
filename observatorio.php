@@ -37,7 +37,8 @@ $oda_objects = [
     'publicacion',
     'sesion',
     'solicitud-info',
-    'instituciones'
+    'instituciones',
+    'tema_ordenanza',
 ];
 
 define('ODA_VERISON', '0.0.1' );
@@ -101,7 +102,9 @@ require_once( ODA_DIR_PATH . 'backend/ordenanzas/Ordenanzas.php' );
 require_once( ODA_DIR_PATH . 'backend/ordenanzas/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/ordenanzas/Admin-columns.php' );
 require_once( ODA_DIR_PATH . 'backend/ordenanzas/Observaciones.php' );
-
+require_once( ODA_DIR_PATH . 'backend/temas-ordenanzas/Temas-ordenanzas.php' );
+require_once( ODA_DIR_PATH . 'backend/temas-ordenanzas/Metaboxes.php' );
+require_once( ODA_DIR_PATH . 'backend/temas-ordenanzas/Admin-columns.php' );
 /**
  * Support for CTP Resoluciones
  */
