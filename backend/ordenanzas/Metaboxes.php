@@ -130,7 +130,7 @@ function oda_ordenanza_metabox() {
     /* DATA ORDENANZA: Proponente */
     $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'ordenanza_proponente',
-        'name' => esc_html__( 'Proponente de Ordenanza', 'oda' ),
+        'name' => esc_html__( 'Proponente externo', 'oda' ),
         'desc' => __( 'Agregue el Proponente de esta Ordenanza.', 'oda' ),
         'type' => 'text_medium'
     ) );
@@ -166,7 +166,7 @@ function oda_ordenanza_metabox() {
         /* DATA ORDENANZA: Miembros */
         $mtb_observacion_data->add_field( array(
             'id'         => ODA_PREFIX . 'ordenanza_miembros',
-            'name' => esc_html__( 'Miembros del Consejo', 'oda' ),
+            'name' => esc_html__( 'Proponentes del Consejo', 'oda' ),
             'desc' => __( 'Seleccione el/os miembros del consejo para esta Ordenanza.', 'oda' ),
             'type' => 'pw_multiselect',
             'classes_cb' => 'oda_select2',
@@ -175,11 +175,13 @@ function oda_ordenanza_metabox() {
     }
 
     /* DATA ORDENANZA: Proponente */
+    /*
     $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'ordenanza_iniciativa_ciudadana',
         'name' => esc_html__( 'Iniciativa Ciudadana', 'oda' ),        
         'type' => 'text'
     ) );
+    */
 
     /* DATA ORDENANZA: Estado */
     $mtb_observacion_data->add_field( array(
@@ -431,7 +433,7 @@ function oda_ordenanza_metabox() {
             /* DATA ORDENANZA: Documento PDF representativo del Item */
             $mtb_ordenanza_fases->add_field( array(
                 'id'         => ODA_PREFIX . 'ord_fases_item_' . $index,
-                'name'       => __('Fase: ') . ' <strong>' . $value['items_ordenanza_fases'] . '</strong>',
+                'name'       => __('Documento Fase: ') . ' <strong>' . $value['items_ordenanza_fases'] . '</strong>',
                 'type'             => 'file',
                 'options' => array(
                     'url' => true,

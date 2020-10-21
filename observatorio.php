@@ -112,6 +112,9 @@ require_once( ODA_DIR_PATH . 'backend/temas-ordenanzas/Admin-columns.php' );
 require_once( ODA_DIR_PATH . 'backend/resoluciones/Resoluciones.php' );
 require_once( ODA_DIR_PATH . 'backend/resoluciones/Metaboxes.php' );
 require_once( ODA_DIR_PATH . 'backend/resoluciones/Admin-columns.php' );
+require_once( ODA_DIR_PATH . 'backend/temas-resoluciones/Temas-resoluciones.php' );
+require_once( ODA_DIR_PATH . 'backend/temas-resoluciones/Metaboxes.php' );
+require_once( ODA_DIR_PATH . 'backend/temas-resoluciones/Admin-columns.php' );
 
 /**
  * Support for CTP Sesiones

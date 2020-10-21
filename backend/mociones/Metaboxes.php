@@ -46,18 +46,22 @@ add_action('add_meta_boxes', 'mocion_register_meta_boxes');
 
 function oda_mostrar_listado_mocion($post, $args)
 {
+    // si ya es un post publicado
+
     $query_miembros = get_miembros($args['args']['city']);
     $votos = get_post_meta($_GET['post'], 'oda_sesion_mocion', true);
+
 ?>
     <script>
         $(document).ready(function(){
             $('#title').attr('required', true);
         })
     </script>
+    <input type="hidden" name="oda_parent_sesion" value="<?php echo $args['args']['parent_sesion']; ?>">
+    <input type="hidden" name="oda_sesion_item" value="<?php echo $args['args']['item']; ?>">
+    <input type="hidden" name="oda_mocion_nombre" value="<?php echo $args['args']['item']; ?>">
+<?php if (isset($_GET['post'])){ ?>
     <div class="custom-field-row">
-        <input type="hidden" name="oda_parent_sesion" value="<?php echo $args['args']['parent_sesion']; ?>">
-        <input type="hidden" name="oda_sesion_item" value="<?php echo $args['args']['item']; ?>">
-        <input type="hidden" name="oda_mocion_nombre" value="<?php echo $args['args']['item']; ?>">
         <!--
     <input type="hidden" name="oda_mocion_position" value="<?php echo $args['args']['position']; ?>">
     -->
@@ -279,6 +283,9 @@ function oda_mostrar_listado_mocion($post, $args)
         </script>
     </div><!-- END custom-field-row -->
 <?php
+    }else{
+        echo '<p><strong>Debe configurar la mocion y publicar antes de continuar con el alta de votos.</strong></p>';
+    }
 }
 
 function oda_mostrar_configuracion_mocion()

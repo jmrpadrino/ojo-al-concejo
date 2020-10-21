@@ -172,6 +172,7 @@ function oda_solicitud_info_metabox() {
         'desc' => __( 'Seleccione la comisión solicitante.', 'oda' ),
         'id'         => ODA_PREFIX . 'solicitud_info_iniciativa_solicitante_comision',
         'type'          => 'select',
+        'classes_cb' => 'oda_select2',
         'options'       => $array_comisiones,
         'attributes'    => array(
             'data-conditional-id'     => ODA_PREFIX . 'solicitud_info_iniciativa',

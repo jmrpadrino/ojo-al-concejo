@@ -10,6 +10,7 @@ add_action( 'cmb2_admin_init', 'oda_ciudad_metabox' );
  */
 function oda_ciudad_metabox() {
 
+
     /*
      * Información de redes sociales y twitter
      */
@@ -100,11 +101,7 @@ function oda_ciudad_metabox() {
             'textarea_rows' => 5,
         ),
     ) );
-    $mtb_textos->add_field( array(
-        'name' => esc_html__( '¿Ocultar sección Concejo Transparente?', 'cmb2' ),
-        'id'   => ODA_PREFIX . 'ciudad__concejo_transver',
-        'type' => 'checkbox',
-    ) );
+    
     $mtb_textos->add_field( array(
         'name' => esc_html__( 'Sección Concejo Transparente izquierda', 'cmb2' ),
         'id'   => ODA_PREFIX . 'ciudad__concejo_transizq',
@@ -285,15 +282,55 @@ function oda_ciudad_metabox() {
         'show_names' => true
     ) );
 
+    // $group_field_id is the field id string, so in this case: 'yourprefix_group_demo'
+    $group_field_fases_res = $mtb_ciudad_resolucion_fases->add_field( array(
+        'id'          => 'oda_ciudad_fase_res',
+        'type'        => 'group',
+        'description' => esc_html__( 'Administración de las fases para las Ordenanzas de la Ciudad', 'cmb2' ),
+        'options'     => array(
+            'group_title'    => esc_html__( '&nbsp;&nbsp;&nbsp;&nbsp;Fase {#}', 'cmb2' ), // {#} gets replaced by row number
+            'add_button'     => esc_html__( 'Agregar otra Fase', 'cmb2' ),
+            'remove_button'  => esc_html__( 'Eliminar Fase', 'cmb2' ),
+            'sortable'       => true,
+            // 'closed'      => true, // true to have the groups closed by default
+            // 'remove_confirm' => esc_html__( 'Are you sure you want to remove?', 'cmb2' ), // Performs confirmation before removing group.
+        ),
+    ) );
+
 
     /* DATA RESOLUCIÓN: ITEMS DE FASES */
 
-    $mtb_ciudad_resolucion_fases->add_field( array(
+    $mtb_ciudad_resolucion_fases->add_group_field( $group_field_fases_res, array(
+        'id'         => 'res_fases_icon',
+        'name'       => __('Ícono para representar la fase', 'oda'),
+        'type'             => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir Ícono'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+
+    $mtb_ciudad_resolucion_fases->add_group_field( $group_field_fases_res, array(
         'id'   => ODA_PREFIX . 'items_resolucion_fases',
         'name' => esc_html__( 'Nombre de la Fase', 'cmb2' ),
         'desc' => __( 'Este nombre se mostrará en otras partes del sistema', 'cmb2' ),
         'type' => 'text',
-        'repeatable' => true
+    ) );
+    $mtb_ciudad_resolucion_fases->add_group_field( $group_field_fases_res, array(
+        'id'         => 'res_fases_front',
+        'name' => esc_html__( '¿Es la fase aprobatoria?', 'oda' ),
+        'desc' => __( 'Active la casilla para mostrar votaciones en el frontpage.', 'oda' ),
+        'type' => 'checkbox'
     ) );
 
 
@@ -356,6 +393,153 @@ function oda_ciudad_metabox() {
         'name' => esc_html__( 'Imagen en la ventana', 'cmb2' ),
         'id'   => 'image',
         'type' => 'file',
+    ) );
+
+    /**
+     * Activar y desactivar modulos para el frontend
+     */
+    $mtb_activar_modulos = new_cmb2_box( array(
+        'id'            => 'oda_activar_modulos',
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Activar o desactivar módulos', 'oda' ),
+        'object_types'  => array( 'ciudad' ),
+        'context'    => 'side',
+        'show_names' => true,
+    ) );
+    $mtb_activar_modulos->add_field( array(
+        'name' => esc_html__( '¿Ocultar sección Concejo Transparente?', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad__concejo_transver',
+        'type' => 'checkbox',
+    ) );
+    $mtb_activar_modulos->add_field( array(
+        'name' => esc_html__( '¿Ocultar Proyectos de ordenanza en esta ciudad?', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_ocula_ordenanza',
+        'type' => 'checkbox',
+    ) );
+    $mtb_activar_modulos->add_field( array(
+        'name' => esc_html__( '¿Ocultar Proyectos de resoluciones en esta ciudad?', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_ocula_resoluciones',
+        'type' => 'checkbox',
+    ) );
+    $mtb_activar_modulos->add_field( array(
+        'name' => esc_html__( '¿Ocultar Observaciones a proyectos de ordenanza en esta ciudad?', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_ocula_observaciones',
+        'type' => 'checkbox',
+    ) );
+    $mtb_activar_modulos->add_field( array(
+        'name' => esc_html__( '¿Ocultar Solicitudes de información en esta ciudad?', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_ocula_solicitud_info',
+        'type' => 'checkbox',
+    ) );
+    $mtb_activar_modulos->add_field( array(
+        'name' => esc_html__( '¿Ocultar Solicitudes de comparecencia en esta ciudad?', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_ocula_solicitud_comp',
+        'type' => 'checkbox',
+    ) );
+
+    /**
+     * Activar y desactivar modulos para el frontend
+     */
+    $mtb_popupinfo_modulos = new_cmb2_box( array(
+        'id'            => 'oda_popupinfo_modulos',
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Imágenes para Popup Info', 'oda' ),
+        'object_types'  => array( 'ciudad' ),
+        'context'    => 'side',
+        'show_names' => true,
+    ) );
+    $mtb_popupinfo_modulos->add_field( array(
+        'name' => esc_html__( 'Imagen Popup para módulo Proyectos de ordenanza', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_popupinfo_ordenanza',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_popupinfo_modulos->add_field( array(
+        'name' => esc_html__( 'Imagen Popup para módulo Proyectos de resoluciones', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_popupinfo_resoluciones',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_popupinfo_modulos->add_field( array(
+        'name' => esc_html__( 'Imagen Popup para módulo Observaciones a proyectos de ordenanza', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_popupinfo_observaciones',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_popupinfo_modulos->add_field( array(
+        'name' => esc_html__( 'Imagen Popup para módulo Solicitudes de información', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_popupinfo_solicitud_info',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_popupinfo_modulos->add_field( array(
+        'name' => esc_html__( 'Imagen Popup para módulo Solicitudes de comparecencia', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_popupinfo_solicitud_comp',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
     ) );
 
 }

@@ -11,11 +11,20 @@ $status_tramite_ordenanza = array(
     '2' => 'Informe para primer debate',
     '3' => 'Informe para segundo debate',
     '4' => 'Aprobación Proyecto Final (Pleno) ',
-    '5' => 'Sanción/observación (Alcalde)',
+    '5' => 'Sanción / observación (Alcalde)',
     '6' => 'Promulgación y publicación',
 );
 
 define('ORDENANZA_STATUS', $status_tramite_ordenanza);
+
+
+$status_tramite_resolucion = array(
+    '1' => 'Proyecto de resolución',
+    '2' => 'Debate y aprobación',
+    '3' => 'Notificación y publicación',
+);
+
+define('RESOLUCION_STATUS', $status_tramite_resolucion);
 
 /*
 echo '<pre>';
@@ -140,24 +149,30 @@ function oda_add_my_scripts(){
                 };
 
                 $fases_ordenanza = array();
-                foreach(
-                    get_post_meta($city, 'oda_ciudad_fase', true) as
-                    $index => $fase
-                ){
-                    $fases_ordenanza[] = array(
-                        'index' => $index,
-                        'title' => $fase['items_ordenanza_fases']
-                    );
+                $fases_ordenanza_ciudad = get_post_meta($city, 'oda_ciudad_fase', true);
+                if($fases_ordenanza_ciudad){
+                    foreach( 
+                        $fases_ordenanza_ciudad as
+                        $index => $fase
+                    ){
+                        $fases_ordenanza[] = array(
+                            'index' => $index,
+                            'title' => $fase['items_ordenanza_fases']
+                        );
+                    }
                 }
                 $fases_resolucion = array();
-                foreach(
-                    get_post_meta($city, ODA_PREFIX . 'items_resolucion_fases', true) as
-                    $index => $fase
-                ){
-                    $fases_resolucion[] = array(
-                        'index' => $index,
-                        'title' => $fase
-                    );
+                $fases_resolucion_ciudad = get_post_meta($city, 'oda_ciudad_fase_res', true);
+                if($fases_resolucion_ciudad){
+                    foreach(
+                        $fases_resolucion_ciudad as
+                        $index => $fase
+                    ){
+                        $fases_resolucion[] = array(
+                            'index' => $index,
+                            'title' => $fase['oda_items_resolucion_fases']
+                        );
+                    }
                 }
 
                 $ordenanzas_y_fases['ordenanzas'] = $active_ordenanzas;

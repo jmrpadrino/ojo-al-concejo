@@ -151,7 +151,7 @@ function oda_resolucion_metabox() {
     /* DATA ORDENANZA: Proponente */
     $mtb_resolucion_data->add_field( array(
         'id'         => ODA_PREFIX . 'resolucion_proponente',
-        'name' => esc_html__( 'Proponente de Ordenanza', 'oda' ),
+        'name' => esc_html__( 'Proponente de la resolución', 'oda' ),
         'desc' => __( 'Agregue el Proponente de esta Resolución.', 'oda' ),
         'type' => 'text_medium'
     ) );
@@ -195,6 +195,12 @@ function oda_resolucion_metabox() {
         ) );
     }
 
+    $mtb_resolucion_data->add_field( array(
+        'id'         => ODA_PREFIX . 'resolucion_iniciativa_ciudadana',
+        'name' => esc_html__( 'Iniciativa Ciudadana', 'oda' ),        
+        'type' => 'text'
+    ) );
+
     /* DATA ORDENANZA: Estado */
     $mtb_resolucion_data->add_field( array(
         'id'         => ODA_PREFIX . 'resolucion_estado',
@@ -203,15 +209,11 @@ function oda_resolucion_metabox() {
         'type' => 'select',
         'show_option_none' => true,
         'default'          => 'alcalde',
-        'options'          => array(
-            'aprobado'       => __( 'Aprobado', 'oda' ),
-            'discusion'      => __( 'En Discusión', 'oda' ),
-            'derogado'    => __( 'Derogado', 'oda' ),
-            'noaprobado'    => __( 'No Aprobado', 'oda' ),
-        )
+        'options'          => RESOLUCION_STATUS
     ) );
 
     /* DATA INCIDENCIA: Temas [Taxonomy Select] */
+    /*
     $mtb_resolucion_data->add_field( array(
         'id'         => ODA_PREFIX . 'resolucion_incidencia_temas',
         'name' => esc_html__( 'Temas de Ordenanza', 'oda' ),
@@ -223,6 +225,33 @@ function oda_resolucion_metabox() {
             'orderby' => 'slug',
             'hide_empty' => false
         )
+    ) );
+    */
+
+    // colocar los temas CPT
+    $query_temas = new WP_Query(array(
+        'post_type' => 'tema_resolucion',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => 'oda_ciudad_owner',
+                'value' => $city,
+                'compare' => '='
+            )
+        )
+    ));
+    $array_temas = array();
+    while ($query_temas->have_posts()) : $query_temas->the_post();
+        $array_temas[get_the_ID()] = get_the_title();
+    endwhile;
+    $mtb_resolucion_data->add_field( array(
+        'id'         => ODA_PREFIX . 'resolucion_incidencia_temas',
+        'name' => esc_html__( 'Temas de Resolución', 'oda' ),
+        'desc' => __( 'Seleccione el tema de esta incidencia.', 'oda' ),
+        'type' => 'select',
+        'show_option_none' => 'Seleccionar',
+        'classes_cb' => 'oda_select2',
+        'options' => $array_temas
     ) );
 
     /* --------------------------------------------------------------
@@ -239,7 +268,7 @@ function oda_resolucion_metabox() {
     ) );
 
     /* DATA ORDENANZA: FASES [ PRE GET POSTS ] */
-    $documentos = get_post_meta($city, ODA_PREFIX . 'items_resolucion_fases', true);
+    $documentos = get_post_meta($city, ODA_PREFIX . 'ciudad_fase_res', true);
 
     if ( !$documentos ){
         /* DATA ORDENANZA: Aviso [Si no hay fases disponibles para la ciudad] */
@@ -261,31 +290,11 @@ function oda_resolucion_metabox() {
                     'classes_cb' => 'oda_spacer',
                 ) );
             }
-            /* DATA ORDENANZA: Ícono representativo del Item */
-            $mtb_resolucion_fases->add_field( array(
-                'id'         => ODA_PREFIX . 'res_fases_icon_' . $index,
-                'name'       => __('Ícono para representar la fase', 'oda'),
-                'type'             => 'file',
-                'options' => array(
-                    'url' => true,
-                ),
-                'text'    => array(
-                    'add_upload_file_text' => 'Añadir Ícono'
-                ),
-                'query_args' => array(
-                    'type' => array(
-                        'image/gif',
-                        'image/jpeg',
-                        'image/png',
-                    ),
-                ),
-                'preview_size' => 'thumbnail'
-            ) );
 
             /* DATA ORDENANZA: Documento PDF representativo del Item */
             $mtb_resolucion_fases->add_field( array(
                 'id'         => ODA_PREFIX . 'res_fases_item_' . $index,
-                'name'       => __('Fase: ') . ' ' . $value,
+                'name'       => __('Documento Fase: ') . ' <strong>' . $value['oda_items_resolucion_fases'] . '</strong>',
                 'type'             => 'file',
                 'options' => array(
                     'url' => true,
