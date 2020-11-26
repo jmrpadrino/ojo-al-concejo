@@ -46,23 +46,13 @@ function oda_ciudad_metabox() {
         'id'   => ODA_PREFIX . 'ciudad_instagram',
         'type' => 'text_url',
     ) );
-    $mtb_sociales->add_field( array(
-        'name' => esc_html__( 'Texto del tweet para sección carpetas', 'cmb2' ),
-        'id'   => ODA_PREFIX . 'ciudad_tweet_folders',
-        'type' => 'text',
-    ) );
-    $mtb_sociales->add_field( array(
-        'name' => esc_html__( 'Texto del tweet para la cedula del concejal', 'cmb2' ),
-        'id'   => ODA_PREFIX . 'ciudad_tweet_profile',
-        'type' => 'text',
-    ) );
 
 
     /*
          * Textos y elementos de maqueta
          */
     $mtb_textos = new_cmb2_box( array(
-        'id'            => 'oda_alta_textos_secciones',
+        'id'            => 'oda_alta_textos_secciones_1',
         'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Textos maqueta Ciudad', 'oda' ),
         'object_types'  => array( 'ciudad' ),
         'context'    => 'normal',
@@ -86,12 +76,7 @@ function oda_ciudad_metabox() {
             'textarea_rows' => 5,
         ),
     ) );
-    $mtb_textos->add_field( array(
-        'name' => esc_html__( 'Imagen Popup Info', 'cmb2' ),
-        'desc' => __( 'Imagen del Popup al hacer clic en circulo info (esfero)', 'cmb2' ),
-        'id'   => ODA_PREFIX . 'ciudad_info_popup_image',
-        'type' => 'file',
-    ) );
+
     $mtb_textos->add_field( array(
         'name' => esc_html__( 'Intro Concejo Municipal', 'cmb2' ),
         'desc' => __( 'Esta sección al inicio de la pantalla Concejo Municipal', 'cmb2' ),
@@ -118,6 +103,361 @@ function oda_ciudad_metabox() {
             'textarea_rows' => 3,
         ),
     ) );
+
+    $mtb_textos->add_field( array(
+        'name' => esc_html__( 'Sección Concejo Transparente derecha', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad__concejo_transder',
+        'type' => 'wysiwyg',
+        'options' => array(
+            'textarea_rows' => 3,
+        ),
+    ) );
+
+
+    /*
+    * Mascaras y Twitter de maqueta
+    */
+    $mtb_img_twitter = new_cmb2_box( array(
+        'id'            => 'oda_alta_textos_secciones_2',
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Imagenes y Twitter maqueta Ciudad', 'oda' ),
+        'object_types'  => array( 'ciudad' ),
+        'context'    => 'normal',
+        'show_names' => true,
+    ) );
+    $mtb_img_twitter->add_field( array(
+		'name' => '<span style="color: #FFC100; font-size: 18px; font-weight: bold;">Elementos del Inicio</span>',
+		'id'   => 'title_inicio',
+		'type' => 'title',
+	) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet para sección carpetas', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_folders',
+        'type' => 'text',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen Derecha (Indicadores) Home', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_info_image_indicadores',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir Imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen Popup Info', 'cmb2' ),
+        'desc' => __( 'Imagen del Popup al hacer clic en circulo info (esfero)', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_info_popup_image',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_img_twitter->add_field( array(
+		'name' => '<span style="color: #FFC100; font-size: 18px; font-weight: bold;">Elementos de la Cedula del Concejal</span>',
+		'id'   => 'title_cedula',
+		'type' => 'title',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen del popup cuando no hay plan de trabajo', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_image_plandetrabajo',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet cuando no hay plan de trabajo', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_plandetrabajo',
+        'type' => 'text',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet para solicitud concejal transparente', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_profile',
+        'type' => 'text',
+    ) );
+    $mtb_img_twitter->add_field( array(
+		'name' => '<span style="color: #FFC100; font-size: 18px; font-weight: bold;">Elementos para popup en menú "Concejo Municipal"</span>',
+		'id'   => 'title_concejo_municipal',
+		'type' => 'title',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen del popup cuando no hay ordenanzas', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_image_menu_ordenanzas',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet cuando no hay ordenanzas', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_menu_ordenanzas',
+        'type' => 'text',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen del popup cuando no hay resoluciones', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_image_menu_resoluciones',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet cuando no hay resoluciones', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_menu_resoluciones',
+        'type' => 'text',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen del popup cuando no hay observaciones', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_image_menu_observaciones',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet cuando no hay observaciones', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_menu_observaciones',
+        'type' => 'text',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen del popup cuando no hay solicitudes', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_image_menu_solicitudes',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet cuando no hay solicitudes', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_menu_solicitudes',
+        'type' => 'text',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen del popup cuando no hay comparecencias', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_image_menu_comparecencias',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet cuando no hay comparecencias', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_menu_comparecencias',
+        'type' => 'text',
+    ) );
+    $mtb_img_twitter->add_field( array(
+		'name' => '<span style="color: #FFC100; font-size: 18px; font-weight: bold;">Elementos de imagen en Evaluación de Gestión</span>',
+		'id'   => 'title_concejo_evaluacion',
+		'type' => 'title',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen cuando no hay asistencias, ausencias o suplencias', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_image_evaluacion_mociones',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet cuando no hay asistencias, ausencias o suplencias', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_evaluacion_mociones',
+        'type' => 'text',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen cuando no hay ordenanzas', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_image_evaluacion_ordenanzas',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet cuando no hay ordenanzas', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_evaluacion_ordenanzas',
+        'type' => 'text',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen cuando no hay resoluciones', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_image_evaluacion_resoluciones',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet cuando no hay resoluciones', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_evaluacion_resoluciones',
+        'type' => 'text',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen cuando no hay observaciones', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_image_evaluacion_observaciones',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet cuando no hay observaciones', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_evaluacion_observaciones',
+        'type' => 'text',
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Imagen cuando no hay solicitudes', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_image_evaluacion_solicitudes',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_img_twitter->add_field( array(
+        'name' => esc_html__( 'Texto del tweet cuando no hay solicitudes', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_tweet_evaluacion_solicitudes',
+        'type' => 'text',
+    ) );
+
 
     /**
 	 * Sample metabox to demonstrate each field type included
