@@ -148,12 +148,47 @@ function oda_resolucion_metabox() {
         )
     ) );
 
+    // comisiones
+    $args = array(
+        'post_type' => 'comision',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => 'oda_ciudad_owner',
+                'value' => $city,
+                'compare' => '='
+            )
+        )
+    );
+    $array_comisiones = array();
+    $comisiones = new WP_Query($args);
+    while ($comisiones->have_posts()) : $comisiones->the_post();
+        $array_comisiones[get_the_ID()] = get_the_title();
+    endwhile;
+    wp_reset_query();
+    $mtb_resolucion_data->add_field (array(
+        'name' => esc_html__( 'Comisión Solicitante', 'oda' ),
+        'desc' => __( 'Seleccione la comisión iniciativa.', 'oda' ),
+        'id'         => ODA_PREFIX . 'ordenanza_comision',
+        'type'          => 'select',
+        'classes_cb' => 'oda_select2',
+        'options'       => $array_comisiones,
+        'attributes'    => array(
+            'data-conditional-id'     => ODA_PREFIX . 'resolucion_iniciativa',
+            'data-conditional-value'  => 'comisiones',
+        ),
+    ) );
+
     /* DATA ORDENANZA: Proponente */
     $mtb_resolucion_data->add_field( array(
-        'id'         => ODA_PREFIX . 'resolucion_proponente',
-        'name' => esc_html__( 'Proponente de la resolución', 'oda' ),
-        'desc' => __( 'Agregue el Proponente de esta Resolución.', 'oda' ),
-        'type' => 'text_medium'
+        'id'         => ODA_PREFIX . 'ordenanza_ciudadania',
+        'name' => esc_html__( 'Proponente ciudadano', 'oda' ),
+        'desc' => __( 'Agregue el Proponente de esta Ordenanza.', 'oda' ),
+        'type' => 'text_medium',
+        'attributes'    => array(
+            'data-conditional-id'     => ODA_PREFIX . 'resolucion_iniciativa',
+            'data-conditional-value'  => 'ciudadania',
+        ),
     ) );
 
     /* DATA ORDENANZA: Miembros [ PRE GET POSTS ] */
@@ -187,20 +222,24 @@ function oda_resolucion_metabox() {
         /* DATA ORDENANZA: Miembros */
         $mtb_resolucion_data->add_field( array(
             'id'         => ODA_PREFIX . 'resolucion_miembros',
-            'name' => esc_html__( 'Miembros del Consejo', 'oda' ),
-            'desc' => __( 'Seleccione el/os miembros del consejo para esta Resolución.', 'oda' ),
+            'name' => esc_html__( 'Proponente del Concejo', 'oda' ),
+            'desc' => __( 'Seleccione el/os miembros del concejo para esta Resolución.', 'oda' ),
             'type' => 'pw_multiselect',
             'classes_cb' => 'oda_select2',
-            'options'          => $array_miembros
+            'options'          => $array_miembros,
+            'attributes'    => array(
+                'data-conditional-id'     => ODA_PREFIX . 'resolucion_iniciativa',
+                'data-conditional-value'  => 'concejal',
+            ),
         ) );
     }
-
+    /*
     $mtb_resolucion_data->add_field( array(
         'id'         => ODA_PREFIX . 'resolucion_iniciativa_ciudadana',
         'name' => esc_html__( 'Iniciativa Ciudadana', 'oda' ),        
         'type' => 'text'
     ) );
-
+    */
     /* DATA ORDENANZA: Estado */
     $mtb_resolucion_data->add_field( array(
         'id'         => ODA_PREFIX . 'resolucion_estado',

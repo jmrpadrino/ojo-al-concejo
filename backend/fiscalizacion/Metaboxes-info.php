@@ -125,6 +125,7 @@ function oda_solicitud_info_metabox() {
             )
         )
     ));
+    $array_concejales = array();
     while ($query_miembros->have_posts()) : $query_miembros->the_post();
         $array_miembros[get_the_ID()] = get_the_title();
         $curul = get_post_meta(get_the_ID(), 'oda_miembro_curul', true);
@@ -181,8 +182,8 @@ function oda_solicitud_info_metabox() {
     ) );
     $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'solicitud_info_iniciativa_solicitante_concejal',
-        'name' => esc_html__( 'Consejal Solicitante', 'oda' ),
-        'desc' => __( 'Seleccione el consejal solicitante.', 'oda' ),
+        'name' => esc_html__( 'Concejal Solicitante', 'oda' ),
+        'desc' => __( 'Seleccione el concejal solicitante.', 'oda' ),
         'type' => 'select',
         'options'          => $array_concejales,
         'attributes'    => array(
@@ -228,8 +229,8 @@ function oda_solicitud_info_metabox() {
         /* DATA SOLICITUD: Miembros */
         $mtb_observacion_data->add_field( array(
             'id'         => ODA_PREFIX . 'solicitud_info_miembros',
-            'name' => esc_html__( 'Miembros del Consejo', 'oda' ),
-            'desc' => __( 'Seleccione el/os miembros del consejo para esta Solicitud.', 'oda' ),
+            'name' => esc_html__( 'Solicitantes del Concejo', 'oda' ),
+            'desc' => __( 'Seleccione el/os miembros del concejo para esta Solicitud.', 'oda' ),
             'type' => 'pw_multiselect',
             'classes_cb' => 'oda_select2',
             'options'          => $array_miembros
@@ -237,12 +238,14 @@ function oda_solicitud_info_metabox() {
     }
 
     /* DATA SOLICITUD: Proponente */
+    /*
     $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'solicitud_info_nombre',
         'name' => esc_html__( 'Nombre de la Solicitud', 'oda' ),
         'desc' => __( 'Agregue el Nombre de la Solicitud.', 'oda' ),
         'type' => 'text_medium'
     ) );
+    */
 
     /* DATA ORDENANZA: Miembros [ PRE GET POSTS ] */
     $query_instituciones = new WP_Query(array(
@@ -275,7 +278,7 @@ function oda_solicitud_info_metabox() {
         /* DATA ORDENANZA: Miembros */
         $mtb_observacion_data->add_field( array(
             'id'         => ODA_PREFIX . 'solicitud_instituciones',
-            'name' => esc_html__( 'Institución requerida', 'oda' ),
+            'name' => esc_html__( 'Información solicitada a', 'oda' ),
             'desc' => __( 'Seleccione la institución requerida para esta solicitud.', 'oda' ),
             'type' => 'select',
             'classes_cb' => 'oda_select2',
@@ -316,12 +319,14 @@ function oda_solicitud_info_metabox() {
     ) );
 
     /* DATA SOLICITUD: Link del Registro Oficial */
+    /*
     $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'solicitud_info_observaciones',
         'name' => esc_html__( 'Observaciones', 'oda' ),
         'desc' => __( 'Agregue las observaciones respectivas', 'oda' ),
         'type' => 'textarea_small'
     ) );
+    */
 
     /* --------------------------------------------------------------
         DATA SOLICITUD: DOCUMENTOS METABOX
@@ -335,32 +340,17 @@ function oda_solicitud_info_metabox() {
         'show_names' => true,
         'classes'    => 'oda-metabox'
     ) );
-
-    $group_field_id = $mtb_solicitud_info_docs->add_field( array(
-        'id'          => ODA_PREFIX . 'solicitud_info_docs_group',
-        'type'        => 'group',
-        'description' => __( 'Documentos asociados a la solicitud', 'oda' ),
-        'options'     => array(
-            'group_title'       => __( 'Documento {#}', 'oda' ),
-            'add_button'        => __( 'Agregar otro Documento', 'oda' ),
-            'remove_button'     => __( 'Remover Documento', 'oda' ),
-            'sortable'          => true,
-            'closed'         => true,
-            'remove_confirm' => esc_html__( '¿Estas seguro de remover este Documento?', 'oda' )
-        )
-    ) );
-
-    $mtb_solicitud_info_docs->add_group_field( $group_field_id, array(
-        'id'   => 'file',
-        'name'      => esc_html__( 'Documento PDF', 'oda' ),
+    $mtb_solicitud_info_docs->add_field( array(
+        'id'   => ODA_PREFIX . 'solicitud_pdf',
+        'name'      => esc_html__( 'Documento Solicitud PDF', 'oda' ),
         'desc'      => esc_html__( 'Cargar un Documento PDF para este item', 'oda' ),
         'type'    => 'file',
 
         'options' => array(
-            'url' => false
+            'url' => true
         ),
         'text'    => array(
-            'add_upload_file_text' => esc_html__( 'Cargar Imagen', 'oda' ),
+            'add_upload_file_text' => esc_html__( 'Cargar PDF', 'oda' ),
         ),
         'query_args' => array(
             'type' => 'application/pdf'
@@ -368,9 +358,33 @@ function oda_solicitud_info_metabox() {
         'preview_size' => 'medium'
     ) );
 
-    $mtb_solicitud_info_docs->add_group_field( $group_field_id, array(
-        'id'        => 'date',
-        'name'      => esc_html__( 'Fecha del Documento', 'oda' ),
+    $mtb_solicitud_info_docs->add_field( array(
+        'id'   => ODA_PREFIX . 'solicitud_pdf_fecha',
+        'name'      => esc_html__( 'Fecha del Documento Solicitud', 'oda' ),
+        'desc'      => esc_html__( 'Ingrese la Fecha del Documento', 'oda' ),
+        'type' => 'text_date',
+    ) );
+    $mtb_solicitud_info_docs->add_field( array(
+        'id'   => ODA_PREFIX . 'respuesta_pdf',
+        'name'      => esc_html__( 'Documento Respuesta PDF', 'oda' ),
+        'desc'      => esc_html__( 'Cargar un Documento PDF para este item', 'oda' ),
+        'type'    => 'file',
+
+        'options' => array(
+            'url' => true
+        ),
+        'text'    => array(
+            'add_upload_file_text' => esc_html__( 'Cargar PDF', 'oda' ),
+        ),
+        'query_args' => array(
+            'type' => 'application/pdf'
+        ),
+        'preview_size' => 'medium'
+    ) );
+
+    $mtb_solicitud_info_docs->add_field( array(
+        'id'   => ODA_PREFIX . 'respuesta_pdf_fecha',
+        'name'      => esc_html__( 'Fecha del Documento Respuesta', 'oda' ),
         'desc'      => esc_html__( 'Ingrese la Fecha del Documento', 'oda' ),
         'type' => 'text_date',
     ) );

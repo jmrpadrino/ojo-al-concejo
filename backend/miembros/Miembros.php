@@ -54,9 +54,11 @@ function oda_Miembros() {
         'publicly_queryable'    => true,
         'query_var'             => 'qv_miembro',
         'rewrite'               => $rewrite,
-        'capability_type'       => 'post',
+        //'capability_type'       => 'post',
         'show_in_rest'          => true,
         'rest_base'             => 'oda_miembros',
+        'capability_type'       => array('miembro','miembros'),
+		'map_meta_cap'    		=> true,
     );
     register_post_type( 'miembro', $args );
 

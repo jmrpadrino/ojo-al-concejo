@@ -10,7 +10,8 @@ function oda_fiscalizacion_admin_menu() {
         __( 'Fiscalización','oda' ),
         'manage_options',
         'modulo-fiscalizacion',
-        'edit.php?post_type=solicitud-info',
+        'panel_fiscalizacion',
+        //'edit.php?post_type=solicitud-info',
         ODA_DIR_URL . 'images/FCD-menu-icon.png',
         38
     );

@@ -57,7 +57,8 @@ function oda_Sesion() {
         'publicly_queryable'    => true,
         'query_var'             => 'qv_sesion',
         'rewrite'               => $rewrite,
-        'capability_type'       => 'post',
+        'capability_type'       => array('sesion','sesiones'),
+		'map_meta_cap'    		=> true,
         'show_in_rest'          => true,
         'rest_base'             => 'oda_Sesiones',
     );

@@ -6,7 +6,15 @@ function oda_insert_scripts_miembros(){
     
     if ( 'miembro' == get_current_screen()->post_type ) {
         wp_enqueue_script('oda_admin_script_jqui', 'https://code.jquery.com/ui/1.12.1/jquery-ui.js', array('jquery'), '1', true );
-        wp_enqueue_script('oda_admin_script_miembros', ODA_DIR_URL . 'backend/miembros/js/admin-script-miembros.js', array('jquery'), '1', true );
+        wp_register_script('oda_admin_script_miembros', ODA_DIR_URL . 'backend/miembros/js/admin-script-miembros.js', array('jquery'), '1', true );
+        wp_enqueue_script('oda_admin_script_miembros');
+        if (isset($_GET['post'])){
+            $circunscripcion = (get_post_meta($_GET['post'], 'oda_circunscripcion_owner', true)) ? get_post_meta($_GET['post'], 'oda_circunscripcion_owner', true) : '';
+            $datos_miembro = array(
+                'circunscripcion' => $circunscripcion,
+            );
+            wp_localize_script( 'oda-admin-script', 'oda_miembro_object', $datos_miembro );
+        }
     }
 }
 

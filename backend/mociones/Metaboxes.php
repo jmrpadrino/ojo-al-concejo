@@ -172,9 +172,11 @@ function oda_mostrar_listado_mocion($post, $args)
                     </div>
                     <div class="oda_col col-same oda_col2 text-center">
                         <?php
-                        $checked_ausente = '';
-                        if (array_key_exists('member_ausente', $votos[get_the_ID()])) {
-                            $checked_ausente = 'checked';
+                        if($votos){
+                            $checked_ausente = '';
+                            if (array_key_exists('member_ausente', $votos[get_the_ID()])) {
+                                $checked_ausente = 'checked';
+                            }
                         }
                         ?>
                         <label for="asiste-<?php echo get_the_ID(); ?>">
@@ -183,11 +185,13 @@ function oda_mostrar_listado_mocion($post, $args)
                     </div>
                     <div class="oda_col col-same oda_col3 text-center">
                         <?php
-                        if ($miembros_suplentes) {
-                            $checked_excusa = '';
-                            if (array_key_exists('member_excusa', $votos[get_the_ID()])) {
-                                $checked_excusa = 'checked';
-                            }
+                            if ($miembros_suplentes) {
+                                if($votos){
+                                    $checked_excusa = '';
+                                    if (array_key_exists('member_excusa', $votos[get_the_ID()])) {
+                                        $checked_excusa = 'checked';
+                                    }
+                                }
                         ?>
                             <label for="excusa-<?php echo get_the_ID(); ?>">
                                 <input id="excusa-<?php echo get_the_ID(); ?>" data-rowid="<?php echo get_the_ID(); ?>" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][member_excusa]" class="excusa_miembro" type="checkbox" data-option="suplente-<?php echo get_the_ID(); ?>" <?php echo $checked_excusa; ?>>
@@ -226,14 +230,15 @@ function oda_mostrar_listado_mocion($post, $args)
                     </div>
                     <div class="oda_col oda_col5 oda_col_voto">
                         <?php
-                        $voto = '';
-                        if (array_key_exists('mocion_voto', $votos[get_the_ID()])) {
-                            $voto = $votos[get_the_ID()]['mocion_voto'];
+                        if($votos){
+                            if (array_key_exists('mocion_voto', $votos[get_the_ID()])) {
+                                $voto = $votos[get_the_ID()]['mocion_voto'];
+                            }
                         }
                         ?>
                         <ul id="row-voto-<?php echo get_the_ID(); ?>">
                             <li>
-                                <input class="voto_miembro" type="radio" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][mocion_voto]" value="1" <?php echo ($voto == 1) ? 'checked' : ''; ?>>
+                                <input class="voto_miembro" type="radio" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][mocion_voto]" value="1" <?php echo ($voto == 1) ? 'checked' : ''; ?> required>
                             </li>
                             <li>
                                 <input class="voto_miembro" type="radio" name="oda_sesion_mocion[<?php echo get_the_ID(); ?>][mocion_voto]" value="2" <?php echo ($voto == 2) ? 'checked' : ''; ?>>

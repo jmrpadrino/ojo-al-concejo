@@ -56,7 +56,8 @@ function oda_Ordenanzas() {
         'publicly_queryable'    => true,
         'query_var'             => 'ordenanza',
         'rewrite'               => $rewrite,
-        'capability_type'       => 'post',
+        'capability_type'       => array('ordenanza','ordenanzas'),
+		'map_meta_cap'    		=> true,
         'show_in_rest'          => true,
         'rest_base'             => 'oda_ordenanzas',
     );

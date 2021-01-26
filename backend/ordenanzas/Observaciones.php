@@ -56,7 +56,8 @@ function oda_Observacion() {
         'publicly_queryable'    => true,
         'query_var'             => 'observacion',
         'rewrite'               => $rewrite,
-        'capability_type'       => 'post',
+        'capability_type'       => array('observacion','observaciones'),
+		'map_meta_cap'    		=> true,
         'show_in_rest'          => true,
         'rest_base'             => 'oda_observaciones',
     );

@@ -58,9 +58,18 @@
 						$('.cmb2-id-oda-circunscripcion-owner .cmb-td').append(html);
 					}
 					$('#oda_circunscripcion_owner').html('');
-					html = '<option value="" selected="selected">Ninguno</option>';					
+					html = '<option>Ninguno</option>';					
 					$.each(response, function(index, value){
-						html += '<option value="'+value.id+'">' + value.title + '</option>';
+						console.log(oda_miembro_object.circunscripcion, value);
+						if (oda_miembro_object){
+							if(oda_miembro_object.circunscripcion == value.id){
+								html += '<option value="'+value.id+'" selected="selected">' + value.title + '</option>';
+							}else{
+								html += '<option value="'+value.id+'">' + value.title + '</option>';
+							}
+						}else{
+							html += '<option value="'+value.id+'">' + value.title + '</option>';
+						}
 					})
 					$('#oda_circunscripcion_owner').append(html);
 					setTimeout(() => {

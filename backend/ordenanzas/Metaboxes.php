@@ -126,13 +126,47 @@ function oda_ordenanza_metabox() {
             'ciudadania'    => __( 'Ciudadanía', 'oda' ),
         )
     ) );
+    // comisiones
+    $args = array(
+        'post_type' => 'comision',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => 'oda_ciudad_owner',
+                'value' => $city,
+                'compare' => '='
+            )
+        )
+    );
+    $array_comisiones = array();
+    $comisiones = new WP_Query($args);
+    while ($comisiones->have_posts()) : $comisiones->the_post();
+        $array_comisiones[get_the_ID()] = get_the_title();
+    endwhile;
+    wp_reset_query();
+    $mtb_observacion_data->add_field (array(
+        'name' => esc_html__( 'Comisión Solicitante', 'oda' ),
+        'desc' => __( 'Seleccione la comisión solicitante.', 'oda' ),
+        'id'         => ODA_PREFIX . 'ordenanza_comision',
+        'type'          => 'select',
+        'classes_cb' => 'oda_select2',
+        'options'       => $array_comisiones,
+        'attributes'    => array(
+            'data-conditional-id'     => ODA_PREFIX . 'ordenanza_iniciativa',
+            'data-conditional-value'  => 'comisiones',
+        ),
+    ) );
 
     /* DATA ORDENANZA: Proponente */
     $mtb_observacion_data->add_field( array(
-        'id'         => ODA_PREFIX . 'ordenanza_proponente',
-        'name' => esc_html__( 'Proponente externo', 'oda' ),
+        'id'         => ODA_PREFIX . 'ordenanza_ciudadania',
+        'name' => esc_html__( 'Proponente ciudadano', 'oda' ),
         'desc' => __( 'Agregue el Proponente de esta Ordenanza.', 'oda' ),
-        'type' => 'text_medium'
+        'type' => 'text_medium',
+        'attributes'    => array(
+            'data-conditional-id'     => ODA_PREFIX . 'ordenanza_iniciativa',
+            'data-conditional-value'  => 'ciudadania',
+        ),
     ) );
 
     /* DATA ORDENANZA: Miembros [ PRE GET POSTS ] */
@@ -166,11 +200,15 @@ function oda_ordenanza_metabox() {
         /* DATA ORDENANZA: Miembros */
         $mtb_observacion_data->add_field( array(
             'id'         => ODA_PREFIX . 'ordenanza_miembros',
-            'name' => esc_html__( 'Proponentes del Consejo', 'oda' ),
-            'desc' => __( 'Seleccione el/os miembros del consejo para esta Ordenanza.', 'oda' ),
+            'name' => esc_html__( 'Concejales Proponentes', 'oda' ),
+            'desc' => __( 'Seleccione el/os miembros del concejo para esta Ordenanza.', 'oda' ),
             'type' => 'pw_multiselect',
             'classes_cb' => 'oda_select2',
-            'options'          => $array_miembros
+            'options'          => $array_miembros,
+            'attributes'    => array(
+                'data-conditional-id'     => ODA_PREFIX . 'ordenanza_iniciativa',
+                'data-conditional-value'  => 'concejal',
+            ),
         ) );
     }
 
@@ -202,50 +240,12 @@ function oda_ordenanza_metabox() {
         */
     ) );
 
-    /* DATA ORDENANZA: Comisión [ PRE GET POSTS ] */
-    $query_comision = new WP_Query(array(
-        'post_type' => 'comision',
-        'posts_per_page' => -1,
-        'meta_query' => array(
-            array(
-                'key' => 'oda_ciudad_owner',
-                'value' => $city,
-                'compare' => '='
-            )
-        )
-    ));
-
-    if ( !$query_comision->have_posts() ){
-        /* DATA ORDENANZA: Aviso [Si no hay comisiones disponibles para la ciudad] */
-        $mtb_observacion_data->add_field( array(
-            'id'   => ODA_PREFIX . 'ordenanza_comision',
-            'name' => esc_html__( 'Aviso Importante', 'oda' ),
-            'desc' => __( 'Aun no tiene comisiones asignadas a la ciudad, por favor asigne una. Haga clic <a href="'. admin_url('/post-new.php?post_type=comision') .'">aqui</a>.', 'oda' ),
-            'type' => 'title'
-        ) );
-    } else {
-        /* DATA ORDENANZA: Comisión [ PRE GET POSTS ] */
-        while ($query_comision->have_posts()) : $query_comision->the_post();
-        $array_comision[get_the_ID()] = get_the_title();
-        endwhile;
-        wp_reset_query();
-
-        /* DATA ORDENANZA: Comisión */
-        $mtb_observacion_data->add_field( array(
-            'id'         => ODA_PREFIX . 'ordenanza_comision',
-            'name' => esc_html__( 'Comision de la Ordenanza', 'oda' ),
-            'desc' => __( 'Seleccione la comisión para esta Ordenanza.', 'oda' ),
-            'type' => 'select',
-            'options' => $array_comision
-        ) );
-    }
-
 
     /* DATA ORDENANZA: Fecha */
     $mtb_observacion_data->add_field( array(
         'id'         => ODA_PREFIX . 'ordenanza_vigencia',
-        'name' => esc_html__( 'Fecha de Vigencia', 'oda' ),
-        'desc' => __( 'Agregue la fecha de vigencia de la Ordenanza.', 'oda' ),
+        'name' => esc_html__( 'Fecha de Promulgación de ordenanza', 'oda' ),
+        'desc' => __( 'Agregue la fecha de promulgación de la Ordenanza.', 'oda' ),
         'type' => 'text_date'
     ) );
 
@@ -569,8 +569,8 @@ function oda_observacion_metabox(){
             /* DATA ORDENANZA: Miembros */
             $mtb_observacion_data->add_field( array(
                 'id'         => ODA_PREFIX . 'observacion_miembro',
-                'name' => esc_html__( 'Miembro del Consejo', 'oda' ),
-                'desc' => __( 'Seleccione el/os miembros del consejo para esta Ordenanza.', 'oda' ),
+                'name' => esc_html__( 'Miembro del Concejo', 'oda' ),
+                'desc' => __( 'Seleccione el/os miembros del concejo para esta Ordenanza.', 'oda' ),
                 'type' => 'pw_select',
                 'classes_cb' => 'oda_select2',
                 'options' => $array_miembros
@@ -608,7 +608,7 @@ function oda_observacion_metabox(){
             $mtb_observacion_data->add_field( array(
                 'id'         => ODA_PREFIX . 'observacion_ordenanza',
                 'name' => esc_html__( 'Ordenanza que se le aplica observación', 'oda' ),
-                'desc' => __( 'Seleccione el/os miembros del consejo para esta Ordenanza.', 'oda' ),
+                'desc' => __( 'Seleccione el/os miembros del concejo para esta Ordenanza.', 'oda' ),
                 'type' => 'pw_select',
                 'classes_cb' => 'oda_select2',
                 'options'          => $array_ordenanzas

@@ -56,7 +56,8 @@ function oda_Resoluciones() {
         'publicly_queryable'    => true,
         'query_var'             => 'resolucion',
         'rewrite'               => $rewrite,
-        'capability_type'       => 'post',
+        'capability_type'       => array('resolucion','resoluciones'),
+		'map_meta_cap'    		=> true,
         'show_in_rest'          => true,
         'rest_base'             => 'oda_resoluciones',
     );

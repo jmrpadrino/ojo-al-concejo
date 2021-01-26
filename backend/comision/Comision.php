@@ -57,7 +57,8 @@ function oda_Comision() {
         'publicly_queryable'    => true,
         'query_var'             => 'qv_comision',
         'rewrite'               => $rewrite,
-        'capability_type'       => 'post',
+        'capability_type'       => array('comision','comisiones'),
+		'map_meta_cap'    		=> true,
         'show_in_rest'          => true,
         'rest_base'             => 'oda_comisiones',
     );

@@ -57,7 +57,8 @@ function oda_solicitud_comp() {
         'publicly_queryable'    => true,
         'query_var'             => 'qv_solicitud_comp',
         'rewrite'               => $rewrite,
-        'capability_type'       => 'post',
+        'capability_type'       => array('comparescencia','comparescencias'),
+		'map_meta_cap'    		=> true,
         'show_in_rest'          => true,
         'rest_base'             => 'oda_solicitudes_comp',
     );

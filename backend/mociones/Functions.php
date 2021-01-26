@@ -422,3 +422,19 @@ function get_miembro_ciudad($id_ciudad)
     $miembro = new WP_Query($args);
     return $miembro;
 }
+
+/*
+array = { 
+    ["year"]=> string(4) "2014" 
+    ["org_1"]=> string(0) "" 
+    ["org_2"]=> string(1) "0" 
+    ["org_3"]=> string(11) "1252,502.64" 
+    ["org_4"]=> string(1) "0" 
+    ["org_5"]=> string(9) "940512.31" 
+    ["org_6"]=> string(10) "1172226.50" 
+    ["org_7"]=> string(1) "0" 
+    ["org_8"]=> string(10) "2450340.25" 
+    ["org_9"]=> string(9) "913667.19" 
+    ["org_10"]=> string(10) "1311200.07" 
+}
+*/

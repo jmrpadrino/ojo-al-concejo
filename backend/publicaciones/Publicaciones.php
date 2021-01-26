@@ -56,9 +56,10 @@ function oda_Publicaciones() {
         'publicly_queryable'    => true,
         'query_var'             => 'publicacion',
         'rewrite'               => $rewrite,
-        'capability_type'       => 'post',
         'show_in_rest'          => true,
-        'rest_base'             => 'oda_publicaciones',
+		'rest_base'             => 'oda_publicaciones',
+		'capability_type'       => array('publicacion','publicaciones'),
+		'map_meta_cap'    		=> true,
     );
     register_post_type( 'publicacion', $args );
 

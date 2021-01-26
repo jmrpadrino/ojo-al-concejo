@@ -57,7 +57,8 @@ function oda_solicitud_info() {
         'publicly_queryable'    => true,
         'query_var'             => 'qv_solicitud_info',
         'rewrite'               => $rewrite,
-        'capability_type'       => 'post',
+        'capability_type'       => array('solicitud','solicitudes'),
+		'map_meta_cap'    		=> true,
         'show_in_rest'          => true,
         'rest_base'             => 'oda_solicitudes_info',
     );

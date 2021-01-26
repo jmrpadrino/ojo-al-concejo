@@ -79,37 +79,122 @@ function oda_ciudad_metabox() {
 
     $mtb_textos->add_field( array(
         'name' => esc_html__( 'Intro Concejo Municipal', 'cmb2' ),
-        'desc' => __( 'Esta sección al inicio de la pantalla Concejo Municipal', 'cmb2' ),
+        'desc' => __( 'Esta sección esta al inicio de la pantalla Concejo Municipal', 'cmb2' ),
         'id'   => ODA_PREFIX . 'ciudad_intro_concejo',
         'type' => 'wysiwyg',
         'options' => array(
             'textarea_rows' => 5,
         ),
     ) );
-    
     $mtb_textos->add_field( array(
-        'name' => esc_html__( 'Sección Concejo Transparente izquierda', 'cmb2' ),
+        'name' => esc_html__( 'Intro Concejo Municipal Link VER', 'cmb2' ),
+        'desc' => __( 'Esta sección esta al inicio de la pantalla VER Concejo Municipal', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_intro_concejo_ver',
+        'type' => 'wysiwyg',
+        'options' => array(
+            'textarea_rows' => 5,
+        ),
+    ) );
+
+    $mtb_textos->add_field( array(
+        'name' => esc_html__( 'Imagen Derecha (Indicadores) Home', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_info_image_indicadores',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir Imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+
+    // oda_doc_post_carpetas
+    $mtb_textos->add_field( array(
+        'id'         => ODA_PREFIX . 'doc_post_carpetas',
+        'name'       => __('Documento adicional (Carpetas)', 'oda'),
+        'type'             => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir Archivo'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/jpeg',
+                'image/png',
+                'application/pdf'
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+
+
+    
+    $mtb_transparente = new_cmb2_box( array(
+        'id'            => 'oda_alta_textos_secciones_transparente',
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Sección Concejo Transparente (Inicio)', 'oda' ),
+        'object_types'  => array( 'ciudad' ),
+        'context'    => 'normal',
+        'show_names' => true,
+    ) );
+
+    $mtb_transparente->add_field( array(
+        'name' => esc_html__( 'Texto izquierda', 'cmb2' ),
         'id'   => ODA_PREFIX . 'ciudad__concejo_transizq',
         'type' => 'wysiwyg',
         'options' => array(
             'textarea_rows' => 3,
         ),
     ) );
-    $mtb_textos->add_field( array(
-        'name' => esc_html__( 'Sección Concejo Transparente derecha', 'cmb2' ),
+    $mtb_transparente->add_field( array(
+        'name' => esc_html__( 'Texto derecha', 'cmb2' ),
         'id'   => ODA_PREFIX . 'ciudad__concejo_transder',
         'type' => 'wysiwyg',
         'options' => array(
             'textarea_rows' => 3,
         ),
     ) );
-
-    $mtb_textos->add_field( array(
-        'name' => esc_html__( 'Sección Concejo Transparente derecha', 'cmb2' ),
-        'id'   => ODA_PREFIX . 'ciudad__concejo_transder',
+    $mtb_transparente->add_field( array(
+        'name' => esc_html__( 'Texto del botón', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad__concejo_trans_btntext',
+        'type' => 'text',
+    ) );
+    $mtb_transparente->add_field( array(
+        'name' => esc_html__( 'URL del botón', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad__concejo_trans_btnurl',
+        'type' => 'text_url',
+    ) ); 
+    
+    
+    $mtb_editables_cedula = new_cmb2_box( array(
+        'id'            => 'oda_alta_textos_secciones_cedula',
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Editables Cedula concejal', 'oda' ),
+        'object_types'  => array( 'ciudad' ),
+        'context'    => 'normal',
+        'show_names' => true,
+    ) );
+    $mtb_editables_cedula->add_field( array(
+        'name' => esc_html__( 'Lateral Superior Perfil', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad__cedula_sidetop',
         'type' => 'wysiwyg',
         'options' => array(
-            'textarea_rows' => 3,
+            'textarea_rows' => 2,
+        ),
+    ) );
+    $mtb_editables_cedula->add_field( array(
+        'name' => esc_html__( 'Lateral Inferior Perfil', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad__cedula_sidebottom',
+        'type' => 'wysiwyg',
+        'options' => array(
+            'textarea_rows' => 2,
         ),
     ) );
 
@@ -133,24 +218,6 @@ function oda_ciudad_metabox() {
         'name' => esc_html__( 'Texto del tweet para sección carpetas', 'cmb2' ),
         'id'   => ODA_PREFIX . 'ciudad_tweet_folders',
         'type' => 'text',
-    ) );
-    $mtb_img_twitter->add_field( array(
-        'name' => esc_html__( 'Imagen Derecha (Indicadores) Home', 'cmb2' ),
-        'id'   => ODA_PREFIX . 'ciudad_info_image_indicadores',
-        'type' => 'file',
-        'options' => array(
-            'url' => true,
-        ),
-        'text'    => array(
-            'add_upload_file_text' => 'Añadir Imagen'
-        ),
-        'query_args' => array(
-            'type' => array(
-                'image/jpeg',
-                'image/png',
-            ),
-        ),
-        'preview_size' => 'thumbnail'
     ) );
 
     $mtb_img_twitter->add_field( array(
@@ -530,7 +597,7 @@ function oda_ciudad_metabox() {
 	 */
     $mtb_rel = new_cmb2_box( array(
         'id'            => 'oda_listado_documentos',
-        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Lista de documentos solicitados para Concejo Transparente', 'oda' ),
+        'title'         => '<img src="' . ODA_DIR_URL . 'images/FCD-menu-icon.png"> ' . esc_html__( 'Lista de documentos solicitados para las campañas', 'oda' ),
         'object_types'  => array( 'ciudad' ),
         'context'    => 'normal',
         'priority'   => 'low',
@@ -701,12 +768,6 @@ function oda_ciudad_metabox() {
         ),
     ) );
 
-    /**
-	 * Group fields works the same, except ids only need
-	 * to be unique to the group. Prefix is not needed.
-	 *
-	 * The parent field's id needs to be passed as the first argument.
-	 */
     $cmb_carpeta->add_group_field( $group_field_carpetas, array(
         'name'       => esc_html__( 'Texto en Carpeta', 'cmb2' ),
         'id'         => 'oda_carpeta_copy',
@@ -785,6 +846,44 @@ function oda_ciudad_metabox() {
         'object_types'  => array( 'ciudad' ),
         'context'    => 'side',
         'show_names' => true,
+    ) );
+    $mtb_popupinfo_modulos->add_field( array(
+        'name' => esc_html__( 'Imagen Popup para módulo Listado de Miembros', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_popupinfo_listado_miembros',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
+    ) );
+    $mtb_popupinfo_modulos->add_field( array(
+        'name' => esc_html__( 'Imagen Popup para módulo Concejo en Cifras', 'cmb2' ),
+        'id'   => ODA_PREFIX . 'ciudad_popupinfo_concejo_cifras',
+        'type' => 'file',
+        'options' => array(
+            'url' => true,
+        ),
+        'text'    => array(
+            'add_upload_file_text' => 'Añadir imagen'
+        ),
+        'query_args' => array(
+            'type' => array(
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+            ),
+        ),
+        'preview_size' => 'thumbnail'
     ) );
     $mtb_popupinfo_modulos->add_field( array(
         'name' => esc_html__( 'Imagen Popup para módulo Proyectos de ordenanza', 'cmb2' ),

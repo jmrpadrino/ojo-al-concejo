@@ -159,8 +159,8 @@ function oda_solicitud_comp_metabox() {
         /* DATA SOLICITUD: Miembros */
         $mtb_observacion_data->add_field( array(
             'id'         => ODA_PREFIX . 'solicitud_comp_miembros',
-            'name' => esc_html__( 'Miembros del Consejo', 'oda' ),
-            'desc' => __( 'Seleccione el/os miembros del consejo para esta Solicitud.', 'oda' ),
+            'name' => esc_html__( 'Miembros del Concejo', 'oda' ),
+            'desc' => __( 'Seleccione el/os miembros del concejo para esta Solicitud.', 'oda' ),
             'type' => 'pw_multiselect',
             'classes_cb' => 'oda_select2',
             'options'          => $array_miembros

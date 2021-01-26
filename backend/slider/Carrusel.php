@@ -47,7 +47,8 @@ function oda_sliders() {
 		'has_archive'           => false,
 		'exclude_from_search'   => true,
 		'publicly_queryable'    => true,
-		'capability_type'       => 'post',
+		'capability_type'       => array('slider','sliders'),
+		'map_meta_cap'    		=> true,
 	);
 	register_post_type( 'oda_slider', $args );
 

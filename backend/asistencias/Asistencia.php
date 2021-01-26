@@ -57,7 +57,8 @@ function oda_Asistencia() {
         'publicly_queryable'    => true,
         'query_var'             => 'qv_asistencia',
         'rewrite'               => $rewrite,
-        'capability_type'       => 'post',
+        'capability_type'       => array('asistencia','asistencias'),
+		'map_meta_cap'    		=> true,
         'show_in_rest'          => true,
         'rest_base'             => 'oda_Asistencias',
     );

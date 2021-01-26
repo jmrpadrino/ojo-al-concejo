@@ -57,7 +57,8 @@ function oda_instituciones() {
         'publicly_queryable'    => true,
         'query_var'             => 'qv_instituciones',
         'rewrite'               => $rewrite,
-        'capability_type'       => 'post',
+        'capability_type'       => array('institucion','instituciones'),
+		'map_meta_cap'    		=> true,
         'show_in_rest'          => true,
         'rest_base'             => 'oda_solicitudes_info',
     );

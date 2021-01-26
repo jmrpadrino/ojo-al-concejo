@@ -57,7 +57,8 @@ function oda_Partidos() {
         'publicly_queryable'    => true,
         'query_var'             => 'qv_partido',
         'rewrite'               => $rewrite,
-        'capability_type'       => 'post',
+        'capability_type'       => array('partido','partidos'),
+		'map_meta_cap'    		=> true,
         'show_in_rest'          => true,
         'rest_base'             => 'oda_partidos_politicos',
     );

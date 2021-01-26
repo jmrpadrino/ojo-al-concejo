@@ -238,6 +238,61 @@ function oda_get_cities(){
 
 }
 
+add_action('admin_menu', 'oda_add_config_page');
+add_action( 'admin_init', 'update_extra_oda_info' );
+
+function oda_add_config_page() {
+    add_menu_page(
+        __( 'ODA Configuración','oda' ),
+        __( 'Configuración','oda' ),
+        'manage_options',
+        'oda-config-page',
+        'oda_config_page',
+        ODA_DIR_URL . 'images/FCD-menu-icon-ALT.png',
+        99
+    );
+}
+
+function update_extra_oda_info() {   
+    register_setting( 'oda-config-page', 'descargo_periodo' ); 
+    register_setting( 'oda-config-page', 'descargo_remitido' ); 
+    register_setting( 'oda-config-page', 'descargo_votaciones' ); 
+    register_setting( 'oda-config-page', 'descargo_cuantitativo' ); 
+} 
+
+function oda_config_page(){
+    // Obtener campos de notas de descargo
+
+    ?>
+        <form method="post" action="options.php">
+        <?php 
+            settings_fields( 'oda-config-page' ); 
+            do_settings_sections( 'oda-config-page' );
+        ?>
+        <div class="wrap">
+            <h1>Notas de descargo</h1>
+            <div class="wp-privacy-request-form-field">
+			    <label for="descargo_periodo">Por Período acumulado</label><br />
+			    <input value="<?php echo get_option('descargo_periodo'); ?>" type="text" class="regular-text" id="descargo_periodo" name="descargo_periodo">
+            </div>  
+            <div class="wp-privacy-request-form-field">
+			    <label for="descargo_remitido">Origen de la información</label><br />
+			    <input value="<?php echo get_option('descargo_remitido'); ?>" type="text" class="regular-text" id="descargo_remitido" name="descargo_remitido">
+            </div>  
+            <div class="wp-privacy-request-form-field">
+			    <label for="descargo_votaciones">Por Titularización</label><br />
+			    <input value="<?php echo get_option('descargo_votaciones'); ?>" type="text" class="regular-text" id="descargo_votaciones" name="descargo_votaciones">
+            </div>  
+            <div class="wp-privacy-request-form-field">
+			    <label for="descargo_cuantitativo">Datos tablas estadísticas</label><br />
+			    <input value="<?php echo get_option('descargo_cuantitativo'); ?>" type="text" class="regular-text" id="descargo_cuantitativo" name="descargo_cuantitativo">
+            </div>  
+            <?php submit_button(); ?>
+            <div class="clear"></div>
+        </div>
+    <?php
+}
+
 
 add_action( 'cmb2_admin_init', 'oda_metabox_for_contacto' );
 /**
